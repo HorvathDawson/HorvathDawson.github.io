@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <title>Electric sk8</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+    <!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+</head>
+
+<body>
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <a href="index.html" class="logo"><strong>Dawson Horvath</strong> <span>Electric sk8</span></a>
+            <nav>
+                <a href="#menu">Menu</a>
+            </nav>
+        </header>
+
+        <!-- Menu -->
+        <nav id="menu">
+            <ul class="links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="portfolio.html">Design Portfolio</a></li>
+                <li><a href="artportfolio.html">Art Portfolio</a></li>
+                <li><a href="#contact">Contact Me</a></li>
+            </ul>
+            <ul class="actions vertical">
+                <li><a href="index.html" class="button special fit">Home</a></li>
+
+            </ul>
+        </nav>
+
+        <!-- Main -->
+        <div id="main" class="alt">
+
+            <!-- One -->
+            <section id="one">
+                <div class="inner">
+                    <header class="major">
+                        <h1>Electric sk8 Board</h1>
+                    </header>
+                    <span class="image main"><img src="images/esk8.jpg" alt="" /></span>
+                    <h2>Context</h2>
+                    <p>Current market electric skateboards are unreasonably priced if the customer wants quality. enjoying the idea of esk8s for commuting and generally wanting one I decided to design and buid one DIY style since i didnt have the money to buy one.</p>
+
+                    <h2>Problem</h2>
+                    <p>The main problem for this project was the goal of building and designing a electric skateboard with specification and reliability satisfactory for commuting purposes.</p>
+
+                    <h2>Research</h2>
+                    <p>Before jumping into designing or purchasing components, the first major undertaking for the project was research, and approaching the problem by first learning about solutions then applying that to form a design, then working prototype.</p>
+                    <p>DIY electric skateboards have a thriving online community which I abused during the researching phase, by reading through countless build threads and other related posts. I used the build threads as a template for my project. I learned from other peoples experiences during their projects to better understand how to approach this project succesfully. This inspiration from other builds was very important for me while learning how to complete this project.</p>
+
+                    <h2>Design</h2>
+                    <div style="text-align: center;"><img src="images/wiring.jpeg" class="fullscreenpicture"><b>The wiring is illustrated by the above wiring schematic.</b></div>
+                    <p>The battery is a 10s4p Li-ion pack, the cells are Samsung 30Q which are 3000 mAh each, therefore 12 Ah in a 4P configuration. This setup was calculated to last roughly 20-30km depending on speed and terrain, which is my goal travel distance. The pack was built in my shop using cell level fusing similar to what tesla batteries use, I used .032" brass for the bus with 26ga bus wires between each cell and the brass.</p>
+                    <p>Charging for the battery pack is reguated by a battery management system. This is to help prevent an electrical fire, and to monitor the cells condition to determine if any cells are at risk. The BMS is not used for output as it is only rated for 60 amp extended pull which could cause issues during extended hill climbs. The BMS might also cause problems by overcharging while braking down hills. The regenerative braking would cause the battery to over charge and the BMS in this situation would shutdown shutting down the moto controller making you lose brakes, which despite more fun is a non ideal situation.</p>
+                    <p>The board is powered by two 6374 160kv sensored prop motors made for an RC plane, these with the larger size will help prevent overheating when carrying load. both motors are controlled by a specailized esk8 motor controlled deisnged to handle load with large current pulls and to accelerate at reasonable speeds, these motor controllers are an open source curcuit board designed by Veddar.</p>
+                    <br style="clear: both" />
+                    <h2>Build process</h2>
+                    <p>The building process sytarted with the chassis. I built this with the intention to keep the whole system water proof for better reliability. The first way to improve water resisitance was by sinking the wires within columns run the length of the board, by epoxying the wires into the deck like this it was able to avoid having to drill holes into the abs electronic enclosure. </p>
+                    <img src="images/wiring.jpeg" class="fullscreenpicture">
+                    <p style="padding-bottom: 20px; padding-top: 20px;">The motor mounts were designed and built out of 1/8 steel plate and a u bolt. The mounts needs to be able to resist flexing and therefore has to be very stiff to achieve this  </p>
+                    <img src="images/motorbracket1.jpg" class="concolumn11">
+                    <img src="images/motorbracket2.jpg" class="concolumn21" ;>
+                    <p></p>
+                    <p>The build is currently still in progress.</p>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Contact -->
+        <section id="contact">
+            <div class="inner">
+                <section>
+                    <form method="post" action="form.php">
+                        <div class="field half first">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" id="name" />
+                        </div>
+                        <div class="field half">
+                            <label for="email">Email</label>
+                            <input type="text" name="email" id="email" />
+                        </div>
+                        <div class="field">
+                            <label for="message">Message</label>
+                            <textarea name="message" id="message" rows="6"></textarea>
+                        </div>
+                        <ul class="actions">
+                            <li><input type="submit" value="Send Message" class="special" /></li>
+                            <li><input type="reset" value="Clear" /></li>
+                        </ul>
+                    </form>
+                </section>
+                <section class="split">
+                    <section>
+                        <div class="contact-method">
+                            <span class="icon alt fa-envelope"></span>
+                            <h3>Email</h3>
+                            <a href="#">Horvath.dawson@gmail.com</a>
+                        </div>
+                    </section>
+                    <section>
+                        <div class="contact-method">
+                            <span class="icon alt fa-phone"></span>
+                            <h3>Phone</h3>
+                            <span>250-306-0343</span>
+                        </div>
+                    </section>
+                    <section>
+                        <div class="contact-method">
+                            <span class="icon alt fa-home"></span>
+                            <h3>Location</h3>
+                            <span>Kamloops<br />
+										British Columbia<br />
+										Canada</span>
+                        </div>
+                    </section>
+                </section>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer id="footer">
+            <section>
+                <div id="footerpicture">
+                    <img src="images/footer.png" />
+                </div>
+            </section>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
