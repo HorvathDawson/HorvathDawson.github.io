@@ -46,24 +46,42 @@
             <section id="one">
                 <div class="inner">
                     <header class="major">
-                        <h1>3D printer</h1>
+                        <h1>Do It Yourself, 3D printer Style</h1>
+                        <p>What is the cheapest possible, real working 3D printer I can make without making compromises in terms of quality?</p>
                     </header>
-                    <span class="image main"><img src="images/pic01.png" ></span>
-                    <br style="clear: both" />
-                    <h2>Context:</h2>
-                    <p> Each year the Ministry of Education allots our school district a number of scholarships worth $1250.00, based on the number of students enrolled in grade 12. Winners receive a Scholarship voucher, which may be used to attend a college or other post secondary school. In School District No. 22 (Vernon), candidates entering the District Scholarships must plan and complete a project to demonstrate a particular skill or interest outside of the regular school curriculum.</p>
+                    <div>
+                    </div>
+                    <div>
+                      <div class="first-column1">
+                        <div width="100%" height="450">
+                            <img src="images/pic01.png" width="80%">
+                        </div>
+                      </div>
+                      <div class="second-column1">
+                        <div width="100%">
+                          <b>Context:</b>
+                          <p> Each year the Ministry of Education allots our school district a number of scholarships worth $1250.00, based on the number
+                            of students enrolled in grade 12. Winners receive a Scholarship voucher, which may be used to attend a college or other post secondary school.
+                             In School District No. 22 (Vernon), candidates entering the District Scholarships must plan and complete a project to demonstrate a particular skill or
+                             interest outside of the regular school curriculum.</p>
 
-                    <h2>Problem:</h2>
+                        </div>
+                      </div>
+                    </div>
+
+                    <br style="clear: both" />
+
+                    <b>Problem:</b>
                     <p>My goal was to determine, "What is the cheapest possible, real working 3D printer I can make without making compromises in terms of quality?" With this challenge in mind I attempted to answer the question by building a Prusa i3 MK2-style clone that includes many of the major features of the original Josef Prusa model.</p>
 
-                    <h2>Design:</h2>
+                    <b>Design:</b>
                     <p>The prusia MK2 is the go to design for most diy 3D printers because of the sheer amount of open source material on the design. The design includes many important features that are now a bench mark for current consumer 3D printers. The main difference between my printer and the original prusia is the controller board. My clone is controlled by a arduino mega with a RAMPS 1.4 stepper motor driver shield, whereas the original is controlled by a RAMBO board. </p>
                     <p>My main goal with the project was to maintain quality while keeping the price of the project as low as possible. To achieve this goal I had to sacrifice in some areas and the area I sacrificed most was print speed. Using an arduino to power a 3D printer has its drawbacks despite the low price, the main disadvantage is the 8bit processor, whereas compared to the 16bit processor of the RAMBO board the arduino causes significant bottle necking of the print speed around any circular extruder pathing.</p>
                     <p>Sacrifices also had to be made in build quality. compared to the original prusias 3mm aluminum frame my clone is built with laser cut 1/4" MDF board. I choose MDF as the material for my structural frame because of the fiber boards natural tendency to absorb small vibrations and not warp with atmospheric moisture, and because MDF is very easy to laser cut precisely.</p>
                     <p>The main structure apart from the frame was printed from another 3D printer. These parts were then connected using 3/8" threaded rod for the main structure these rods cause alot of problems with allignment because they are usually bent slightly. The extruder movement was made using 8mm drill rod for the linear X & Y axis movement, and the first iteration used 1/4" threaded rods for Z axis movement which was instead later changed to lead screws.</p>
 
-                    <h2>Build process:</h2>
-                    <h3>The Frame</h3>
+                    <b>Build process:</b>
+                    <b>The Frame</b>
                     <p>The building process started first by building the structural frame of the printer, the reason for this was Aliexpreses unusually long shipping times leaving enough time to build the structure and still take a nap. The frame was laser cut from 1/4" MDF by a friend at the local makerspace club. The rest of the structure that holds the print bed and the Y axis motion was built using threaded rod and 3d printed fasteners.</p>
                     <div class="concolumn12"> <img src="images/3dprinter/3dprinter2.JPG" style="width: 100%;">
                         <p style="text-align: center;"><b>Print Bed Structure</b></p>
@@ -77,7 +95,7 @@
 
                     <br style="clear: both" />
 
-                    <h3>Electronics and Linear Motion</h3>
+                    <b>Electronics and Linear Motion</b>
                     <p>The electrical portion of the project was based around the arduino mega and a RAMPS 1.4 shell.</p>
                     <div class="concolumn11" style="margin-right: 5%;"><img src="images/Ramps.jpeg" style=" width: 100%;">
                         <p style="text-align: center;"><b>RAMPS Wiring Schematic</b></p>
@@ -109,11 +127,11 @@
                         <p style="text-align: center;"><b>Completed Printer</b></p>
                     </div>
                     <br style="clear: both" />
-                    <h2>The Big Picture:</h2>
-                    <h3>What I Learned</h3>
+                    <b>The Big Picture:</b>
+                    <b>What I Learned</b>
                     <p>This project was something I wanted to do for many years before I actually decided to  pursue it. The idea I could complete one of the projects I have thought about building while simutaneously helping fund my post secondary was a very appealing position which I took full avantage. This project taught me so much about the basics of 3D printing, robotics, and most importantly how to trouble shoot issues I encounter throughout the building process. The main goal of the project was to keep the price of the printer as low as possible, which I was able to do relatively successfully, the total price for the project was under 300$ CAN, which is less than the average price of a mid quality chinese Clone.</p>
-                    
-                    <h3>Achievements</h3>
+
+                    <b>Achievements</b>
                     <ul>
                         <li>Most hours spent on one issue: <b>43.</b></li>
                         <li>Best workspace: <b>Workbench made with a sheet of plywood across my bed.</b></li>

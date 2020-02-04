@@ -4234,8 +4234,6 @@ body.is-menu-visible #menu .inner {
 .second-column1 {
     width: 50%;
     float: left;
-
-
 }
 
 .concolumn1 {
@@ -4451,12 +4449,12 @@ body.is-menu-visible #menu .inner {
 }
 .fullscreenpicture {
         float: auto;
-        width: 100%;   
+        width: 100%;
         margin-left: 0;
-        
+
     }
 
-  
+
     .concolumn1r {
         float: right;
         width: 30%;
@@ -4472,9 +4470,9 @@ body.is-menu-visible #menu .inner {
     }
     .concolumn21 {
         float: left;
-        width: 50%;        
+        width: 50%;
         margin-left: 0;
-        padding-bottom: 50px;      
+        padding-bottom: 50px;
     }
 
 @media (max-width: 800px){
@@ -4486,9 +4484,9 @@ body.is-menu-visible #menu .inner {
     }
     .concolumn21 {
         float: left;
-        width: 100%;        
+        width: 100%;
         margin-left: 0;
-        padding-bottom: 50px;      
+        padding-bottom: 50px;
     }
     .concolumn1r {
         float: left;
@@ -4506,15 +4504,15 @@ body.is-menu-visible #menu .inner {
     }
     .concolumn22 {
         float: left;
-        width: 30%;        
+        width: 30%;
         margin-left: 4.5%;
-        padding-bottom: 30px;      
+        padding-bottom: 30px;
     }
     .concolumn32 {
         float: left;
-        width: 30%;        
+        width: 30%;
         margin-left: 4.5%;
-        padding-bottom: 30px;      
+        padding-bottom: 30px;
     }
 
 @media (max-width: 800px){
@@ -4526,14 +4524,14 @@ body.is-menu-visible #menu .inner {
     }
     .concolumn22 {
         float: left;
-        width: 100%;        
+        width: 100%;
         margin-left: 0;
-        padding-bottom: 10px;      
+        padding-bottom: 10px;
     }
     .concolumn32 {
         float: left;
-        width: 100%;        
+        width: 100%;
         margin-left: 0;
-        padding-bottom: 30px;      
+        padding-bottom: 30px;
     }
 }
