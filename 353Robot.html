@@ -85,7 +85,7 @@
                         <div>
                            <p >The following image captures a top view of the gazebo simulation world that our robot operated in.
                              Our robot (in white) is shown at its starting position on the road and the "parked cars" are represented
-                            by the blue rectangles placed throughout the course at various "parking locations". Our objective was
+                             by the blue rectangles placed throughout the course at various "parking locations". Our objective was
                             to navigate the roads, and collect the license plate information of all parked cars along our path.
                           </p>
                         </div>
@@ -102,10 +102,10 @@
                     <div>
                       <div class="first-column1">
                         <div>
-                           <p >
-                           The operation of our robot relied solely on the camera input feed it received from the virtual world.
-                           Within the gazebo simulation, a camera mounted on the top of the robot facing forwards continuously fed
-                           our system with an image feed. The following image shows an example of the frame we would recive back.
+                           <p>
+                           The operation of our robot relied solely on the camera input feed is received from the virtual world.
+                           Within the gazebo simulation, a camera mounted on the top of the robot facing forwards continuously
+                           fed our system with an image feed. The following image shows an example of the frame we would receive back.
                           </p>
                         </div>
                       </div>
@@ -120,31 +120,34 @@
 
                     <br>
                     <b>Ros Architecture:</b>
-                    <p>Since the only input to our system was the camera feed, our system needed to be capable of
-                       transforming an input image into output commands through a series of callbacks and algorthims. At a very high level,
-                        this architecture is summarized in the following diagram.
+                    <p>
+                      Since the only input to our system was the camera feed, our system needed to be capable of
+                      transforming an input image into output commands through a series of callbacks and algorithms. At a very high level,
+                      this architecture is summarized in the following diagram.
                     </p>
                     <div width="100%">
                         <img src="images/353RobotArchitecture.png" width="60%" />
                     </div>
                     <br>
-                    <p>Each "callback" is essentially an asychronously running method responsible for handling a specific aspect of our
-                      robots operation. For example, our "Car Callback" handles capturing images of the parked cars, as well as avoiding
-                      the roaming truck which circles the middle track. Our "Navigation Callback" uses the camera feed to stay centered
-                      within the road, and to properly stop at crosswalks. After we have successfully navigated the course, our system
+                    <p>
+                      Each "callback" is essentially an asynchronously running method responsible for handling a specific aspect of our robot operation.
+                      For example, our "Car Callback" handles capturing images of the parked cars, as well as avoiding the roaming truck which circles the middle track.
+                       Our "Navigation Callback" uses the camera feed to stay centered within the road and to properly stop at crosswalks. After we have successfully navigated the course, our system
                       has captured multiple images of each parked car we have passed.
                     </p>
                     <br>
-                    <p>After capturing images of all parked cars, an "Objective Completed" flag withing our system gets set True.
+                    <p>
+                      After capturing images of all parked cars, an "Objective Completed" flag withing our system gets set True.
                       This starts the execution of our License Plate Image Processing Callback.
                     </p>
                     <b>License Plate OCR</b>
-                    <p>The captured images are first filtered and cropped to identify the portion of the image which has
+                    <p>
+                      The captured images are first filtered and cropped to identify the portion of the image which has
                       the parking location and plate number information. Below, the images show an example of the unfiltered captured images,
                       followed by the process of locating the areas of the image which hold the information we are looking for. It is worth
-                      noting that some of the images we capture are not completely in focus. Regardles, our algorithm was able to correctly
-                      identify and crop the images for further processing. After filtering the images, we send them through our pre-trained
-                      neural network which outputs the parking location and licence plate number to the terminal and scoreboard with an accuracy of 98%.
+                      noting that some of the images we capture are not completely in focus. Regardless, our algorithm was able to correctly identify and crop the images for further processing.
+                      After filtering the images, we send them through our pre-trained
+                      a neural network which outputs the parking location and license plate number to the terminal and scoreboard with an accuracy of 98%.
                     </p>
                     <br>
                     <div>
@@ -166,7 +169,7 @@
                     <div>
                       <div class="first-column1">
                         <div width="100%" height="450">
-                        <p>The following video shows a captured demo run of our finished robot. A top down view on the right portion of the screen shows
+                        <p>The following video shows a captured demo run of our finished robot. A top-down view on the right portion of the screen shows
                           the robots progress through its path, whereas the left portion of the screen shows the world through the eyes of the robot.
                           There are a few other key points worth noting below. </p>
                         </div>
@@ -181,11 +184,10 @@
                     <br clear="both">
                     <p> Within the gazebo simulation world, we had to deal with the constraint that output commands were discrete
                       in nature, meaning there was only a finite set of commands that we could give. In our case, this meant that we could not publish "go forward" and
-                      "turn left" commands at the same time. The result is that our robot looks very jittery as it travels. Its worth noting
-                      that this is simply a limitation of the platform the simulation was running in.
+                      "turn left" commands at the same time. The result is that our robot looks very jittery as it travels. It's worth noting that this is simply a limitation of the platform the simulation was running in.
                     </p>
                       Bounding boxes can be seen throughout the video. Parked cars are represented with blue bounding boxes, pedestrians with red (or green) depending on their position,
-                      and the roaming truck with a yellow bounding box. The identification of these objects of interest were what we used to make decisions within our code.
+                      and the roaming truck with a yellow bounding box. The identification of these objects of interest was what we used to make decisions within our code.
                     <p>
                     </P>
                     <p>
