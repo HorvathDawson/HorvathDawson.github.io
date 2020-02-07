@@ -127,12 +127,14 @@
                     <div width="100%">
                         <img src="images/353RobotArchitecture.png" width="60%" />
                     </div>
+                    <br>
                     <p>Each "callback" is essentially an asychronously running method responsible for handling a specific aspect of our
                       robots operation. For example, our "Car Callback" handles capturing images of the parked cars, as well as avoiding
                       the roaming truck which circles the middle track. Our "Navigation Callback" uses the camera feed to stay centered
                       within the road, and to properly stop at crosswalks. After we have successfully navigated the course, our system
                       has captured multiple images of each parked car we have passed.
                     </p>
+                    <br>
                     <p>After capturing images of all parked cars, an "Objective Completed" flag withing our system gets set True.
                       This starts the execution of our License Plate Image Processing Callback.
                     </p>
@@ -144,6 +146,7 @@
                       identify and crop the images for further processing. After filtering the images, we send them through our pre-trained
                       neural network which outputs the parking location and licence plate number to the terminal and scoreboard with an accuracy of 98%.
                     </p>
+                    <br>
                     <div>
                       <div class="first-column1">
                         <div width="100%" height="500">
