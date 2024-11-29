@@ -1,0 +1,90 @@
+:root {
+    /* CSS HEX */
+    --honeydew: #dff8ebff;
+    --rose-quartz: #a28f9dff;
+    --battleship-gray: #74776bff;
+    --walnut-brown: #5c574fff;
+    --black-olive: #48483aff;
+
+    /* CSS HSL */
+    --honeydew-hsl: hsla(149, 64%, 92%, 1);
+    --rose-quartz-hsl: hsla(316, 9%, 60%, 1);
+    --battleship-gray-hsl: hsla(75, 5%, 44%, 1);
+    --walnut-brown-hsl: hsla(37, 8%, 34%, 1);
+    --black-olive-hsl: hsla(60, 11%, 25%, 1);
+
+    /* CSS RGB */
+    --honeydew-rgb: rgba(223, 248, 235, 1);
+    --rose-quartz-rgb: rgba(162, 143, 157, 1);
+    --battleship-gray-rgb: rgba(116, 119, 107, 1);
+    --walnut-brown-rgb: rgba(92, 87, 79, 1);
+    --black-olive-rgb: rgba(72, 72, 58, 1);
+
+    /* CSS Gradient */
+    --gradient-top: linear-gradient(0deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-right: linear-gradient(90deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-bottom: linear-gradient(180deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-left: linear-gradient(270deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-top-right: linear-gradient(45deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-bottom-right: linear-gradient(135deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-top-left: linear-gradient(225deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-bottom-left: linear-gradient(315deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-radial: radial-gradient(#dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+}
+
+/* Default sticky-top style */
+#main-header {
+    transition: background-color 0.3s, box-shadow 0.3s, height 0.3s;
+    background-color: var(--walnut-brown); /* Default background color */
+}
+
+/* Background color when sticky at the top */
+#main-header.scrolled {
+    background-color: var(--rose-quartz);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjust link color when sticky at the top */
+#main-header.scrolled a {
+    color: var(--battleship-gray);
+}
+
+.navbar-brand .logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    letter-spacing: -0.04em;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.04em;
+    color: #394650;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
+    color: #07d897;
+}
+
+.dropdown-menu {
+    background-color: #f7f6f6;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+
+.dropdown-item:hover {
+    color: #07d897;
+    background-color: #eef5f7;
+}
+
+@media (max-width: 1024px) {
+    #main-header nav {
+        padding: 0 1rem;
+    }
+
+    #primary-menu {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
