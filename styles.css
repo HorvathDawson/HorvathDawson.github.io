@@ -14,11 +14,11 @@
     --black-olive-hsl: hsla(60, 11%, 25%, 1);
 
     /* CSS RGB */
-    --honeydew-rgb: rgba(223, 248, 235, 1);
-    --rose-quartz-rgb: rgba(162, 143, 157, 1);
-    --battleship-gray-rgb: rgba(116, 119, 107, 1);
-    --walnut-brown-rgb: rgba(92, 87, 79, 1);
-    --black-olive-rgb: rgba(72, 72, 58, 1);
+    --honeydew-rgb: rgba(223, 248, 235, 0.4);
+    --rose-quartz-rgb: rgba(162, 143, 157, 0.4);
+    --battleship-gray-rgb: rgba(116, 119, 107, 0.4);
+    --walnut-brown-rgb: rgba(92, 87, 79, 0.4);
+    --black-olive-rgb: rgba(72, 72, 58, 0.4);
 
     /* CSS Gradient */
     --gradient-top: linear-gradient(0deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
@@ -96,52 +96,66 @@ body {
 
 
 .hero {
-    position: relative;
     height: 200vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+    /* justify-content: center; */
+    /* align-items: center; */
+    flex-direction: column;
 }
 
 .hero .background-banner {
-    position: fixed;
+    position: sticky;
+    display: flex;
     top: 0;
     width: 100%;
     height: 75px;
     background: var(--walnut-brown);
-    z-index: 0;
+    z-index: 1;
 }
 
 .hero .background {
-    position: absolute;
+    display: flex;
     top: 0;
     width: 100%;
-    height: 500px;
+    height: 60vh;
     background: var(--walnut-brown);
     background-size: cover;
     background-position: center;
     z-index: 0;
 }
 
-.hero .background-two {
-    width: 100%;
-    height: 200px;
-    background: var(--gradient-top);
-    z-index: 2;
-}
-
-.sticky {
-    position: -webkit-sticky;
-    background-color: red;
+.hero .background-lower {
+    display: flex;
     position: sticky;
     top: 0;
+    width: 100%;
+    /* height: auto; */
+    /* background: var(--gradient-top); */
+    z-index: 0;
+    background-image: url('assets/banner.JPG');
+    background-size: cover;
+    background-position: center;
+    height: auto;
+    aspect-ratio: 16/9; /* Adjust the aspect ratio as needed */
 }
 
-.sticky:before,
-.sticky:after {
+.hero .background-lower::after {
     content: '';
-    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--honeydew-rgb); /* White opacity layer */
+    z-index: 1;
+}
+
+
+@media (max-width: 768px) {
+    .hero .background-lower {
+        background-position: center center;
+        aspect-ratio: 4/3; /* Adjust the aspect ratio as needed for mobile */
+    }
 }
 
 .hero .intro-text-container {
@@ -153,7 +167,7 @@ body {
 }
 
 .hero .intro-text-container h1 {
-    position: relative;
+    position: absolute;
     left: 100px;
     top: 0px;
     font-size: 7.5rem;
