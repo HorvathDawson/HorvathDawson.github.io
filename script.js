@@ -8,30 +8,26 @@ document.addEventListener("DOMContentLoaded", () => {
             header.classList.remove("scrolled");
         }
     });
-
-    // window.addEventListener("scroll", () => {
-    //     const hero = document.querySelector(".hero");
-    //     const background = document.querySelector(".background");
-    //     const textContainer = document.querySelector(".text-container");
+    // const ticker = document.querySelector('.ticker');
+    // const phrases = [
+    //   'Engineering Physicist',
+    //   'Mechatronic Engineer',
+    //   'Problem Solver',
+    //   'Innovator',
+    //   'Hands-On Builder',
+    //   'Robotics Enthusiast',
+    //   'Creative Thinker',
+    //   'Data Explorer',
+    //   'Outdoor Adventurer',
+    //   'Curiosity-Driven'
+    // ];
     
-    //     const bgRect = background.getBoundingClientRect();
-    //     const textRect = textContainer.getBoundingClientRect();
-
-    //     const scrollY = window.scrollY;
-    //     background.style.top = `-${scrollY}px`;
-
-    //     console.log(bgRect.bottom, textRect.bottom)
-    
-    //     if (bgRect.bottom <= 50 && textRect.bottom >= 0) {
-    //         // Stick background when it reaches 50px from the top
-    //         console.log(background.offsetHeight)
-    //         const offset = background.offsetHeight - 150
-    //         background.style.top = `-${offset}px`;
-    //         console.log("Stick background")
-
-    //     } 
+    // phrases.forEach(phrase => {
+    //   const span = document.createElement('span');
+    //   span.textContent = phrase;
+    //   ticker.appendChild(span);
     // });
-    
+
     
 });
 

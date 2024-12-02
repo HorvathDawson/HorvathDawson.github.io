@@ -1,0 +1,320 @@
+:root {
+    /* CSS HEX */
+    --honeydew: #dff8ebff;
+    --rose-quartz: #a28f9dff;
+    --battleship-gray: #74776bff;
+    --walnut-brown: #5c574fff;
+    --black-olive: #48483aff;
+
+    /* CSS HSL */
+    --honeydew-hsl: hsla(149, 64%, 92%, 1);
+    --rose-quartz-hsl: hsla(316, 9%, 60%, 1);
+    --battleship-gray-hsl: hsla(75, 5%, 44%, 1);
+    --walnut-brown-hsl: hsla(37, 8%, 34%, 1);
+    --black-olive-hsl: hsla(60, 11%, 25%, 1);
+
+    /* CSS RGB */
+    --honeydew-rgb: rgba(223, 248, 235, 0.4);
+    --rose-quartz-rgb: rgba(162, 143, 157, 0.4);
+    --battleship-gray-rgb: rgba(116, 119, 107, 0.4);
+    --walnut-brown-rgb: rgba(92, 87, 79, 0.4);
+    --black-olive-rgb: rgba(72, 72, 58, 0.4);
+
+    /* CSS Gradient */
+    --gradient-top: linear-gradient(0deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-right: linear-gradient(90deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-bottom: linear-gradient(180deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-left: linear-gradient(270deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-top-right: linear-gradient(45deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-bottom-right: linear-gradient(135deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-top-left: linear-gradient(225deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-bottom-left: linear-gradient(315deg, #dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+    --gradient-radial: radial-gradient(#dff8ebff, #a28f9dff, #74776bff, #5c574fff, #48483aff);
+}
+
+body {
+    font-family: 'Roboto', sans-serif; /* Apply Roboto here */
+    background-color: var(--honeydew);
+}
+
+/* Default sticky-top style */
+#main-header {
+    transition: background-color 0.3s, box-shadow 0.3s, height 0.3s;
+    background-color: var(--walnut-brown);
+}
+
+/* Background color when sticky at the top */
+#main-header.scrolled {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--rose-quartz);
+}
+
+.navbar-brand .logo {
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-decoration: none;
+    letter-spacing: -0.04em;
+    color: var(--honeydew);
+}
+
+.navbar-nav .nav-link {
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.04em;
+    color: var(--honeydew);
+    transition: color 0.3s ease-in-out;
+}
+
+#main-header .navbar-nav .nav-link:hover,
+#main-header .navbar-nav .nav-link:focus {
+    color: var(--rose-quartz);
+}
+
+#main-header.scrolled .navbar-nav .nav-link:hover,
+#main-header.scrolled .navbar-nav .nav-link:focus {
+    color: var(--walnut-brown);
+}
+
+.dropdown-menu {
+    background-color: var(--honeydew);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+
+.dropdown-item:hover {
+    color: var(--rose-quartz);
+    background-color: var(--honeydew);
+}
+
+@media (max-width: 1024px) {
+    #main-header nav {
+        padding: 0 1rem;
+    }
+
+    #primary-menu {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+.hero {
+    /* display: flex; */
+    /* flex-direction: column; */
+    position: relative;
+    border: 2px solid red;
+}
+
+.hero .background-banner {
+    position: sticky;
+    display: flex;
+    top: 0;
+    width: 100%;
+    height: 75px;
+    /* min-height: 75px; */
+    background: var(--walnut-brown);
+    z-index: 1;
+}
+
+.hero .background {
+    display: flex;
+    top: 0;
+    width: 100%;
+    height: 60vh;
+    /* min-height: 500px; */
+    background: var(--walnut-brown);
+    background-size: cover;
+    background-position: center;
+    float:left; /* added */
+    z-index: 0;
+}
+
+.hero .background-lower {
+    display: flex;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    /* height: auto; */
+    /* background: var(--gradient-top); */
+    z-index: 0;
+    background-image: url('assets/images/rainier/Rainier_tent_pad_sunset.jpg');
+    background-size: cover;
+    background-position: center;
+    /* height: auto; */
+    aspect-ratio: 16/9; /* Adjust the aspect ratio as needed */
+    shape-outside:linear-gradient(transparent,transparent);
+    float:left; /* added */
+}
+
+.hero .background-lower::after {
+    content: '';
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--walnut-brown); /* White opacity layer */
+    z-index: 1;
+    opacity: 0.5;
+}
+
+
+.ticker-wrapper {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: left;
+    padding: 10px 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+  }
+  
+  .ticker {
+    display: inline-block;
+    left: 0;
+    white-space: nowrap;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-name: ticker;
+    animation-duration: 15s;
+    gap: 50px; /* Space between each item */
+  }
+
+    @keyframes ticker {
+        0% { transform: translatex(0%); }
+        100% { transform: translatex(-50%); }
+    }
+
+  .ticker span {
+      margin-right: 50px;
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--rose-quartz);
+      white-space: nowrap; /* Force text to be on the same line */
+      display: inline-block;
+  }
+
+@media (max-width: 1600px) {
+    .hero .background-lower {
+        background-position: center center;
+        aspect-ratio: 4/3; /* Adjust the aspect ratio to be tall and skinny for mobile */
+    }
+}
+
+@media (max-width: 1250px) {
+    .hero .background-lower {
+        background-position: center center;
+        aspect-ratio: 1/1; /* Adjust the aspect ratio to be tall and skinny for mobile */
+    }
+}
+
+@media (max-width: 900px) {
+    .hero .background-lower {
+        background-position: center center;
+        aspect-ratio: 3/4; /* Adjust the aspect ratio to be tall and skinny for mobile */
+    }
+}
+
+@media (max-width: 600px) {
+    .hero .background-lower {
+        background-position: center center;
+        aspect-ratio: 9/16; /* Adjust the aspect ratio to be tall and skinny for mobile */
+    }
+}
+
+.hero .intro-text-container {
+    /* display: flex;  */
+    flex-direction: column;
+    z-index: 2;
+    height: auto;
+    background-color: transparent;
+    width: auto;
+}
+
+.hero .intro-text-container h1,
+.hero .intro-text-container h2,
+.hero .intro-text-container p {
+    position: relative;
+    text-align: start;
+    height: auto;
+    color: var(--honeydew);
+}
+
+.hero .intro-text-container h1 {
+    padding-top: 100px;
+    padding-left: 100px;
+    font-size: 7.5rem;
+    font-weight: 700;
+    left: 10%;
+}
+
+.hero .intro-text-container h2 {
+    padding-top: 200px;
+    padding-left: 50px;
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.hero .intro-text-container p {
+    padding-top: 50px;
+    text-align: left;
+    justify-content: center;
+    padding-left: 5%;
+    padding-right: 5%;
+    font-size: 1.5rem;
+    font-weight: 400;
+    padding-bottom: 100vh;
+    margin: 0 auto;
+}
+
+/* .hero .intro-text-container h1 {
+    padding-top: 100px;
+    position: relative;
+    left: 100px;
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: start;
+    color: var(--honeydew);
+    display: flex;
+    display: inline-block;
+} */
+
+/* Scale text with screen size */
+@media (max-width: 1200px) {
+    .hero .intro-text-container h1 {
+        font-size: 6rem;
+        padding-left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 992px) {
+    .hero .intro-text-container h1 {
+        font-size: 5rem;
+        padding-left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero .intro-text-container h1 {
+        font-size: 4rem;
+        padding-left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 576px) {
+    .hero .intro-text-container h1 {
+        font-size: 3rem;
+        padding-left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+.scroll-section {
+    padding: 100px 20px;
+    min-height: 200vh; /* Ensure there's enough content to scroll */
+}
