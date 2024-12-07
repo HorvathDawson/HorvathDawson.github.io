@@ -49,29 +49,55 @@ body {
     background-color: var(--rose-quartz);
 }
 
+#main-header.scrolled.white-section {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--honeydew);
+}
+
+
 .navbar-brand .logo {
     font-weight: bold;
     font-size: 1.5rem;
     text-decoration: none;
     letter-spacing: -0.04em;
+}
+.navbar-brand .logo {
     color: var(--honeydew);
+}
+
+.scrolled.white-section .navbar-brand .logo{
+    color: var(--black-olive)
+}
+.navbar-brand .logo:hover,
+.navbar-brand .logo:focus {
+    color: var(--rose-quartz);
+}
+
+.scrolled .navbar-brand .logo:hover,
+.scrolled .navbar-brand .logo:focus {
+    color: var(--walnut-brown);
 }
 
 .navbar-nav .nav-link {
     font-weight: 700;
     font-size: 1rem;
     letter-spacing: -0.04em;
-    color: var(--honeydew);
     transition: color 0.3s ease-in-out;
 }
+.navbar-nav .nav-link {
+    color: var(--honeydew);
+}
+.scrolled.white-section .navbar-nav .nav-link{
+    color: var(--black-olive)
+}
 
-#main-header .navbar-nav .nav-link:hover,
-#main-header .navbar-nav .nav-link:focus {
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
     color: var(--rose-quartz);
 }
 
-#main-header.scrolled .navbar-nav .nav-link:hover,
-#main-header.scrolled .navbar-nav .nav-link:focus {
+.scrolled .navbar-nav .nav-link:hover,
+.scrolled .navbar-nav .nav-link:focus {
     color: var(--walnut-brown);
 }
 
@@ -101,7 +127,6 @@ body {
     /* display: flex; */
     /* flex-direction: column; */
     position: relative;
-    border: 2px solid red;
 }
 
 .hero .background-banner {
@@ -178,7 +203,7 @@ body {
     animation-iteration-count: infinite;
     animation-timing-function: linear;
     animation-name: ticker;
-    animation-duration: 15s;
+    animation-duration: 35s;
     gap: 50px; /* Space between each item */
   }
 
@@ -225,8 +250,6 @@ body {
 }
 
 .hero .intro-text-container {
-    /* display: flex;  */
-    flex-direction: column;
     z-index: 2;
     height: auto;
     background-color: transparent;
@@ -265,7 +288,7 @@ body {
     padding-right: 5%;
     font-size: 1.5rem;
     font-weight: 400;
-    padding-bottom: 100vh;
+    padding-bottom: 70vh;
     margin: 0 auto;
 }
 
@@ -314,7 +337,41 @@ body {
     }
 }
 
+.scroll-over {
+    // display: flex;
+    // top: 0;
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+}
+.scroll-over div {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--honeydew);
+    background-size: cover;
+    background-position: center;
+    z-index: 2;
+}
+.hero .scroll-over div {
+    background-color: var(--honeydew);
+}
+
 .scroll-section {
     padding: 100px 20px;
     min-height: 200vh; /* Ensure there's enough content to scroll */
+}
+
+.section-background {
+    
+    position: sticky;
+    display: flex;
+    top: 0;
+    width: 100%;
+    min-height: 100vh;
+    height: 100vh;
+    background-color: var(--honeydew);
+    z-index: 1;
 }

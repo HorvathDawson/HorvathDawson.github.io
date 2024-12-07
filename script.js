@@ -7,26 +7,16 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             header.classList.remove("scrolled");
         }
+
+        const heroScrollOver = document.querySelector(".hero .scroll-over");
+        if (heroScrollOver.getBoundingClientRect().top < header.offsetHeight) {
+            header.classList.add("white-section");
+        } else {
+            header.classList.remove("white-section");
+        }
     });
-    // const ticker = document.querySelector('.ticker');
-    // const phrases = [
-    //   'Engineering Physicist',
-    //   'Mechatronic Engineer',
-    //   'Problem Solver',
-    //   'Innovator',
-    //   'Hands-On Builder',
-    //   'Robotics Enthusiast',
-    //   'Creative Thinker',
-    //   'Data Explorer',
-    //   'Outdoor Adventurer',
-    //   'Curiosity-Driven'
-    // ];
-    
-    // phrases.forEach(phrase => {
-    //   const span = document.createElement('span');
-    //   span.textContent = phrase;
-    //   ticker.appendChild(span);
-    // });
+
+
 
     
 });
