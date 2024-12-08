@@ -6,9 +6,9 @@ body {
   background-color: #FEDCC8; }
 
 .parallax {
-  perspective-origin: bottom;
+  perspective-origin: center;
   perspective: 100px;
-  height: 100vh;
+  height: calc(2 / 3 * 100vw);
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
@@ -24,6 +24,7 @@ body {
   position: absolute;
   display: flex;
   height: auto;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
@@ -41,7 +42,7 @@ body {
   top: 100%;
   left: 0;
   right: 0;
-  height: 50vh;
+  height: 200vh;
   z-index: 2; }
 
 .parallax__layer__0 {
