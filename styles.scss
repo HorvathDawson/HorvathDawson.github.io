@@ -12,10 +12,12 @@ body {
     // overflow: hidden
 }
 
+$imageAspectRatio: 2/3;
+
 .parallax {
     perspective-origin: center;
     perspective: 100px;
-    height: calc(2 / 3 * 100vw);
+    height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
@@ -23,65 +25,65 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100%;
-    //   margin-left: -1500px;
+    // width: 100%;
     display: flex;
-    // justify-content: center;
-}
 
-// .parallax__wrapper {
-        
-// }
+
+}
 
 
 .parallax__layer {
     position: absolute;
     display: flex;
-    height: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    transform: translatex(-50%);
-    overflow: hidden;
+    height: 100vh;
+    min-height: 100vh;
+    width: 100vw;
+    min-width: 100vw;
+    // top: 0;
+    // right: 0;
+    // bottom: 0;
+    // left: 0;
     justify-content: center;
-    align-items: center;
-
     img {
         display: block;
-        position: absolute;
-        bottom: 0;
-        width: 102%;
+        width: 100vw;
+        min-width: 500px;
+        min-height: #{$imageAspectRatio * 500px};
+        height: (#{$imageAspectRatio * 100vw});
     }
 }
 
 .parallax__cover {
-    background: #2D112B;
-    display: flex;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    background: #2d112b;
+    position: relative;
+    top: calc(max(100vw, 500px) * #{$imageAspectRatio} * 0.99);
     height: 200vh;
+    width: 100vw;
+    min-width: 100vw;
+    min-height: 200vh;
     z-index: 2;
 }
 
 $parallax__layers: 5;
 
 @for $i from 0 through $parallax__layers {
+
+    $parallaxScale: 2;
+
     $x: (
-        $parallax__layers - $i) / 2;
+        $parallax__layers - $i) / 2 * $parallaxScale;
 
-    .parallax__layer__#{$i} {
-        transform: translateZ(unquote("#{-100 * $x}px")) scale($x + 1
-    );
-    // transform: translateZ(unquote("#{-100 * $x}px"));
-}
-}
 
-// Make parallax cover get same as final layer
-$final_layer: 0;
+        // $heightDifferenceOneSide: $x / 2;
+        $totalOffset: calc((100vh - #{$imageAspectRatio*100vw}) / #{$parallax__layers});
 
-.parallax__cover {
-    transform: translateZ(unquote("#{-100 * $final_layer}px")) scale($final_layer + 1);
+        .parallax__layer__#{$i} {
+            transform: translateZ(#{-100px * $x}) scale($x + 1) translateY(#{$totalOffset});
+        }
+
+        @if $i ==$parallax__layers {
+            .parallax__cover {
+                transform: translateZ(#{-100px * $x}) scale($x + 1) translateY(#{$totalOffset});
+            }
+        }
 }

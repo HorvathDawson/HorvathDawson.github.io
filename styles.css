@@ -10,7 +10,7 @@ body {
 .parallax {
   perspective-origin: center;
   perspective: 100px;
-  height: calc(2 / 3 * 100vw);
+  height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
   position: relative;
@@ -18,56 +18,52 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  width: 100%;
   display: flex; }
 
 .parallax__layer {
   position: absolute;
   display: flex;
-  height: 100%;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  transform: translatex(-50%);
-  overflow: hidden;
-  justify-content: center;
-  align-items: center; }
+  height: 100vh;
+  min-height: 100vh;
+  width: 100vw;
+  min-width: 100vw;
+  justify-content: center; }
   .parallax__layer img {
     display: block;
-    position: absolute;
-    bottom: 0;
-    width: 102%; }
+    width: 100vw;
+    min-width: 500px;
+    min-height: 333.3333333333px;
+    height: 66.6666666667vw; }
 
 .parallax__cover {
-  background: #2D112B;
-  display: flex;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
+  background: #2d112b;
+  position: relative;
+  top: calc(max(100vw, 500px) * 0.6666666667 * 0.99);
   height: 200vh;
+  width: 100vw;
+  min-width: 100vw;
+  min-height: 200vh;
   z-index: 2; }
 
 .parallax__layer__0 {
-  transform: translateZ(-250px) scale(3.5); }
+  transform: translateZ(-500px) scale(6) translateY(calc((100vh - 66.6666666667vw) / 5)); }
 
 .parallax__layer__1 {
-  transform: translateZ(-200px) scale(3); }
+  transform: translateZ(-400px) scale(5) translateY(calc((100vh - 66.6666666667vw) / 5)); }
 
 .parallax__layer__2 {
-  transform: translateZ(-150px) scale(2.5); }
+  transform: translateZ(-300px) scale(4) translateY(calc((100vh - 66.6666666667vw) / 5)); }
 
 .parallax__layer__3 {
-  transform: translateZ(-100px) scale(2); }
+  transform: translateZ(-200px) scale(3) translateY(calc((100vh - 66.6666666667vw) / 5)); }
 
 .parallax__layer__4 {
-  transform: translateZ(-50px) scale(1.5); }
+  transform: translateZ(-100px) scale(2) translateY(calc((100vh - 66.6666666667vw) / 5)); }
 
 .parallax__layer__5 {
-  transform: translateZ(0px) scale(1); }
+  transform: translateZ(0px) scale(1) translateY(calc((100vh - 66.6666666667vw) / 5)); }
 
 .parallax__cover {
-  transform: translateZ(0px) scale(1); }
+  transform: translateZ(0px) scale(1) translateY(calc((100vh - 66.6666666667vw) / 5)); }
 
 /*# sourceMappingURL=styles.css.map */
