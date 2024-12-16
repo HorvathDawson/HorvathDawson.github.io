@@ -1,4 +1,15 @@
-// @import "compass/css3";
+:root {
+    --warm-white: #fcf7f0;
+    --orange-red: #ed601a;
+    --gold: #f3de40;
+    --icg: #34bf83;
+    --source-bg: #f0f8fc;
+    --off-black: #242424;
+    --white: white;
+    --black: black;
+    --source-blue: #18376d;
+    --source-dark: #001d39;
+}
 
 * {
     box-sizing: border-box;
@@ -10,7 +21,35 @@ body {
     margin: 0;
     padding: 0;
     // overflow: hidden
+    color: var(--warm-white);
+    font-family: Space Mono, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
 }
+
+
+.paragraph-2 {
+    text-shadow: 0 0 4px #000;
+    max-width: 480px;
+    margin-top: 20px;
+    font-size: 20px;
+    line-height: 35px;
+}
+
+h6 {
+    text-transform: uppercase;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+}
+
+a {
+    color: #f3f3f3;
+    text-decoration: none;
+}
+
 
 $imageAspectRatio: 2/3;
 
@@ -44,6 +83,7 @@ $imageAspectRatio: 2/3;
     // bottom: 0;
     // left: 0;
     justify-content: center;
+
     img {
         display: block;
         width: 100vw;
@@ -54,15 +94,21 @@ $imageAspectRatio: 2/3;
 }
 
 .parallax__cover {
-    background: #2d112b;
+    // background: #2d112b;
+    background: url('public/assets/images/parallax_header/foreground_color.png') no-repeat center center;
+    background-size: cover;
     position: relative;
     top: calc(max(100vw, 500px) * #{$imageAspectRatio} * 0.99);
-    height: 200vh;
+    height: fit-content;
     width: 100vw;
-    min-width: 100vw;
+    min-width: 100%;
     min-height: 200vh;
     z-index: 2;
+    padding-top: 100px;
 }
+
+
+
 
 $parallax__layers: 5;
 
@@ -74,16 +120,445 @@ $parallax__layers: 5;
         $parallax__layers - $i) / 2 * $parallaxScale;
 
 
-        // $heightDifferenceOneSide: $x / 2;
-        $totalOffset: calc((100vh - #{$imageAspectRatio*100vw}) / #{$parallax__layers});
+    // $heightDifferenceOneSide: $x / 2;
+    $totalOffset: calc((100vh - #{$imageAspectRatio*100vw}) / #{$parallax__layers}
+    );
 
-        .parallax__layer__#{$i} {
-            transform: translateZ(#{-100px * $x}) scale($x + 1) translateY(#{$totalOffset});
-        }
+.parallax__layer__#{$i} {
+    transform: translateZ(#{-100px * $x}) scale($x + 1) translateY(#{$totalOffset});
+}
 
-        @if $i ==$parallax__layers {
-            .parallax__cover {
-                transform: translateZ(#{-100px * $x}) scale($x + 1) translateY(#{$totalOffset});
-            }
-        }
+@if $i ==$parallax__layers {
+    .parallax__cover {
+        transform: translateZ(#{-100px * $x}) scale($x + 1) translateY(#{$totalOffset});
+    }
+}
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.page-wrapper {
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+@media screen and (max-width: 991px) {
+    .page-wrapper {
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+
+    .page-wrapper.home {
+        padding-left: 120px;
+        padding-right: 120px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+
+    .page-wrapper,
+    .page-wrapper.home {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+@media screen and (max-width: 469px) {
+
+    .page-wrapper {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .page-wrapper.home {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+.project-container {
+    max-width: 990px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.project-portfolio__grid {
+    grid-column-gap: 30px;
+    grid-row-gap: 213px;
+    grid-template: "." "." /1.75fr;
+    grid-auto-columns: 1fr;
+    display: grid;
+}
+
+.project-portfolio__item {
+    max-height: 577px;
+    grid-area: span 1/span 1/span 1/span 1;
+    border: 2px solid #fff8ee;
+    border-radius: 15px;
+    flex-flow: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: 40vw;
+    max-height: 550px;
+    min-height: 540px;
+    padding: 35px 30px;
+    transition: box-shadow .5s;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+
+@media screen and (max-width: 1180px) {
+    .project-portfolio__item {
+        min-height: auto;
+        height: 45vw;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .project-portfolio__item {
+        justify-content: flex-end;
+        height: auto;
+        min-height: 750px;
+        max-height: none;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .project-portfolio__item {
+        grid-area: span 1/span 2/span 1/span 2;
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .project-portfolio__item {
+        flex-flow: column;
+        align-items: flex-start;
+        min-height: 710px;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .project-portfolio__item-overlay {
+        background-color: #0000001a;
+        background-image: linear-gradient(#2d112b, #140814);
+        display: block;
+        position: absolute;
+        inset: 0%;
+    }
+}
+
+.project-portfolio__item-text.item-text-width {
+    max-width: 399px;
+}
+
+.project-portfolio__item-text {
+    z-index: 2;
+    width: 492px;
+    position: relative;
+}
+
+@media screen and (max-width: 991px) {
+    .project-portfolio__item-text {
+        width: 100%;
+    }
+}
+
+.category-heading {
+    color: #fff8ee82;
+    letter-spacing: 5px;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.project-portfolio__item-text.item-text-width {
+    max-width: 399px;
+}
+
+@media screen and (max-width: 991px) {
+    .project-portfolio__item-text {
+        width: 100%;
+    }
+}
+
+.text-highlight {
+    color: #47e98d;
+    background-color: #4d28a9cc;
+    text-decoration: none;
+    transition: background-color .2s;
+    display: inline;
+}
+
+h1 {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 46px;
+}
+
+.heading-3 {
+    line-height: 46px;
+    word-break: break-word;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+.text-highlight:hover {
+    background-color: #7038cfcc;
+}
+
+.project-portfolio__item-image {
+    perspective: 2000px;
+    perspective-origin: 50% 100%;
+    width: 60%;
+    height: 90%;
+    position: absolute;
+    inset: auto 0% 0% auto;
+}
+
+
+
+@media screen and (max-width: 991px) {
+    .project-portfolio__item-image {
+        width: 92%;
+        height: 71vw;
+        margin-bottom: 37px;
+        inset: 0% 0% auto auto;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .project-portfolio__item-image {
+        height: 83vw;
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .project-portfolio__item-image {
+        min-width: 280px;
+        height: 86vw;
+        min-height: 340px;
+    }
+}
+
+.project-portfolio__item-image.openSim2Real {
+    // perspective: none;
+    width: 60%;
+    max-height: 507px;
+    transform: rotate(0);
+    right: 5%;
+}
+
+.project-portfolio__item-image.self-driving-car {
+    max-height: 507px;
+    transform: perspective(2000px)rotate(0);
+}
+
+@media screen and (max-width: 991px) {
+
+    .project-portfolio__item-image.openSim2Real {
+        width: 90%;
+        height: 60vw;
+        max-height: 522px;
+        top: 4%;
+        left: 25%;
+    }
+
+    .project-portfolio__item-image.self-driving-car {
+        max-height: 522px;
+        top: 4%;
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+
+    .project-portfolio__item-image.openSim2Real,
+    .project-portfolio__item-image.self-driving-car {
+        height: 67vw;
+    }
+    .project-portfolio__item-image.openSim2Real{
+
+        left: 5%;
+    }
+}
+
+@media screen and (max-width: 479px) {
+
+    .project-portfolio__item-image.openSim2Real,
+    .project-portfolio__item-image.self-driving-car {
+        height: 57vw;
+        min-height: 240px;
+        // right: 0%;
+    }
+}
+
+.project-portfolio__item-image-container {
+    transform-origin: 50% 100%;
+    width: auto;
+    height: 100%;
+    position: absolute;
+    top: auto;
+    right: 5%;
+    bottom: 0%;
+    transform: none;
+}
+
+@media screen and (max-width: 991px) {
+    .project-portfolio__item-image-container {
+        width: 70vw;
+        top: 3%;
+        bottom: auto;
+        justify-content: center;
+    }
+}
+
+img {
+    vertical-align: middle;
+    max-width: 100%;
+    display: inline-block;
+    border: 0;
+
+}
+
+.project-portfolio__item-image-container .background,
+.project-portfolio__item-image-container .splash {
+    opacity: 1;
+    height: 100%;
+    position: absolute;
+    inset: 0%;
+    z-index: 4;
+}
+
+.project-portfolio__item-image-container .foreground {
+    opacity: 0;
+    height: 100%;
+    position: relative;
+    z-index: 5;
+}
+
+@media screen and (max-width: 991px) {
+
+    .project-portfolio__item-image-container .background,
+    .project-portfolio__item-image-container .foreground,
+    .project-portfolio__item-image-container .splash {
+        opacity: 1 !important;
+    }
+}
+
+.button-portfolio--tile-2 {
+    z-index: 2;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    background-color: #0000;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    height: auto;
+    padding: 19px 36px 20px;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 30px;
+    transition: color .4s, background-color .4s;
+    position: relative;
+}
+
+@media screen and (max-width: 991px) {
+    .button-portfolio--tile-2 {
+        z-index: 10;
+        position: relative;
+    }
+}
+
+
+.laptop-keyboard-div {
+    width: 104%;
+    position: absolute;
+    inset: 63.5% -2% auto auto;
+}
+
+@media screen and (max-width: 991px) {
+    .laptop-keyboard-div {
+        width: 65.5vw;
+        top: 32.2vw;
+        right: -1.5vw;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .laptop-keyboard-div {
+        width: 71vw;
+        top: 34.9vw;
+        right: 3.5vw;
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .laptop-keyboard-div {
+        width: 78vw;
+        top: 38.5vw;
+        right: 5.6vw;
+    }
+}
+
+.laptop-screen-div {
+    transform-origin: 50% 100%;
+    width: 80%;
+    position: absolute;
+    inset: 0% 10% auto auto;
+    transform: none;
+    transform-style: preserve-3d;
+}
+
+@media screen and (max-width: 991px) {
+    .laptop-screen-div {
+        width: 50vw;
+        right: 6.1vw;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .laptop-screen-div {
+        width: 54vw;
+        right: 12.1vw;
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .laptop-screen-div {
+        width: 60vw;
+        right: 14.7vw;
+    }
+}
+
+
+
+.comp-screen {
+    opacity: 0;
+    background-image: url(public/assets/images/self-driving-car/screen.gif);
+    background-position: 50%;
+    background-size: cover;
+    width: 92.5%;
+    height: 86.5%;
+    position: absolute;
+    inset: 9.5% auto auto 3.6%;
+}
+
+.laptop-screen-div .background {
+    opacity: 1;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0%;
+}
+
+.laptop-keyboard-div .background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0%;
 }
