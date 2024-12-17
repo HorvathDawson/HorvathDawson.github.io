@@ -28,7 +28,7 @@ body {
   max-width: 480px;
   margin-top: 20px;
   font-size: 20px;
-  line-height: 35px; }
+  line-height: 30px; }
 
 h6 {
   text-transform: uppercase;
@@ -71,7 +71,7 @@ a {
     height: 66.6666666667vw; }
 
 .parallax__cover {
-  background: url("public/assets/images/parallax_header/foreground_color.png") no-repeat center center;
+  background: url("public/assets/parallax_header/foreground_color.png") no-repeat center center;
   background-size: cover;
   position: relative;
   top: calc(max(100vw, 500px) * 0.6666666667 * 0.99);
@@ -108,7 +108,8 @@ a {
 
 .page-wrapper {
   padding-left: 100px;
-  padding-right: 100px; }
+  padding-right: 100px;
+  padding-bottom: 100px; }
 
 @media screen and (max-width: 991px) {
   .page-wrapper {
@@ -123,7 +124,7 @@ a {
   .page-wrapper.home {
     padding-left: 40px;
     padding-right: 40px; } }
-@media screen and (max-width: 469px) {
+@media screen and (max-width: 479px) {
   .page-wrapper {
     padding-left: 10px;
     padding-right: 10px; }
@@ -178,7 +179,10 @@ a {
   .project-portfolio__item {
     flex-flow: column;
     align-items: flex-start;
-    min-height: 710px; } }
+    min-height: 800px; } }
+.project-portfolio__item:hover {
+  box-shadow: 0 0 86px 6px #7038cfcc; }
+
 @media screen and (max-width: 991px) {
   .project-portfolio__item-overlay {
     background-color: #0000001a;
@@ -238,7 +242,8 @@ h1 {
   width: 60%;
   height: 90%;
   position: absolute;
-  inset: auto 0% 0% auto; }
+  inset: auto 0% 0% auto;
+  transform-style: flat; }
 
 @media screen and (max-width: 991px) {
   .project-portfolio__item-image {
@@ -254,15 +259,29 @@ h1 {
     min-width: 280px;
     height: 86vw;
     min-height: 340px; } }
-.project-portfolio__item-image.openSim2Real {
+.project-portfolio__item-image.openSim2Real,
+.project-portfolio__item-image.fume-extractor,
+.project-portfolio__item-image.buell {
   width: 60%;
   max-height: 507px;
   transform: rotate(0);
-  right: 5%; }
+  right: 5%;
+  top: 5%; }
+
+.project-portfolio__item-image.buell {
+  right: -5%; }
 
 .project-portfolio__item-image.self-driving-car {
-  max-height: 507px;
-  transform: perspective(2000px) rotate(0); }
+  max-height: 507px; }
+
+.project-portfolio__item-image.robot253 {
+  inset: 5% 0% 0% auto; }
+
+.project-portfolio__item-image.a40austin {
+  inset: 0% 0% 0% auto; }
+
+.project-portfolio__item-image.esk8 {
+  inset: 10% -3% 0% auto; }
 
 @media screen and (max-width: 991px) {
   .project-portfolio__item-image.openSim2Real {
@@ -270,23 +289,72 @@ h1 {
     height: 60vw;
     max-height: 522px;
     top: 4%;
-    left: 25%; }
+    inset: 0 -20% auto auto; }
+
+  .project-portfolio__item-image.fume-extractor {
+    width: 90%;
+    height: 60vw;
+    max-height: 590px;
+    top: 4%;
+    inset: 0 -10% auto auto; }
 
   .project-portfolio__item-image.self-driving-car {
     max-height: 522px;
-    top: 4%; } }
+    top: 4%;
+    left: 0;
+    right: 0; }
+
+  .project-portfolio__item-image.buell {
+    max-height: 522px;
+    height: 50vw;
+    right: 0; }
+
+  .project-portfolio__item-image.robot253,
+  .project-portfolio__item-image.a40austin,
+  .project-portfolio__item-image.esk8 {
+    max-height: 522px;
+    height: 50vw;
+    width: 90%;
+    justify-content: center;
+    inset: 0 -20% auto auto; } }
 @media screen and (max-width: 767px) {
   .project-portfolio__item-image.openSim2Real,
-  .project-portfolio__item-image.self-driving-car {
+  .project-portfolio__item-image.fume-extractor,
+  .project-portfolio__item-image.self-driving-car,
+  .project-portfolio__item-image.buell {
     height: 67vw; }
 
-  .project-portfolio__item-image.openSim2Real {
-    left: 5%; } }
+  .project-portfolio__item-image.openSim2Real,
+  .project-portfolio__item-image.fume-extractor {
+    left: 5%; }
+
+  .project-portfolio__item-image.self-driving-car {
+    left: 5%;
+    right: 5%; }
+
+  .project-portfolio__item-image.robot253,
+  .project-portfolio__item-image.a40austin,
+  .project-portfolio__item-image.esk8 {
+    max-height: 522px;
+    height: 70vw;
+    width: 90%;
+    inset: -5% auto auto auto; } }
 @media screen and (max-width: 479px) {
   .project-portfolio__item-image.openSim2Real,
-  .project-portfolio__item-image.self-driving-car {
+  .project-portfolio__item-image.fume-extractor,
+  .project-portfolio__item-image.self-driving-car,
+  .project-portfolio__item-image.buell {
     height: 57vw;
-    min-height: 240px; } }
+    min-height: 240px; }
+
+  .project-portfolio__item-image.robot253,
+  .project-portfolio__item-image.fume-extractor,
+  .project-portfolio__item-image.openSim2Real {
+    top: 1%; }
+
+  .project-portfolio__item-image.self-driving-car {
+    left: 8%;
+    right: 8%; } }
 .project-portfolio__item-image-container {
   transform-origin: 50% 100%;
   width: auto;
@@ -295,7 +363,8 @@ h1 {
   top: auto;
   right: 5%;
   bottom: 0%;
-  transform: none; }
+  transform: none;
+  transition: opacity 0.5s ease-in-out; }
 
 @media screen and (max-width: 991px) {
   .project-portfolio__item-image-container {
@@ -306,8 +375,25 @@ h1 {
 img {
   vertical-align: middle;
   max-width: 100%;
+  width: auto;
+  /* Maintain aspect ratio */
+  height: 100%;
+  /* Fill the container's height */
+  object-fit: contain;
+  /* Ensure aspect ratio is preserved */
   display: inline-block;
   border: 0; }
+
+#opensim2real-canvas1, #opensim2real-canvas2 {
+  vertical-align: middle;
+  display: inline-block;
+  object-fit: contain;
+  /* Ensure aspect ratio is preserved */
+  height: 100%;
+  /* Fill the container's height */
+  width: auto;
+  /* Maintain aspect ratio */
+  aspect-ratio: 637 / 824; }
 
 .project-portfolio__item-image-container .background,
 .project-portfolio__item-image-container .splash {
@@ -317,14 +403,38 @@ img {
   inset: 0%;
   z-index: 4; }
 
+.project-portfolio__item-image-container .fumes,
+.project-portfolio__item-image-container .splash {
+  opacity: 0; }
+
+.project-portfolio__item-image-container .fumes {
+  position: absolute;
+  transform: rotate(80deg);
+  height: 20% !important;
+  inset: 58% auto auto 75% !important;
+  z-index: 6 !important; }
+
+@media screen and (max-width: 991px) {
+  .project-portfolio__item-image-container .fumes {
+    inset: 58% auto auto 65% !important; } }
+@media screen and (max-width: 767px) {
+  .project-portfolio__item-image-container .fumes {
+    inset: 58% auto auto 73% !important; } }
+@media screen and (max-width: 479px) {
+  .project-portfolio__item-image-container .fumes {
+    inset: 56% auto auto 62% !important; } }
 .project-portfolio__item-image-container .foreground {
   opacity: 0;
   height: 100%;
+  width: auto;
+  min-width: 50%;
   position: relative;
   z-index: 5; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-image-container .background,
+  .project-portfolio__item-image-container .background {
+    opacity: 0 !important; }
+
   .project-portfolio__item-image-container .foreground,
   .project-portfolio__item-image-container .splash {
     opacity: 1 !important; } }
@@ -347,10 +457,14 @@ img {
   .button-portfolio--tile-2 {
     z-index: 10;
     position: relative; } }
+.project-portfolio__item-image.project-portfolio__item-image.self-driving-car .image-wrapper {
+  min-height: 100%;
+  min-width: 100%; }
+
 .laptop-keyboard-div {
   width: 104%;
   position: absolute;
-  inset: 63.5% -2% auto auto; }
+  inset: 62.5% -2% auto auto; }
 
 @media screen and (max-width: 991px) {
   .laptop-keyboard-div {
@@ -372,8 +486,7 @@ img {
   width: 80%;
   position: absolute;
   inset: 0% 10% auto auto;
-  transform: none;
-  transform-style: preserve-3d; }
+  transform: none; }
 
 @media screen and (max-width: 991px) {
   .laptop-screen-div {
@@ -389,7 +502,7 @@ img {
     right: 14.7vw; } }
 .comp-screen {
   opacity: 0;
-  background-image: url(public/assets/images/self-driving-car/screen.gif);
+  background-image: url(public/assets/projects/self-driving-car/screen.gif);
   background-position: 50%;
   background-size: cover;
   width: 92.5%;
@@ -409,5 +522,13 @@ img {
   height: 100%;
   position: absolute;
   inset: 0%; }
+
+@media screen and (max-width: 991px) {
+  .laptop-screen-div .background,
+  .laptop-screen-div .foreground,
+  .laptop-screen-div .splash,
+  .laptop-keyboard-div .background,
+  .laptop-keyboard-div .foreground {
+    opacity: 1 !important; } }
 
 /*# sourceMappingURL=styles.css.map */

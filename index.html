@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Parallax Example</title>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"
-            type="text/javascript"></script>
-        <link rel="stylesheet" href="styles.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Parallax Example</title>
+        <script src="https://unpkg.com/gifler@0.1.0/gifler.min.js"></script>
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"
+            type="text/javascript"></script>
+        <script
+            type="text/javascript">WebFont.load({  google: {    families: ["Open Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic","Space Mono:regular,italic,700,700italic","Karla:regular,italic,700,700italic","Frank Ruhl Libre:300,regular,500,700,900","Playfair Display:regular,italic,700,700italic,900,900italic","Lora:regular,italic,700,700italic"]  }});</script>
     </head>
     <body>
-        <!-- <header>
-        <h1>Welcome to My Parallax Page</h1>
-    </header> -->
+        <link rel="stylesheet" href="styles.css">
         <div class="parallax">
             <div class="parallax__layer parallax__layer__0">
-                <img src="public/assets/images/parallax_header/Layer__0.png" />
+                <img src="public/assets/parallax_header/Layer__0.png" />
             </div>
             <div class="parallax__layer parallax__layer__1">
-                <img src="public/assets/images/parallax_header/Layer__1.png" />
+                <img src="public/assets/parallax_header/Layer__1.png" />
             </div>
             <div class="parallax__layer parallax__layer__2">
-                <img src="public/assets/images/parallax_header/Layer__2.png" />
+                <img src="public/assets/parallax_header/Layer__2.png" />
             </div>
             <div class="parallax__layer parallax__layer__3">
-                <img src="public/assets/images/parallax_header/Layer__3.png" />
+                <img src="public/assets/parallax_header/Layer__3.png" />
             </div>
             <div class="parallax__layer parallax__layer__4">
-                <img src="public/assets/images/parallax_header/Layer__4.png" />
+                <img src="public/assets/parallax_header/Layer__4.png" />
             </div>
             <div class="parallax__layer parallax__layer__5">
-                <img src="public/assets/images/parallax_header/Layer__5.png" />
+                <img src="public/assets/parallax_header/Layer__5.png" />
             </div>
             <div class="parallax__cover">
                 <div class="page-wrapper home">
@@ -62,23 +62,21 @@
                                     <div
                                         class="project-portfolio__item-image-container mouse-tracking-shuffle">
                                         <img
-                                            src="public/assets/images/opensim2real/leg.png"
-                                            loading="lazy"
+                                            src="public/assets/projects/opensim2real/leg-spin-body-small.gif"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
                                             alt class="foreground"
-                                            style="opacity: 0;">
+                                            style="opacity: 0; display: none;">
                                         <img
-                                            src="public/assets/images/opensim2real/leg-edge.png"
-                                            loading="lazy"
+                                            src="public/assets/projects/opensim2real/leg-spin-edge-small.gif"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
                                             alt class="background"
-                                            style="opacity: 1;">
-                                        <img
-                                            src="public/assets/images/opensim2real/splash.png"
-                                            loading="lazy"
-                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
-                                            alt class="splash"
-                                            style="opacity: 0;">
+                                            style="opacity: 1; display: none;">
+                                        <canvas id="opensim2real-canvas1"
+                                            class="foreground"
+                                            style="opacity: 0;"></canvas>
+                                        <canvas id="opensim2real-canvas2"
+                                            class="background"
+                                            style="opacity: 1;"></canvas>
                                     </div>
                                 </div>
                                 <a
@@ -96,7 +94,7 @@
                                     <h6 class="category-heading">Simulation</h6>
                                     <h1 class="heading-3">
                                         <a
-                                            href="https://opensim2real.github.io/os2r-superbuild/docs/index.html"
+                                            href
                                             target="_blank">
                                             <span class="text-highlight">
                                                 Self Driving Car
@@ -115,30 +113,33 @@
                                         parked cars with 98% accuracy.
                                     </p>
                                 </div>
-                                <div class="project-portfolio__item-image self-driving-car">
-                                    <div class="laptop-screen-div mouse-tracking-shuffle">
-                                        <!-- style="will-change: transform; transform: translate3d(0px, 0px, 0px) scale3d(1, 1, 1) rotateX(-37.4234deg) rotateY(0deg) rotateZ(0deg) skew(0deg)" -->
-                                        <img
-                                            src="public/assets/images/self-driving-car/computer-foreground.svg"
-                                            loading="lazy" alt class="foreground"
-                                            style="opacity: 0;">
-                                        <img
-                                            src="public/assets/images/self-driving-car/computer-background.svg"
-                                            loading="lazy" alt class="background"
-                                            style="opacity: 1;">
-                                        <div class="comp-screen splash"
-                                            style="opacity: 0;">
+                                <div
+                                    class="project-portfolio__item-image self-driving-car">
+                                    <div
+                                        class="image-wrapper mouse-tracking-shuffle">
+                                        <div class="laptop-screen-div">
+                                            <img
+                                                src="public/assets/projects/self-driving-car/computer-foreground.svg"
+                                                class="foreground"
+                                                style="opacity: 0;">
+                                            <img
+                                                src="public/assets/projects/self-driving-car/computer-background.svg"
+                                                class="background"
+                                                style="opacity: 1;">
+                                            <div class="comp-screen splash"
+                                                style="opacity: 0;">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="laptop-keyboard-div mouse-tracking-shuffle">
-                                        <img
-                                            src="public/assets/images/self-driving-car/computer-keys-foreground.svg"
-                                            loading="lazy" alt class="foreground"
-                                            style="opacity: 0;">
-                                        <img
-                                            src="public/assets/images/self-driving-car/computer-keys-background.svg"
-                                            loading="lazy" alt class="background"
-                                            style="opacity: 1;">
+                                        <div class="laptop-keyboard-div">
+                                            <img
+                                                src="public/assets/projects/self-driving-car/computer-keys-foreground.svg"
+                                                class="foreground"
+                                                style="opacity: 0;">
+                                            <img
+                                                src="public/assets/projects/self-driving-car/computer-keys-background.svg"
+                                                class="background"
+                                                style="opacity: 1;">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +152,7 @@
                                         class="category-heading">Competition</h6>
                                     <h1 class="heading-3">
                                         <a
-                                            href="https://opensim2real.github.io/os2r-superbuild/docs/index.html"
+                                            href
                                             target="_blank">
                                             <span class="text-highlight">
                                                 Autonomous Robot
@@ -163,11 +164,283 @@
                                         the Engineering Physics
                                         Robot Competition, featuring a custom
                                         drivetrain, SPI-based
-                                        communication, and mechanical systems
-                                        like a flipper for object handling,
+                                        communication, and mechanical systems,
                                         showcasing skills in CAD, prototyping,
                                         and embedded systems.
                                     </p>
+                                </div>
+                                <div
+                                    class="project-portfolio__item-image robot253">
+                                    <div
+                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        <img
+                                            src="public/assets/projects/253robot/foreground.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="foreground"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/253robot/background2.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background"
+                                            style="opacity: 1;">
+                                        <img
+                                            src="public/assets/projects/253robot/splash.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="splash"
+                                            style="opacity: 0;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="project-portfolio__item">
+                                <div class="project-portfolio__item-overlay">
+                                </div>
+                                <div
+                                    class="project-portfolio__item-text item-text-width">
+                                    <h6
+                                        class="category-heading">In
+                                        Progress</h6>
+                                    <h1 class="heading-3">
+                                        <a
+                                            href
+                                            target="_blank">
+                                            <span class="text-highlight">
+                                                1950 A40 Austin
+                                            </span>
+                                        </a>
+                                    </h1>
+                                    <p class="paragraph-2">
+                                        Modernizing a 1950 Austin A40 by
+                                        rebuilding and upgrading
+                                        its suspension, brakes, motor, and more,
+                                        transforming it
+                                        into a modern-ish car with a classic
+                                        body.
+                                    </p>
+                                </div>
+                                <div
+                                    class="project-portfolio__item-image a40austin">
+                                    <div
+                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        <img
+                                            src="public/assets/projects/a40austin/foreground.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="foreground"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/a40austin/background.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background"
+                                            style="opacity: 1;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="project-portfolio__item">
+                                <div class="project-portfolio__item-overlay">
+                                </div>
+                                <div
+                                    class="project-portfolio__item-text item-text-width">
+                                    <h6
+                                        class="category-heading">Fix</h6>
+                                    <h1 class="heading-3">
+                                        <a
+                                            href
+                                            target="_blank">
+                                            <span class="text-highlight">
+                                                Buell Motor Rebuild
+                                            </span>
+                                        </a>
+                                    </h1>
+                                    <p class="paragraph-2">
+                                        Rebuilt a 2008 Buell XB9SX motor,
+                                        involving complete disassembly,
+                                        inspection, and replacement of worn
+                                        components. The process required
+                                        precision, patience, and a deep
+                                        understanding of engine mechanics to
+                                        restore performance and reliability.
+                                    </p>
+                                </div>
+                                <div
+                                    class="project-portfolio__item-image buell">
+                                    <div
+                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        <img
+                                            src="public/assets/projects/buell/motor_images/section-view.png"
+                                            alt class="foreground"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/buell/motor_images/case.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background"
+                                            style="opacity: 1;">
+                                        <img
+                                            src="public/assets/projects/buell/motor_images/left-cylinder.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background"
+                                            style="opacity: 1;">
+                                        <img
+                                            src="public/assets/projects/buell/motor_images/cylinder-barrel.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background part__1"
+                                            style="opacity: 1;">
+                                        <img
+                                            src="public/assets/projects/buell/motor_images/rocker-box.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background part__2"
+                                            style="opacity: 1;">
+                                        <img
+                                            src="public/assets/projects/buell/motor_images/rocker-box-top.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background part__3"
+                                            style="opacity: 1;">
+                                        <img
+                                            src="public/assets/projects/buell/motor_images/push-rods.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background part__4"
+                                            style="opacity: 1;">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="project-portfolio__item">
+                                <div class="project-portfolio__item-overlay">
+                                </div>
+                                <div
+                                    class="project-portfolio__item-text item-text-width">
+                                    <h6
+                                        class="category-heading">Project</h6>
+                                    <h1 class="heading-3">
+                                        <a
+                                            href
+                                            target="_blank">
+                                            <span class="text-highlight">
+                                                Fume Extractor
+                                            </span>
+                                        </a>
+                                    </h1>
+                                    <p class="paragraph-2">
+                                        Designed and built a low-cost fume
+                                        extractor
+                                        arm with an inline fan, counterbalance
+                                        system,
+                                        friction joints, and a welded stand on
+                                        casters,
+                                        addressing challenges in part sourcing
+                                        and joint
+                                        design.
+                                    </p>
+                                </div>
+                                <div
+                                    class="project-portfolio__item-image fume-extractor">
+                                    <div
+                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        <img
+                                            src="public/assets/projects/fume-extractor/arm.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="foreground"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/fume-extractor/arm-edge.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background"
+                                            style="opacity: 1;">
+                                        <img
+                                            src="public/assets/projects/fume-extractor/splash.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="splash"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/fume-extractor/fumes.gif"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="splash fumes"
+                                            style="opacity: 0;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="project-portfolio__item">
+                                <div class="project-portfolio__item-overlay">
+                                </div>
+                                <div
+                                    class="project-portfolio__item-text item-text-width">
+                                    <h6
+                                        class="category-heading">Project</h6>
+                                    <h1 class="heading-3">
+                                        <a
+                                            href
+                                            target="_blank">
+                                            <span class="text-highlight">
+                                                DIY E-Sk8
+                                            </span>
+                                        </a>
+                                    </h1>
+                                    <p class="paragraph-2">
+                                        Designed and built a DIY electric
+                                        skateboard powered by dual 6374 motors,
+                                        a
+                                        custom 10s4p Li-ion battery pack, and
+                                        Vedder ESCs. Focused on creating a
+                                        reliable, daily-commuting e-skateboard
+                                        with waterproofing and optimized
+                                        performance through tailored gearing and
+                                        components.
+                                    </p>
+                                </div>
+                                <div class="project-portfolio__item-image esk8">
+                                    <div
+                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        <img
+                                            src="public/assets/projects/esk8/foreground.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="foreground"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/esk8/background.svg"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background"
+                                            style="opacity: 1;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="project-portfolio__item">
+                                <div class="project-portfolio__item-overlay">
+                                </div>
+                                <div
+                                    class="project-portfolio__item-text item-text-width">
+                                    <h6
+                                        class="category-heading">Scholarship</h6>
+                                    <h1 class="heading-3">
+                                        <a
+                                            href
+                                            target="_blank">
+                                            <span class="text-highlight">
+                                                Low-Cost 3D Printer Build
+                                            </span>
+                                        </a>
+                                    </h1>
+                                    <p class="paragraph-2">
+                                        Designed and built a low-cost,
+                                        functional 3D printer inspired
+                                        by the Prusa i3 MK2. Focused on
+                                        maintaining quality while minimizing
+                                        costs,
+                                        integrating an Arduino Mega with a RAMPS
+                                        1.4 board, MDF frame, and custom wiring.
+                                    </p>
+                                </div>
+                                <div class="project-portfolio__item-image esk8">
+                                    <div
+                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        <img
+                                            src="public/assets/projects/3dprinter/foreground.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="foreground"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/3dprinter/background.png"
+                                            sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
+                                            alt class="background"
+                                            style="opacity: 1;">
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,0 +1,27 @@
+# Ignore sass cache
+.sass-cache
+
+# Ignore GIMP files
+*.xcf
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+
+public/assets/rainier/

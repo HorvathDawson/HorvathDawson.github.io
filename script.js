@@ -1,139 +1,184 @@
-// JavaScript for Parallax Effect
 document.addEventListener('DOMContentLoaded', () => {
-
-
-  document.addEventListener('scroll', () => {
-    const scrollTop = window.scrollY; // Get current scroll position
-    console.log(scrollTop);
-    // const layers = document.querySelectorAll('.parallax__layer');
-    // layers.forEach((layer, index) => {
-    //   console.log(layer, index);
-    //   const speed = (index + 1) * 0.3; // Define layer-specific speed
-    //   const yOffset = scrollTop * speed;
-    //   layer.style.transform = `translateY(${yOffset}px)`;
-    // });
-  });
-
   const items = document.querySelectorAll('.project-portfolio__item');
 
-  items.forEach((item) => {
-    item.addEventListener('mouseenter', () => {
-      const backgrounds = item.querySelectorAll('.background');
-      const foregrounds = item.querySelectorAll('.foreground');
-      const splashes = item.querySelectorAll('.splash');
+  // Event delegation for mouse events
+  document.body.addEventListener('mouseenter', (e) => handleHover(e, 'mouseenter'), true);
+  document.body.addEventListener('mouseleave', (e) => handleHover(e, 'mouseleave'), true);
 
-      backgrounds.forEach(background => {
-      background.style.willChange = 'opacity';
-      background.style.transition = 'opacity 0.5s ease-in-out';
-      background.style.opacity = '0';
+  function handleHover(event, type) {
+    const item = event.target.closest('.project-portfolio__item');
+    if (!item) return;
+
+    const canvases = item.querySelectorAll('canvas');
+    if (canvases) {
+      canvases.forEach((canvas) => {
+        canvas.dataset.hover = type === 'mouseenter' ? 'true' : 'false';
       });
+    }
+    const backgrounds = item.querySelectorAll('.background');
+    const foregrounds = item.querySelectorAll('.foreground');
+    const splashes = item.querySelectorAll('.splash');
 
-      foregrounds.forEach(foreground => {
-      foreground.style.willChange = 'opacity';
-      foreground.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
-      foreground.style.opacity = '1';
-      });
+    if (type === 'mouseenter') {
+      toggleOpacity(backgrounds, '0');
+      toggleOpacity(foregrounds, '1');
+      toggleOpacity(splashes, '1');
+    } else if (type === 'mouseleave') {
+      toggleOpacity(backgrounds, '1');
+      toggleOpacity(foregrounds, '0');
+      toggleOpacity(splashes, '0');
+    }
 
-      splashes.forEach(splash => {
-      splash.style.willChange = 'opacity';
-      splash.style.transition = 'opacity 0.5s ease-in-out';
-      splash.style.opacity = '1';
+  }
+
+  function toggleOpacity(elements, value) {
+    elements.forEach((el) => (el.style.opacity = value));
+  }
+
+  function setupCanvas() {
+    const canvas1 = document.querySelector('#opensim2real-canvas1');
+    const canvas2 = document.querySelector('#opensim2real-canvas2');
+
+    // Use gifler to handle animations
+    let gif1, gif2;
+    gif1 = gifler('public/assets/projects/opensim2real/leg-spin-body-small.gif');
+    gif2 = gifler('public/assets/projects/opensim2real/leg-spin-edge-small.gif');
+
+    let anim1, anim2;
+    gif1.get((animation) => {
+      anim1 = animation;
+      anim1.animateInCanvas(canvas1, (frameCtx) => {
+        frameCtx.drawImage(animation.image, 0, 0, canvas1.width, canvas1.height);
       });
     });
 
-    item.addEventListener('mouseleave', () => {
-      const backgrounds = item.querySelectorAll('.background');
-      const foregrounds = item.querySelectorAll('.foreground');
-      const splashes = item.querySelectorAll('.splash');
-
-      backgrounds.forEach(background => {
-      background.style.willChange = 'opacity';
-      background.style.transition = 'opacity 0.5s ease-in-out';
-      background.style.opacity = '1';
-      });
-
-      foregrounds.forEach(foreground => {
-      foreground.style.willChange = 'opacity';
-      foreground.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
-      foreground.style.opacity = '0';
-      });
-
-      splashes.forEach(splash => {
-      splash.style.willChange = 'opacity';
-      splash.style.transition = 'opacity 0.5s ease-in-out';
-      splash.style.opacity = '0';
+    gif2.get((animation) => {
+      anim2 = animation;
+      anim2.animateInCanvas(canvas2, (frameCtx) => {
+        frameCtx.drawImage(animation.image, 0, 0, canvas2.width, canvas2.height);
       });
     });
+  }
 
-
-  });
+  setupCanvas();
 
 });
 
+const parallaxContainer = document.querySelector('.parallax');
+let scrollAnimationFrame;
 
-const updateTransform = (event) => {
-  const scrollTop = window.scrollY;
-  const windowHeight = window.innerHeight;
-  const centerX = window.innerWidth / 2;
-  const centerY = window.innerHeight / 2;
+parallaxContainer.addEventListener('scroll', () => {
+  if (scrollAnimationFrame) return;
 
-  const openSim2RealItems = document.querySelectorAll('.project-portfolio__item-image.openSim2Real');
-  openSim2RealItems.forEach((item) => {
-    const itemRect = item.getBoundingClientRect();
-    const itemCenterY = itemRect.top + itemRect.height / 2;
+  scrollAnimationFrame = requestAnimationFrame(() => {
+    const windowHeight = window.innerHeight;
     const windowCenterY = windowHeight / 2;
-    const distanceToCenter = Math.min(0, 1.5 * windowCenterY - itemCenterY);
     const maxDistance = windowHeight / 2;
-    const rotation = Math.max(-35, -35 * (distanceToCenter / maxDistance));
-    item.style.transform = `rotateZ(${rotation}deg)`;
+
+    // Cached item rotations
+    const cachedItems = [
+      { selector: '.project-portfolio__item-image.openSim2Real', axis: 'Z', min: -35, max: 35 },
+      // { selector: '.project-portfolio__item-image.fume-extractor', axis: 'Y', min: -35, max: 20.5 },
+      { selector: '.project-portfolio__item-image.self-driving-car .laptop-screen-div', axis: 'X', min: -60, max: 60 },
+    ];
+
+    cachedItems.forEach(({ selector, axis, min, max }) => {
+      document.querySelectorAll(selector).forEach((item) => {
+        const rect = item.getBoundingClientRect();
+        const itemCenterY = rect.top + rect.height / 2;
+        const distanceToCenter = Math.min(0, 1.5 * windowCenterY - itemCenterY);
+        let rotation = axis === 'Z' ? Math.max(min, min * (distanceToCenter / maxDistance)) : Math.min(max, min * (distanceToCenter / maxDistance));
+        if (axis === 'X') rotation = -rotation;
+
+        item.style.transform = `rotate${axis}(${rotation}deg)`;
+
+      });
+    });
+
+    // Apply dynamic part translations
+    applyDynamicPartTranslation(windowCenterY);
+
+    // Apply car movement animation
+    applyCarTranslation(windowCenterY);
+
+    scrollAnimationFrame = null;
   });
 
-  const selfDrivingCars = document.querySelectorAll('.project-portfolio__item-image.self-driving-car .laptop-screen-div');
-  selfDrivingCars.forEach((item) => {
-    const itemRect = item.getBoundingClientRect();
-    const itemCenterY = itemRect.top + itemRect.height / 2;
-    const windowCenterY = windowHeight / 2;
-    const distanceToCenter = Math.min(0, 1.5 * windowCenterY - itemCenterY);
-    const maxDistance = windowHeight / 2;
-    const rotation = Math.max(-90, -90 * (distanceToCenter / maxDistance));
-    item.style.transform = `rotateX(${-rotation}deg)`;
-    if (rotation === 0) {
-      item.style.transformStyle = 'flat';
-    }
-  });
 
-  const elements = document.querySelectorAll('.mouse-tracking-shuffle');
-  elements.forEach((element) => {
+});
+
+function applyDynamicPartTranslation(windowCenterY) {
+  const baseDistance = 30; // Base distance in pixels
+  const angleInDegrees = 60; // Angle above horizontal
+  const angleInRadians = (angleInDegrees * Math.PI) / 180; // Convert to radians
+
+  document.querySelectorAll('.project-portfolio__item').forEach((item) => {
+    const rect = item.getBoundingClientRect();
+    const itemCenterY = rect.top + rect.height / 2;
+
+    // Calculate closeness factor
+    const distanceToCenter = Math.abs(itemCenterY - windowCenterY);
+    const factor = Math.max(0, 1 - distanceToCenter / windowCenterY); // Factor reduces as item moves away
+
+    // Translate each part__x dynamically
+    item.querySelectorAll('[class*="part__"]').forEach((part) => {
+      const match = part.className.match(/part__(\d+)/); // Extract part number
+      if (!match) return;
+
+      const partNumber = parseInt(match[1], 10);
+      const distance = baseDistance * partNumber * factor; // Scale translation
+
+      const translateX = distance * Math.cos(angleInRadians);
+      const translateY = -distance * Math.sin(angleInRadians);
+
+      part.style.transform = `translate(${translateX}px, ${translateY}px)`;
+    });
+  });
+}
+
+function applyCarTranslation(windowCenterY) {
+  const baseDistance = -75; // Starting position
+  const angleInDegrees = 30; // Angle of movement
+  const angleInRadians = (angleInDegrees * Math.PI) / 180; // Convert to radians
+
+  document.querySelectorAll('.project-portfolio__item-image.a40austin').forEach((car) => {
+    const rect = car.getBoundingClientRect();
+    const itemCenterY = rect.top + rect.height / 2;
+
+    // Calculate closeness factor
+    const distanceToCenter = Math.max(0, itemCenterY - windowCenterY);
+    const factor = Math.max(0, distanceToCenter / windowCenterY); // Factor reduces as item moves away
+
+    // Calculate translation along the specified axis
+    const translateX = baseDistance * factor * Math.cos(angleInRadians);
+    const translateY = baseDistance * factor * Math.sin(angleInRadians);
+
+    car.style.transform = `translate(${translateX}px, ${translateY}px)`;
+  });
+}
+
+// Mouse tracking for shuffle effect
+let mouseX, mouseY;
+let mouseAnimationFrame;
+
+document.addEventListener('mousemove', (event) => {
+  mouseX = event.clientX;
+  mouseY = event.clientY;
+
+  if (mouseAnimationFrame) return;
+
+  mouseAnimationFrame = requestAnimationFrame(() => {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
     const offsetX = (mouseX - centerX) * 0.002;
     const offsetY = (mouseY - centerY) * 0.002;
     const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
     const zOffset = distance * 100;
-    element.style.willChange = 'transform';
-    const currentTransform = element.style.transform;
-    const newTransform = `translate3d(${offsetX}%, ${offsetY}%, ${zOffset}px)`;
-    const updatedTransform = currentTransform.replace(/translate3d\([^)]+\)/, newTransform);
-    element.style.transform = updatedTransform.includes('translate3d') ? updatedTransform : `${newTransform} ${currentTransform}`;
-    // element.style.transformStyle = 'preserve-3d';
+
+    document.querySelectorAll('.mouse-tracking-shuffle').forEach((element) => {
+      element.style.transform = `translate3d(${offsetX}%, ${offsetY}%, ${zOffset}px)`;
+    });
+
+    mouseAnimationFrame = null;
   });
-};
-
-const parallaxContainer = document.querySelector('.parallax');
-
-parallaxContainer.addEventListener('scroll', () => {
-  document.dispatchEvent(new CustomEvent('updateTransform'));
 });
-
-let mouseX;
-let mouseY;
-
-document.addEventListener('mousemove', (event) => {
-  const centerX = window.innerWidth / 2;
-  const centerY = window.innerHeight / 2;
-  mouseX = event.clientX;
-  mouseY = event.clientY;
-
-  document.dispatchEvent(new CustomEvent('updateTransform'));
-});
-
-document.addEventListener('updateTransform', updateTransform);
-
