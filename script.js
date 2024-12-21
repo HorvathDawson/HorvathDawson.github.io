@@ -35,44 +35,61 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.forEach((el) => (el.style.opacity = value));
   }
 
+  function preloadGIFs(gifUrls, callback) {
+    const loadedImages = [];
+    let loadedCount = 0;
+  
+    gifUrls.forEach((url, index) => {
+      const img = new Image();
+      img.onload = () => {
+        loadedImages[index] = img;
+        loadedCount++;
+        if (loadedCount === gifUrls.length) {
+          callback(loadedImages);
+        }
+      };
+      img.src = url;
+    });
+  }
+  
   function setupCanvas() {
     const canvas1 = document.querySelector('#opensim2real-canvas1');
     const canvas2 = document.querySelector('#opensim2real-canvas2');
-
-    // Use gifler to handle animations
-    let gif1, gif2;
-    const gif1Url = 'public/assets/projects/opensim2real/leg-spin-body-small.gif';
-    const gif2Url = 'public/assets/projects/opensim2real/leg-spin-edge-small.gif';
-
-    const loadGif = (url) => {
-      return new Promise((resolve) => {
-      const img = new Image();
-      img.src = url;
-      img.onload = () => resolve(url);
-      });
-    };
-
-    Promise.all([loadGif(gif1Url), loadGif(gif2Url)]).then(([loadedGif1Url, loadedGif2Url]) => {
-      gif1 = gifler(loadedGif1Url);
-      gif2 = gifler(loadedGif2Url);
-
+  
+    // GIF URLs in priority order
+    const gifUrls = [
+      'public/assets/projects/opensim2real/leg-spin-body-small.gif',
+      'public/assets/projects/opensim2real/leg-spin-edge-small.gif'
+    ];
+  
+    // Preload GIFs
+    preloadGIFs(gifUrls, (preloadedImages) => {
+      const gif1 = gifler(preloadedImages[0].src);
+      const gif2 = gifler(preloadedImages[1].src);
+  
       let anim1, anim2;
-      gif1.get((animation) => {
-      anim1 = animation;
-      anim1.animateInCanvas(canvas1, (frameCtx) => {
-        frameCtx.drawImage(animation.image, 0, 0, canvas1.width, canvas1.height);
+      let syncStartTime = performance.now(); // Synchronization reference time
+  
+      gif1.get((animation1) => {
+        anim1 = animation1;
+        anim1.animateInCanvas(canvas1, (frameCtx) => {
+          const currentTime = performance.now() - syncStartTime;
+          anim1.moveTo(currentTime);
+          frameCtx.drawImage(animation1.image, 0, 0, canvas1.width, canvas1.height);
+        });
       });
-      });
-
-      gif2.get((animation) => {
-      anim2 = animation;
-      anim2.animateInCanvas(canvas2, (frameCtx) => {
-        frameCtx.drawImage(animation.image, 0, 0, canvas2.width, canvas2.height);
-      });
+  
+      gif2.get((animation2) => {
+        anim2 = animation2;
+        anim2.animateInCanvas(canvas2, (frameCtx) => {
+          const currentTime = performance.now() - syncStartTime;
+          anim2.moveTo(currentTime);
+          frameCtx.drawImage(animation2.image, 0, 0, canvas2.width, canvas2.height);
+        });
       });
     });
   }
-
+  
   setupCanvas();
 
 });
