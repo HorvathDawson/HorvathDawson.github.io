@@ -41,21 +41,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Use gifler to handle animations
     let gif1, gif2;
-    gif1 = gifler('public/assets/projects/opensim2real/leg-spin-body-small.gif');
-    gif2 = gifler('public/assets/projects/opensim2real/leg-spin-edge-small.gif');
+    const gif1Url = 'public/assets/projects/opensim2real/leg-spin-body-small.gif';
+    const gif2Url = 'public/assets/projects/opensim2real/leg-spin-edge-small.gif';
 
-    let anim1, anim2;
-    gif1.get((animation) => {
+    const loadGif = (url) => {
+      return new Promise((resolve) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => resolve(url);
+      });
+    };
+
+    Promise.all([loadGif(gif1Url), loadGif(gif2Url)]).then(([loadedGif1Url, loadedGif2Url]) => {
+      gif1 = gifler(loadedGif1Url);
+      gif2 = gifler(loadedGif2Url);
+
+      let anim1, anim2;
+      gif1.get((animation) => {
       anim1 = animation;
       anim1.animateInCanvas(canvas1, (frameCtx) => {
         frameCtx.drawImage(animation.image, 0, 0, canvas1.width, canvas1.height);
       });
-    });
+      });
 
-    gif2.get((animation) => {
+      gif2.get((animation) => {
       anim2 = animation;
       anim2.animateInCanvas(canvas2, (frameCtx) => {
         frameCtx.drawImage(animation.image, 0, 0, canvas2.width, canvas2.height);
+      });
       });
     });
   }
