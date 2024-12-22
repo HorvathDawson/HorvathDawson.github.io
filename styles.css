@@ -379,6 +379,7 @@ img {
   /* Maintain aspect ratio */
   height: 100%;
   /* Fill the container's height */
+  min-height: 100%;
   object-fit: contain;
   /* Ensure aspect ratio is preserved */
   display: inline-block;
@@ -411,6 +412,7 @@ img {
   position: absolute;
   transform: rotate(80deg);
   height: 20% !important;
+  min-height: 20% !important;
   inset: 58% auto auto 75% !important;
   z-index: 6 !important; }
 
@@ -423,6 +425,12 @@ img {
 @media screen and (max-width: 479px) {
   .project-portfolio__item-image-container .fumes {
     inset: 56% auto auto 62% !important; } }
+@media screen and (max-width: 400px) {
+  .project-portfolio__item-image-container .fumes {
+    inset: 56% auto auto 180px !important; } }
+@media screen and (max-width: 350px) {
+  .project-portfolio__item-image-container .fumes {
+    inset: 56% auto auto 75% !important; } }
 .project-portfolio__item-image-container .foreground {
   opacity: 0;
   height: 100%;
