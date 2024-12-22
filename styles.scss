@@ -478,7 +478,9 @@ h1 {
 .project-portfolio__item-image-container {
     transform-origin: 50% 100%;
     width: auto;
+    min-width: 50px;
     height: 100%;
+    min-height: 100%;
     position: absolute;
     top: auto;
     right: 5%;
