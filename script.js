@@ -137,7 +137,7 @@ function applyDynamicPartTranslation(windowCenterY) {
 }
 
 function applyCarTranslation(windowCenterY) {
-  const baseDistance = -75; // Starting position
+  const baseDistance = -150; // Starting position
   const angleInDegrees = 30; // Angle of movement
   const angleInRadians = (angleInDegrees * Math.PI) / 180; // Convert to radians
 
