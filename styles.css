@@ -347,10 +347,15 @@ h1 {
     height: 57vw;
     min-height: 240px; }
 
-  .project-portfolio__item-image.robot253,
   .project-portfolio__item-image.fume-extractor,
   .project-portfolio__item-image.openSim2Real {
     top: 1%; }
+
+  .project-portfolio__item-image.robot253,
+  .project-portfolio__item-image.buell,
+  .project-portfolio__item-image.esk8 {
+    top: 0%;
+    inset: -5% 5% auto auto; }
 
   .project-portfolio__item-image.self-driving-car {
     left: 8%;
