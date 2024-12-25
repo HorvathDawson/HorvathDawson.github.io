@@ -33,23 +33,24 @@
 }
 
 body {
-    font-family: 'Roboto', sans-serif; /* Apply Roboto here */
+    font-family: 'Roboto', sans-serif;
+    /* Apply Roboto here */
 }
 
 /* Default sticky-top style */
-#main-header {
+.main-header {
     transition: background-color 0.3s, box-shadow 0.3s, height 0.3s;
     background-color: var(--walnut-brown);
 }
 
 /* Background color when sticky at the top */
-#main-header.scrolled {
+.main-header.scrolled {
     background-color: var(--rose-quartz);
 }
 
 .navbar-brand .logo {
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     text-decoration: none;
     letter-spacing: -0.04em;
     color: var(--honeydew);
@@ -63,13 +64,13 @@ body {
     transition: color 0.3s ease-in-out;
 }
 
-#main-header .navbar-nav .nav-link:hover,
-#main-header .navbar-nav .nav-link:focus {
+.main-header .navbar-nav .nav-link:hover,
+.main-header .navbar-nav .nav-link:focus {
     color: var(--rose-quartz);
 }
 
-#main-header.scrolled .navbar-nav .nav-link:hover,
-#main-header.scrolled .navbar-nav .nav-link:focus {
+.main-header.scrolled .navbar-nav .nav-link:hover,
+.main-header.scrolled .navbar-nav .nav-link:focus {
     color: var(--walnut-brown);
 }
 
@@ -84,14 +85,10 @@ body {
 }
 
 @media (max-width: 1024px) {
-    #main-header nav {
+    .main-header nav {
         padding: 0 1rem;
     }
 
-    #primary-menu {
-        flex-direction: column;
-        align-items: flex-start;
-    }
 }
 
 
@@ -108,7 +105,7 @@ body {
     display: flex;
     top: 0;
     width: 100%;
-    height: 75px;
+    height: 100px;
     background: var(--walnut-brown);
     z-index: 1;
 }
@@ -117,7 +114,7 @@ body {
     display: flex;
     top: 0;
     width: 100%;
-    height: 60vh;
+    height: 15vh;
     background: var(--walnut-brown);
     background-size: cover;
     background-position: center;
@@ -136,7 +133,8 @@ body {
     background-size: cover;
     background-position: center;
     height: auto;
-    aspect-ratio: 16/9; /* Adjust the aspect ratio as needed */
+    aspect-ratio: 16/9;
+    /* Adjust the aspect ratio as needed */
 }
 
 .hero .background-lower::after {
@@ -146,7 +144,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--honeydew-rgb); /* White opacity layer */
+    background-color: var(--honeydew-rgb);
+    /* White opacity layer */
     z-index: 1;
 }
 
@@ -154,64 +153,100 @@ body {
 @media (max-width: 768px) {
     .hero .background-lower {
         background-position: center center;
-        aspect-ratio: 4/3; /* Adjust the aspect ratio as needed for mobile */
+        aspect-ratio: 4/3;
+        /* Adjust the aspect ratio as needed for mobile */
     }
 }
 
-.hero .intro-text-container {
-    position: relative;
-    z-index: 2;
-    height: auto;
-    background-color: transparent;
-    width: 100%;
+.section-text {
+    margin: 25px;
+    margin-top: 50px;
 }
 
-.hero .intro-text-container h1 {
-    position: absolute;
-    left: 100px;
-    top: 0px;
-    font-size: 7.5rem;
-    font-weight: 700;
-    text-align: start;
-    color: var(--rose-quartz);
+
+.projects {
     display: flex;
-    display: inline-block;
+    flex-direction: column;
+    gap: 50px;
+    /* Adjust the gap as needed */
+    margin-bottom: 50px;
+    align-items: center;
+    /* Center the project divs */
 }
 
-/* Scale text with screen size */
-@media (max-width: 1200px) {
-    .hero .intro-text-container h1 {
-        font-size: 6rem;
-        left: 50%;
-        transform: translateX(-50%);
+.projects>h2 {
+    margin-top: 50px;
+    margin-bottom: -25px;
+    width: 100%;
+    padding-left: 25px;
+    justify-content: left;
+}
+
+.projects .project {
+    display: flex;
+
+    background-color: var(--honeydew);
+    padding: 15px;
+    margin-left: 50px;
+    margin-right: 50px;
+    min-height: 350px;
+    max-width: 1000px;
+    width: 80vw;
+    border-radius: 5px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 750px) {
+    .projects .project {
+        flex-direction: column;
     }
 }
 
-@media (max-width: 992px) {
-    .hero .intro-text-container h1 {
-        font-size: 5rem;
-        left: 50%;
-        transform: translateX(-50%);
+.project > .project-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 40%;
+    min-width: 250px;
+    height: auto;
+}
+
+
+@media (max-width: 750px) {
+    .project > .project-image {
+        width: 80%;
+        margin: 0 auto;
+        margin-top: 25px;
     }
 }
 
-@media (max-width: 768px) {
-    .hero .intro-text-container h1 {
-        font-size: 4rem;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+.project-image img {
+    border: 5px solid var(--rose-quartz);
 }
 
-@media (max-width: 576px) {
-    .hero .intro-text-container h1 {
-        font-size: 3rem;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+.project > .project-text {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    max-width: 600px;
+    margin: 15px;
 }
 
-.scroll-section {
-    padding: 100px 20px;
-    min-height: 200vh; /* Ensure there's enough content to scroll */
+.project .learn-more {
+    display: flex;
+    bottom: 15px;
+    left: 15px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    width: 150px;
+    border-radius: 5px;
+    background-color: var(--rose-quartz);
+    color: var(--honeydew);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out;
 }
+

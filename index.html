@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Header and Section Example</title>
+        <title>Darcy Turin</title>
         <link rel="stylesheet" href="styles.css">
         <script src="script.js"></script>
         <link
@@ -23,10 +23,10 @@
 
     </head>
     <body>
-        <header id="main-header" class="sticky-top">
+        <header class="main-header sticky-top">
             <nav class="navbar navbar-expand-lg px-3">
                 <a class="navbar-brand text-primary" href="#">
-                    <span class="logo">Dawson Horvath</span>
+                    <span class="logo">Darcy Turin</span>
                 </a>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav">
@@ -34,17 +34,16 @@
                             <a class="nav-link active" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="#about-me">About</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Services
+                                Projects
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#">Action</a></li>
-                                <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                <li><a class="dropdown-item" href="projects/capstone.html">Capstone</a></li>
+                                <!-- <li><hr class="dropdown-divider"></li> -->
+                                <!-- <li><a class="dropdown-item" href="#">Something else here</a></li> -->
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -56,22 +55,12 @@
         </header>
         <section class="hero">
             <div class="background-banner"></div>
-            <div class="intro-text-container">
-                <h1>Know<br>
-                    thy Author.<br>
-                    A Brief<br>
-                    Description<br>
-                    of<br>
-                    Who I Am<br>
-                    and<br>
-                    What I Can Offer.</h1>
-            </div>
             <div class="background"></div>
             <div class="background-lower"></div>
         </section>
 
         <section>
-            <div class="container">
+            <div id="about-me" class="section-text">
                 <h2>About Me</h2>
                 <p>
                     I am an Engineering Physicist turned Mechatronic Engineer, 
@@ -88,14 +77,37 @@
             </div>
         </section>
         
-        <section class="scroll-section">
-            <div class="container">
-                <h2>Scroll Down to Explore More</h2>
-                <p>This section is intentionally long to demonstrate scrolling.</p>
+        <section class="projects">
+            <h2>Projects</h2>
+            <div class="project">
+                <div class="project-text">
+                    <h2>Project 1</h2>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                    </p>
+                    <div style="flex-grow: 1;"></div>
+                    <div>  
+                        <a  class="learn-more" href="/projects/capstone.html">Learn More</a>
+                    </div>
+                </div>
+                <div class="project-image">
+                    <img src="assets/Ramps.jpeg" alt="Project 1 Image" class="img-fluid" loading="lazy">
+                </div>
+            </div>
+            <div class="project">
+                <div class="project-text">
+                    <h2>Project 1</h2>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                    </p>
+                </div>
+                <div class="project-image"></div>
             </div>
         </section>
-        
-        
+
+        <footer class="bg-light py-3 text-center">
+            <p class="mb-0">&copy; 2024 Darcy Turin. All Rights Reserved.</p>
+        </footer>     
         
     </body>
 </html>
