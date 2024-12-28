@@ -2,19 +2,23 @@ document.addEventListener('DOMContentLoaded', () => {
   const items = document.querySelectorAll('.project-portfolio__item');
 
   // Event delegation for mouse events
-  document.body.addEventListener('mouseenter', (e) => handleHover(e, 'mouseenter'), true);
-  document.body.addEventListener('mouseleave', (e) => handleHover(e, 'mouseleave'), true);
+  document.body.addEventListener('mouseover', (e) => handleHover(e, 'mouseenter'));
+  document.body.addEventListener('mouseout', (e) => handleHover(e, 'mouseleave'));
 
   function handleHover(event, type) {
     const item = event.target.closest('.project-portfolio__item');
-    if (!item) return;
+
+    // Ensure the event is for the intended element
+    if (!item || (type === 'mouseenter' && event.relatedTarget?.closest('.project-portfolio__item') === item) ||
+      (type === 'mouseleave' && event.relatedTarget?.closest('.project-portfolio__item') === item)) {
+      return;
+    }
 
     const canvases = item.querySelectorAll('canvas');
-    if (canvases) {
-      canvases.forEach((canvas) => {
-        canvas.dataset.hover = type === 'mouseenter' ? 'true' : 'false';
-      });
-    }
+    canvases.forEach((canvas) => {
+      canvas.dataset.hover = type === 'mouseenter' ? 'true' : 'false';
+    });
+
     const backgrounds = item.querySelectorAll('.background');
     const foregrounds = item.querySelectorAll('.foreground');
     const splashes = item.querySelectorAll('.splash');
@@ -28,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleOpacity(foregrounds, '0');
       toggleOpacity(splashes, '0');
     }
-
   }
+
 
   function toggleOpacity(elements, value) {
     elements.forEach((el) => (el.style.opacity = value));
@@ -77,7 +81,7 @@ parallaxContainer.addEventListener('scroll', () => {
 
     // Cached item rotations
     const cachedItems = [
-      { selector: '.project-portfolio__item-image.openSim2Real', axis: 'Z', min: -35, max: 35 },
+      // { selector: '.project-portfolio__item-image.openSim2Real', axis: 'Z', min: -35, max: 35 },
       // { selector: '.project-portfolio__item-image.fume-extractor', axis: 'Y', min: -35, max: 20.5 },
       { selector: '.project-portfolio__item-image.self-driving-car .laptop-screen-div', axis: 'X', min: -60, max: 60 },
     ];
@@ -141,7 +145,7 @@ function applyCarTranslation(windowCenterY) {
   const angleInDegrees = 30; // Angle of movement
   const angleInRadians = (angleInDegrees * Math.PI) / 180; // Convert to radians
 
-  document.querySelectorAll('.project-portfolio__item-image.a40austin').forEach((car) => {
+  document.querySelectorAll('.project-portfolio__item-image.a40austin .project-portfolio__item-image-container').forEach((car) => {
     const rect = car.getBoundingClientRect();
     const itemCenterY = rect.top + rect.height / 2;
 
@@ -172,13 +176,24 @@ document.addEventListener('mousemove', (event) => {
     const centerY = window.innerHeight / 2;
     const offsetX = (mouseX - centerX) * 0.002;
     const offsetY = (mouseY - centerY) * 0.002;
-    const distance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-    const zOffset = distance * 100;
 
-    document.querySelectorAll('.mouse-tracking-shuffle').forEach((element) => {
-      element.style.transform = `translate3d(${offsetX}%, ${offsetY}%, ${zOffset}px)`;
-    });
+    if (window.innerWidth > 991) {
+      document.querySelectorAll('.project-portfolio__item-image').forEach((element) => {
+        element.style.transform = `translate3d(${offsetX}%, ${offsetY}%, 0)`;
+      });
+    }
+    // document.querySelectorAll('.project-portfolio__item-image').forEach((element) => {
+      // element.style.transform = `translate3d(${offsetX}%, ${offsetY}%, 0)`;
+    // });
 
     mouseAnimationFrame = null;
   });
+});
+
+document.getElementById('contact-form').addEventListener('submit', function (e) {
+  const recaptchaResponse = grecaptcha.getResponse();
+  if (!recaptchaResponse) {
+      e.preventDefault(); // Prevent form submission
+      alert('Please complete the reCAPTCHA.');
+  }
 });

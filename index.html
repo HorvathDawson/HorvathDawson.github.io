@@ -23,20 +23,7 @@
             href="public/assets/parallax_header/Layer__4.png">
         <link rel="preload" as="image"
             href="public/assets/parallax_header/Layer__5.png">
-        <link rel="preload" as="image"
-            href="public/assets/projects/opensim2real/leg-spin-body-small.gif">
-        <link rel="preload" as="image"
-            href="public/assets/projects/opensim2real/leg-spin-edge-small.gif">
-        <link rel="preload" as="image"
-            href="public/assets/projects/self-driving-car/screen.gif">
-        <link rel="preload" as="image"
-            href="public/assets/projects/self-driving-car/computer-background.svg">
-        <link rel="preload" as="image"
-            href="public/assets/projects/self-driving-car/computer-foreground.svg">
-        <link rel="preload" as="image"
-            href="public/assets/projects/self-driving-car/computer-keys-background.svg">
-        <link rel="preload" as="image"
-            href="public/assets/projects/self-driving-car/computer-keys-background.svg">
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     </head>
     <body>
         <link rel="stylesheet" href="styles.css">
@@ -61,6 +48,38 @@
             </div>
             <div class="parallax__cover">
                 <div class="page-wrapper home">
+                    <div class="about-me">
+                        <div class="about-me__text">
+                            <h1 class="heading-3">
+                                Hi, I’m Dawson Horvath!
+                            </h1>
+                            <p class="paragraph-2">
+                                I’m a mechatronic and software engineer with a
+                                degree in Engineering Physics, who is driven by
+                                a
+                                passion for designing innovative robotics and
+                                software systems. From building cell screening
+                                robots to crafting advanced imaging pipelines, I
+                                thrive at tackling complex challenges.
+                                <br>
+                                <br>
+                                Outside of work, I’m an outdoor enthusiast and
+                                athlete. Whether it’s scuba diving, mountain
+                                biking, climbing, or practicing martial arts
+                                like Brazilian jiu-jitsu and Muay Thai, I’m
+                                constantly seeking new adventures that push my
+                                limits and inspire my creativity. The
+                                perseverance and problem-solving I’ve honed
+                                through these activities directly influence my
+                                approach to engineering.
+                            </p>
+
+                        </div>
+                        <div class="about-me__image">
+                            <img src="public/assets/about_me/tent.png"
+                                alt loading="lazy">
+                        </div>
+                    </div>
                     <div class="project-container">
                         <div class="project-portfolio__grid">
                             <div class="project-portfolio__item">
@@ -88,7 +107,7 @@
                                 <div
                                     class="project-portfolio__item-image openSim2Real">
                                     <div
-                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        class="project-portfolio__item-image-container">
                                         <img
                                             src="public/assets/projects/opensim2real/leg-spin-body-small.gif"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
@@ -143,36 +162,34 @@
                                 </div>
                                 <div
                                     class="project-portfolio__item-image self-driving-car">
-                                    <div
-                                        class="image-wrapper mouse-tracking-shuffle">
-                                        <div class="laptop-screen-div">
-                                            <img
-                                                src="public/assets/projects/self-driving-car/computer-foreground.svg"
-                                                class="foreground"
-                                                loading="lazy"
-                                                style="opacity: 0;">
-                                            <img
-                                                src="public/assets/projects/self-driving-car/computer-background.svg"
-                                                class="background"
-                                                loading="lazy"
-                                                style="opacity: 1;">
-                                            <div class="comp-screen splash"
-                                                loading="lazy"
-                                                style="opacity: 0;">
-                                            </div>
+
+                                    <div class="laptop-screen-div">
+                                        <img
+                                            src="public/assets/projects/self-driving-car/computer-foreground.svg"
+                                            class="foreground"
+                                            loading="lazy"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/self-driving-car/computer-background.svg"
+                                            class="background"
+                                            loading="lazy"
+                                            style="opacity: 1;">
+                                        <div class="comp-screen splash"
+                                            loading="lazy"
+                                            style="opacity: 0;">
                                         </div>
-                                        <div class="laptop-keyboard-div">
-                                            <img
-                                                src="public/assets/projects/self-driving-car/computer-keys-foreground.svg"
-                                                class="foreground"
-                                                loading="lazy"
-                                                style="opacity: 0;">
-                                            <img
-                                                src="public/assets/projects/self-driving-car/computer-keys-background.svg"
-                                                class="background"
-                                                loading="lazy"
-                                                style="opacity: 1;">
-                                        </div>
+                                    </div>
+                                    <div class="laptop-keyboard-div">
+                                        <img
+                                            src="public/assets/projects/self-driving-car/computer-keys-foreground.svg"
+                                            class="foreground"
+                                            loading="lazy"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/projects/self-driving-car/computer-keys-background.svg"
+                                            class="background"
+                                            loading="lazy"
+                                            style="opacity: 1;">
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +221,7 @@
                                 <div
                                     class="project-portfolio__item-image robot253">
                                     <div
-                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        class="project-portfolio__item-image-container">
                                         <img
                                             src="public/assets/projects/253robot/foreground.png"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
@@ -253,7 +270,7 @@
                                 <div
                                     class="project-portfolio__item-image a40austin">
                                     <div
-                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        class="project-portfolio__item-image-container">
                                         <img
                                             src="public/assets/projects/a40austin/foreground.png"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
@@ -296,9 +313,9 @@
                                 <div
                                     class="project-portfolio__item-image buell">
                                     <div
-                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        class="project-portfolio__item-image-container">
                                         <img
-                                            src="public/assets/projects/buell/motor_images/section-view.png"
+                                            src="public/assets/projects/buell/motor_images/section-view.gif"
                                             alt class="foreground"
                                             loading="lazy"
                                             style="opacity: 0;">
@@ -368,7 +385,7 @@
                                 <div
                                     class="project-portfolio__item-image fume-extractor">
                                     <div
-                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        class="project-portfolio__item-image-container">
                                         <img
                                             src="public/assets/projects/fume-extractor/arm.png"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
@@ -422,7 +439,7 @@
                                 </div>
                                 <div class="project-portfolio__item-image esk8">
                                     <div
-                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        class="project-portfolio__item-image-container">
                                         <img
                                             src="public/assets/projects/esk8/foreground.png"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
@@ -464,7 +481,7 @@
                                 </div>
                                 <div class="project-portfolio__item-image esk8">
                                     <div
-                                        class="project-portfolio__item-image-container mouse-tracking-shuffle">
+                                        class="project-portfolio__item-image-container">
                                         <img
                                             src="public/assets/projects/3dprinter/foreground.png"
                                             sizes="(max-width: 479px) 96vw, (max-width: 767px) 90vw, (max-width: 991px) 70vw, 56vw"
@@ -480,7 +497,106 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="project-portfolio__item">
+                                <div class="project-portfolio__item-overlay">
+                                </div>
+                                <div
+                                    class="project-portfolio__item-text item-text-width">
+                                    <h6 class="category-heading">Offline
+                                        Website</h6>
+                                    <h1 class="heading-3">
+                                        <a
+                                            href="public/assets/resume/resume.pdf"
+                                            target="_blank"
+                                            download>
+                                            <span class="text-highlight">
+                                                Resume
+                                            </span>
+                                        </a>
+                                    </h1>
+                                    <p class="paragraph-2">
+                                        If you feel inclined to take the
+                                        experience offline.
+                                    </p>
+                                </div>
+                                <div
+                                    class="project-portfolio__item-image resume">
+                                    <div class="tablet-div">
+                                        <img
+                                            src="public/assets/resume/foreground.png"
+                                            class="foreground"
+                                            loading="lazy"
+                                            style="opacity: 0;">
+                                        <img
+                                            src="public/assets/resume/background.png"
+                                            class="background"
+                                            loading="lazy"
+                                            style="opacity: 1;">
+                                        <div class="tablet-screen splash"
+                                            style="opacity: 0;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <a
+                                    href="public/assets/resume/resume.pdf"
+                                    target="_blank"
+                                    class="button-portfolio--tile-2 w-button"
+                                    download>
+                                    Download Resume
+                                </a>
+                            </div>
                         </div>
+                        <!-- <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd-ORTakZ4IOBgNYOtuETuGr5X5I9a8xMa0kjfiJJVOyTIASg/viewform?embedded=true" width="640" height="689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe> -->
+                        <!-- https://docs.google.com/forms/d/e/1FAIpQLSd-ORTakZ4IOBgNYOtuETuGr5X5I9a8xMa0kjfiJJVOyTIASg/viewform?usp=pp_url&entry.2005620554=fullname&entry.1045781291=email@me.com&entry.839337160=message -->
+                        <div style="margin-top: 150px;">
+                            <h1 class="heading-3">Contact Me</h1>
+                            <form id="contact-form"
+                                action="https://formspree.io/f/{your_form_id}"
+                                method="POST">
+
+                                <label id="contact-form-name-label"
+                                    for="contact-form-name-input">
+                                    Full Name
+                                </label>
+                                <input id="contact-form-name-input"
+                                    class="round-field w-input" type="text"
+                                    name="contact-form-name"
+                                    placeholder="Leeroy Jenkins"
+                                    data-name="Full Name"
+                                    maxlength="256" required>
+
+                                <label id="contact-form-email-label"
+                                    for="contact-form-email-input">
+                                    Email Address
+                                </label>
+                                <input id="contact-form-email-input"
+                                    class="round-field w-input" type="email"
+                                    name="contact-form-email"
+                                    data-name="Email Address"
+                                    placeholder="JenkinsLeeroy@gmail.com"
+                                    maxlength="256" required>
+
+                                <label id="contact-form-message-label"
+                                    for="contact-form-message-textarea">
+                                    Message
+                                </label>
+                                <textarea id="contact-form-message-textarea"
+                                    class="textarea round-field w-input"
+                                    name="contact-form-message"
+                                    data-name="Message"
+                                    placeholder="Hello, I am messaging to tell you about my project, collaboration ideas, or how you can assist my team..."
+                                    maxlength="5000"></textarea>
+
+                                <!-- reCAPTCHA -->
+                                <div id="contact-recaptcha" class="g-recaptcha" data-theme="light"
+                                    data-sitekey="6LeBU6gqAAAAAEJDe5diUdowY2Q0cwpk0GyEdSdy"></div>
+
+                                <input id="contact-form-submit" type="submit"
+                                    class="button-portfolio--tile-2 w-button"
+                                    value="Submit">
+                            </form>
+                        </div>
+
                     </div>
 
                 </div>
