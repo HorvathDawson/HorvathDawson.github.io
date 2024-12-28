@@ -670,26 +670,26 @@ img {
 #contact-form-name-label {
   grid-area: 1/1/2/2; }
 
-#contact-form-name-input {
+.contact-form-name-input {
   grid-area: 2/1/3/2; }
 
 #contact-form-email-label {
   grid-area: 1/2/2/3; }
 
-#contact-form-email-input {
+.contact-form-email-input {
   grid-area: 2/2/3/3; }
 
 #contact-form-message-label {
   grid-area: 3/1/4/3; }
 
-#contact-form-message-textarea {
+.contact-form-message-textarea {
   grid-area: 4/1/5/3; }
 
 #contact-form-submit {
   grid-area: 5/2/6/3;
   justify-self: end; }
 
-#contact-recaptcha {
+.contact-recaptcha {
   grid-area: 5/1/6/2; }
 
 @media screen and (max-width: 991px) {
@@ -699,26 +699,26 @@ img {
   #contact-form-name-label {
     grid-area: 1/1/2/2; }
 
-  #contact-form-name-input {
+  .contact-form-name-input {
     grid-area: 2/1/3/2; }
 
   #contact-form-email-label {
     grid-area: 3/1/4/2; }
 
-  #contact-form-email-input {
+  .contact-form-email-input {
     grid-area: 4/1/5/2; }
 
   #contact-form-message-label {
     grid-area: 5/1/6/2; }
 
-  #contact-form-message-textarea {
+  .contact-form-message-textarea {
     grid-area: 6/1/7/2; }
 
   #contact-form-submit {
     grid-area: 8/1/9/2;
     justify-self: start; }
 
-  #contact-recaptcha {
+  .contact-recaptcha {
     grid-area: 7/1/8/2; } }
 @media screen and (max-width: 767px) {
   #contact-form-submit {

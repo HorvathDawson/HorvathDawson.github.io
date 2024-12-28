@@ -183,7 +183,7 @@ document.addEventListener('mousemove', (event) => {
       });
     }
     // document.querySelectorAll('.project-portfolio__item-image').forEach((element) => {
-      // element.style.transform = `translate3d(${offsetX}%, ${offsetY}%, 0)`;
+    // element.style.transform = `translate3d(${offsetX}%, ${offsetY}%, 0)`;
     // });
 
     mouseAnimationFrame = null;
@@ -193,7 +193,24 @@ document.addEventListener('mousemove', (event) => {
 document.getElementById('contact-form').addEventListener('submit', function (e) {
   const recaptchaResponse = grecaptcha.getResponse();
   if (!recaptchaResponse) {
-      e.preventDefault(); // Prevent form submission
-      alert('Please complete the reCAPTCHA.');
+    e.preventDefault(); // Prevent form submission
+    alert('Please complete the reCAPTCHA.');
+  } else {
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.id = 'entry.670876903';
+    hiddenInput.name = 'entry.670876903';
+    hiddenInput.value = recaptchaResponse;
+    e.target.appendChild(hiddenInput);
+    e.target.querySelectorAll('*').forEach((el) => {
+      el.style.transition = 'opacity 2s';
+      el.style.opacity = '0';
+      setTimeout(() => {
+        el.style.display = 'none';
+      }, 2000);
+    });
+    const message = document.createElement('div');
+    message.textContent = 'Your submission has been processed...';
+    e.target.insertBefore(message, e.target.firstChild);
   }
 });

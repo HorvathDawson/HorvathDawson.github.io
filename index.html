@@ -546,55 +546,55 @@
                                 </a>
                             </div>
                         </div>
-                        <!-- <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSd-ORTakZ4IOBgNYOtuETuGr5X5I9a8xMa0kjfiJJVOyTIASg/viewform?embedded=true" width="640" height="689" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe> -->
-                        <!-- https://docs.google.com/forms/d/e/1FAIpQLSd-ORTakZ4IOBgNYOtuETuGr5X5I9a8xMa0kjfiJJVOyTIASg/viewform?usp=pp_url&entry.2005620554=fullname&entry.1045781291=email@me.com&entry.839337160=message -->
+                        <!-- Eventually replace this with a lambda function but it works for now. -->
                         <div style="margin-top: 150px;">
                             <h1 class="heading-3">Contact Me</h1>
                             <form id="contact-form"
-                                action="https://formspree.io/f/{your_form_id}"
-                                method="POST">
+                                action="https://docs.google.com/forms/d/e/1FAIpQLSd-ORTakZ4IOBgNYOtuETuGr5X5I9a8xMa0kjfiJJVOyTIASg/formResponse?"
+                                method="POST"
+                                target="hidden_iframe" >
 
-                                <label id="contact-form-name-label"
-                                    for="contact-form-name-input">
+                                <label id="contact-form-name-label" for="entry.2005620554">
                                     Full Name
                                 </label>
-                                <input id="contact-form-name-input"
-                                    class="round-field w-input" type="text"
-                                    name="contact-form-name"
+                                <input id="entry.2005620554"
+                                    class="round-field w-input contact-form-name-input" type="text"
+                                    name="entry.2005620554"
                                     placeholder="Leeroy Jenkins"
                                     data-name="Full Name"
                                     maxlength="256" required>
 
                                 <label id="contact-form-email-label"
-                                    for="contact-form-email-input">
+                                    for="entry.1045781291">
                                     Email Address
                                 </label>
-                                <input id="contact-form-email-input"
-                                    class="round-field w-input" type="email"
-                                    name="contact-form-email"
+                                <input id="entry.1045781291"
+                                    class="round-field w-input contact-form-email-input" type="email"
+                                    name="entry.1045781291"
                                     data-name="Email Address"
                                     placeholder="JenkinsLeeroy@gmail.com"
                                     maxlength="256" required>
 
                                 <label id="contact-form-message-label"
-                                    for="contact-form-message-textarea">
+                                    for="entry.839337160">
                                     Message
                                 </label>
-                                <textarea id="contact-form-message-textarea"
-                                    class="textarea round-field w-input"
-                                    name="contact-form-message"
+                                <textarea id="entry.839337160"
+                                    class="textarea round-field w-input contact-form-message-textarea"
+                                    name="entry.839337160"
                                     data-name="Message"
                                     placeholder="Hello, I am messaging to tell you about my project, collaboration ideas, or how you can assist my team..."
                                     maxlength="5000"></textarea>
 
                                 <!-- reCAPTCHA -->
-                                <div id="contact-recaptcha" class="g-recaptcha" data-theme="light"
+                                <div class="g-recaptcha contact-recaptcha" data-theme="light"
                                     data-sitekey="6LeBU6gqAAAAAEJDe5diUdowY2Q0cwpk0GyEdSdy"></div>
 
                                 <input id="contact-form-submit" type="submit"
                                     class="button-portfolio--tile-2 w-button"
                                     value="Submit">
                             </form>
+                            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {}"></iframe>
                         </div>
 
                     </div>
