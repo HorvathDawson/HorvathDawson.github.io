@@ -19,7 +19,9 @@
 
 html,
 body {
-    background-color: #FEDCC8;
+    background-color: var(--purple);
+    // background: url('public/assets/parallax_header/foreground_color.png') no-repeat center center;
+    // background-size: cover;
     margin: 0;
     padding: 0;
     // overflow: hidden
@@ -103,9 +105,13 @@ textarea.w-select {
 $imageAspectRatio: 2/3;
 
 .parallax {
+    background-color: #FEDCC8;
+    // background: url('public/assets/parallax_header/foreground_color.png') no-repeat center center;
+    // background-size: cover;
     perspective-origin: center;
     perspective: 100px;
     height: 100vh;
+    // height: fit-content;
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
@@ -144,7 +150,7 @@ $imageAspectRatio: 2/3;
     background-size: cover;
     position: relative;
     top: calc(max(100vw, 500px) * #{$imageAspectRatio} * 0.99);
-    height: fit-content;
+    height: max-content;
     width: 100vw;
     min-width: 100%;
     min-height: 200vh;
