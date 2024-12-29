@@ -590,15 +590,23 @@ h1 {
     }
 
     .project-portfolio__item-image.robot253,
-    .project-portfolio__item-image.buell,
     .project-portfolio__item-image.esk8 {
         top: 0%;
         inset: -5% 5% auto auto;
     }
+    .project-portfolio__item-image.buell {
+        top: 0%;
+        inset: -2% 5% auto auto;
+    }
+
 
     .project-portfolio__item-image.self-driving-car {
         left: 8%;
         right: 8%;
+    }
+
+    .project-portfolio__item-image.resume {
+        inset: 15% 0% auto auto;
     }
 }
 
