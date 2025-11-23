@@ -1,11 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { BaseProjectItem, ProjectImageContainer, type ProjectConfig } from './BaseProjectItem';
-
-declare global {
-  interface Window {
-    gifler: any;
-  }
-}
 
 const projectConfig: ProjectConfig = {
   id: 'opensim2real',
@@ -17,61 +11,28 @@ const projectConfig: ProjectConfig = {
 };
 
 export const OpenSim2RealProject: React.FC = () => {
-  const canvas1Ref = useRef<HTMLCanvasElement>(null);
-  const canvas2Ref = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    if (!window.gifler || !canvas1Ref.current || !canvas2Ref.current) return;
-
-    const canvas1 = canvas1Ref.current;
-    const canvas2 = canvas2Ref.current;
-
-    let gif1, gif2;
-    gif1 = window.gifler('/assets/projects/opensim2real/leg-spin-body-small.gif');
-    gif2 = window.gifler('/assets/projects/opensim2real/leg-spin-edge-small.gif');
-
-    gif1.get((animation: any) => {
-      animation.animateInCanvas(canvas1, (frameCtx: any) => {
-        frameCtx.drawImage(animation.image, 0, 0, canvas1.width, canvas1.height);
-      });
-    });
-
-    gif2.get((animation: any) => {
-      animation.animateInCanvas(canvas2, (frameCtx: any) => {
-        frameCtx.drawImage(animation.image, 0, 0, canvas2.width, canvas2.height);
-      });
-    });
-  }, []);
 
   return (
     <BaseProjectItem config={projectConfig} className="openSim2Real">
-      <ProjectImageContainer>
-        <img
-          src="/assets/projects/opensim2real/leg-spin-body-small.gif"
-          alt=""
-          className="foreground"
-          loading="lazy"
-          style={{ opacity: 0, display: 'none' }}
-        />
-        <img
-          src="/assets/projects/opensim2real/leg-spin-edge-small.gif"
-          alt=""
-          className="background"
-          loading="lazy"
-          style={{ opacity: 1, display: 'none' }}
-        />
-        <canvas
-          ref={canvas1Ref}
-          id="opensim2real-canvas1"
-          className="foreground"
-          style={{ opacity: 0 }}
-        />
-        <canvas
-          ref={canvas2Ref}
-          id="opensim2real-canvas2"
-          className="background"
-          style={{ opacity: 1 }}
-        />
+      <ProjectImageContainer className="project-portfolio__item-image opensim2real">
+        <div className="project-portfolio__item-image-container">
+          {/* Body spin animation - shows on hover */}
+          <img
+            src="/assets/projects/opensim2real/leg-spin-body-small.gif"
+            alt=""
+            className="foreground"
+            loading="lazy"
+            style={{ opacity: 0 }}
+          />
+          {/* Edge spin animation - shows by default */}
+          <img
+            src="/assets/projects/opensim2real/leg-spin-edge-small.gif"
+            alt=""
+            className="background"
+            loading="lazy"
+            style={{ opacity: 1 }}
+          />
+        </div>
       </ProjectImageContainer>
     </BaseProjectItem>
   );
