@@ -114,7 +114,7 @@ textarea.w-select {
     height: 66.6666666667vw; }
 
 .parallax__cover {
-  background: url("public/assets/parallax_header/foreground_color.png") no-repeat center center;
+  background: url("/assets/parallax_header/foreground_color.png") no-repeat center center;
   background-size: cover;
   position: relative;
   top: calc(max(100vw, 500px) * 0.6666666667 * 0.99);
@@ -614,7 +614,7 @@ img {
     right: 14.7vw; } }
 .comp-screen {
   opacity: 0;
-  background-image: url(public/assets/projects/self-driving-car/screen.gif);
+  background-image: url(/assets/projects/self-driving-car/screen.gif);
   background-position: 50%;
   background-size: cover;
   width: 92.5%;
@@ -646,7 +646,7 @@ img {
 .tablet-screen {
   opacity: 0;
   transform-style: preserve-3d;
-  background-image: url(public/assets/resume/resume_rotated.png);
+  background-image: url(/assets/resume/resume_rotated.png);
   background-position: 50%;
   background-size: cover;
   width: 73.5%;

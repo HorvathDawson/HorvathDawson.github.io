@@ -1,4 +1,40 @@
-import type { Project, ParallaxLayer, AboutMeContent } from '../types';
+// Type definitions
+export interface ParallaxLayer {
+  id: string;
+  src: string;
+  depth: number;
+}
+
+export interface AboutMeContent {
+  title: string;
+  description: string;
+  image: string;
+}
+
+export interface Project {
+  id: string;
+  category: string;
+  title: string;
+  description: string;
+  link?: string;
+  downloadable?: boolean;
+  buttonText?: string;
+  images: {
+    foreground?: string;
+    background?: string;
+    splash?: string;
+    gif?: string;
+    additionalImages?: Array<{
+      src: string;
+      className?: string;
+      type: 'foreground' | 'background' | 'splash' | 'part';
+    }>;
+  };
+  animations?: {
+    type: 'canvas' | 'rotation' | 'translation' | 'parts';
+    config?: any;
+  };
+}
 
 export const parallaxLayers: ParallaxLayer[] = [
   { id: 'layer0', src: '/assets/parallax_header/Layer__0.png', depth: 0.1 },

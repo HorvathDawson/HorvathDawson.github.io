@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import type { ContactFormData } from '../types';
+
+interface ContactFormData {
+  fullName: string;
+  email: string;
+  message: string;
+}
 
 export const ContactForm: React.FC = () => {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -13,7 +18,7 @@ export const ContactForm: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev: ContactFormData) => ({
       ...prev,
       [name]: value,
     }));

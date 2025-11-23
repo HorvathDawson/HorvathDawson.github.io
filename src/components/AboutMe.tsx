@@ -1,5 +1,5 @@
 import React from 'react';
-import type { AboutMeContent } from '../types';
+import type { AboutMeContent } from '../data/content';
 
 interface AboutMeProps {
   content: AboutMeContent;
@@ -11,7 +11,7 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
       <div className="about-me__text">
         <h1 className="heading-3">{content.title}</h1>
         <p className="paragraph-2">
-          {content.description.split('\n\n').map((paragraph, index) => (
+          {content.description.split('\n\n').map((paragraph: string, index: number) => (
             <React.Fragment key={index}>
               {paragraph}
               {index < content.description.split('\n\n').length - 1 && (
