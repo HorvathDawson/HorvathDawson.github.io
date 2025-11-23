@@ -12,24 +12,24 @@ export const A40AustinProject: React.FC = () => {
   // Custom animations for car sliding (handled by global scroll handler in App.tsx)
   const customAnimations = (_element: HTMLDivElement) => {
     // Car translation animations are handled in the main App.tsx scroll handler
-    // which looks for .a40austin .project-portfolio__item-image-container
+    // which looks for .project-a40austin .project-card-media
   };
 
   return (
     <BaseProjectItem 
       config={projectConfig} 
-      className="a40austin"
+      className="project-a40austin"
       customAnimations={customAnimations}
     >
-      <ProjectImageContainer className="project-portfolio__item-image-container">
+      <ProjectImageContainer className="project-card-media" imageClassName="project-a40austin">
         <ProjectImage
           src="/assets/projects/a40austin/foreground.png"
-          className="foreground"
+          className="foreground-layer"
           style={{ opacity: 0 }}
         />
         <ProjectImage
           src="/assets/projects/a40austin/background.png"
-          className="background"
+          className="background-layer"
           style={{ opacity: 1 }}
         />
       </ProjectImageContainer>

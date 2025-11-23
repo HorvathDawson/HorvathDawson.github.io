@@ -13,21 +13,21 @@ const projectConfig: ProjectConfig = {
 
 export const ResumeProject: React.FC = () => {
   return (
-    <BaseProjectItem config={projectConfig} className="resume">
-      <div className="project-portfolio__item-image resume">
-        <div className="tablet-div">
+    <BaseProjectItem config={projectConfig} className="project-resume">
+      <div className="project-card-image project-resume">
+        <div className="tablet-frame">
           <ProjectImage
             src="/assets/resume/foreground.png"
-            className="foreground"
+            className="foreground-layer"
             style={{ opacity: 0 }}
           />
           <ProjectImage
             src="/assets/resume/background.png"
-            className="background"
+            className="background-layer"
             style={{ opacity: 1 }}
           />
           <div 
-            className="tablet-screen splash"
+            className="tablet-display splash-layer"
             style={{ 
               opacity: 0,
               backgroundImage: 'url(/assets/resume/resume_rotated.png)',

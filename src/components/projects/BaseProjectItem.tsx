@@ -42,9 +42,9 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
 
     // Default hover animations
     const handleMouseEnter = () => {
-      const backgrounds = item.querySelectorAll('.background');
-      const foregrounds = item.querySelectorAll('.foreground');
-      const splashes = item.querySelectorAll('.splash');
+      const backgrounds = item.querySelectorAll('.background-layer');
+      const foregrounds = item.querySelectorAll('.foreground-layer');
+      const splashes = item.querySelectorAll('.splash-layer');
       const canvases = item.querySelectorAll('canvas');
 
       backgrounds.forEach((el: Element) => {
@@ -65,9 +65,9 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
     };
 
     const handleMouseLeave = () => {
-      const backgrounds = item.querySelectorAll('.background');
-      const foregrounds = item.querySelectorAll('.foreground');
-      const splashes = item.querySelectorAll('.splash');
+      const backgrounds = item.querySelectorAll('.background-layer');
+      const foregrounds = item.querySelectorAll('.foreground-layer');
+      const splashes = item.querySelectorAll('.splash-layer');
       const canvases = item.querySelectorAll('canvas');
 
       backgrounds.forEach((el: Element) => {
@@ -102,20 +102,20 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
   }, [onMouseEnter, onMouseLeave, customAnimations]);
 
   return (
-    <div ref={itemRef} className={`project-portfolio__item ${config.id} ${className}`}>
-      <div className="project-portfolio__item-overlay"></div>
-      <div className="project-portfolio__item-text item-text-width">
-        <h6 className="category-heading">{config.category}</h6>
-        <h1 className="heading-3">
+    <div ref={itemRef} className={`project-card ${config.id} ${className}`}>
+      <div className="project-card-overlay"></div>
+      <div className="project-card-content content-width-constrained">
+        <h6 className="project-category">{config.category}</h6>
+        <h1 className="section-title">
           {config.link ? (
             <a href={config.link} target="_blank" rel="noopener noreferrer">
-              <span className="text-highlight">{config.title}</span>
+              <span className="text-highlighted">{config.title}</span>
             </a>
           ) : (
-            <span className="text-highlight">{config.title}</span>
+            <span className="text-highlighted">{config.title}</span>
           )}
         </h1>
-        <p className="paragraph-2">{config.description}</p>
+        <p className="about-description">{config.description}</p>
       </div>
       {children}
       {config.link && config.buttonText && (
@@ -123,7 +123,7 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
           href={config.link}
           target="_blank"
           rel="noopener noreferrer"
-          className="button-portfolio--tile-2 w-button"
+          className="project-cta-button button"
           {...(config.downloadable ? { download: true } : {})}
         >
           {config.buttonText}
@@ -147,9 +147,10 @@ export const ProjectImage: React.FC<ProjectImageProps> = ({ src, className, styl
 // Container component for project image sections
 export const ProjectImageContainer: React.FC<{ 
   className?: string; 
+  imageClassName?: string;
   children: React.ReactNode;
-}> = ({ className = "project-portfolio__item-image-container", children }) => (
-  <div className="project-portfolio__item-image">
+}> = ({ className = "project-card-media", imageClassName = "", children }) => (
+  <div className={`project-card-image ${imageClassName}`.trim()}>
     <div className={className}>
       {children}
     </div>

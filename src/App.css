@@ -25,7 +25,7 @@ body {
   font-size: 14px;
   line-height: 20px; }
 
-.paragraph-2 {
+.about-description {
   text-shadow: 0 0 4px #000;
   max-width: 480px;
   margin-top: 20px;
@@ -44,11 +44,11 @@ a {
   color: #f3f3f3;
   text-decoration: none; }
 
-input.w-button {
+input.button {
   -webkit-appearance: button;
   appearance: button; }
 
-.w-button {
+.button {
   color: #fff;
   line-height: inherit;
   cursor: pointer;
@@ -67,12 +67,12 @@ label {
 textarea {
   overflow: auto; }
 
-textarea.w-input,
-textarea.w-select {
+textarea.form-input,
+textarea.form-select {
   height: auto; }
 
-.w-input,
-.w-select {
+.form-input,
+.form-select {
   color: #333;
   background-color: #fff;
   border: 1px solid #ccc;
@@ -84,7 +84,7 @@ textarea.w-select {
   line-height: 1.42857;
   display: block; }
 
-.parallax {
+.parallax-container {
   background-color: #FEDCC8;
   perspective-origin: center;
   perspective: 100px;
@@ -98,7 +98,7 @@ textarea.w-select {
   bottom: 0;
   display: flex; }
 
-.parallax__layer {
+.parallax-layer {
   position: absolute;
   display: flex;
   height: 100vh;
@@ -106,14 +106,14 @@ textarea.w-select {
   width: 100vw;
   min-width: 100vw;
   justify-content: center; }
-  .parallax__layer img {
+  .parallax-layer img {
     display: block;
     width: 100vw;
     min-width: 500px;
     min-height: 333.3333333333px;
     height: 66.6666666667vw; }
 
-.parallax__cover {
+.parallax-foreground {
   background: url("/assets/parallax_header/foreground_color.png") no-repeat center center;
   background-size: cover;
   position: relative;
@@ -125,57 +125,57 @@ textarea.w-select {
   z-index: 2;
   padding-top: 100px; }
 
-.parallax__layer__0 {
+.parallax-layer-depth-0 {
   transform: translateZ(-500px) scale(6) translateY(calc((100vh - 66.6666666667vw) / 5 )); }
 
-.parallax__layer__1 {
+.parallax-layer-depth-1 {
   transform: translateZ(-400px) scale(5) translateY(calc((100vh - 66.6666666667vw) / 5 )); }
 
-.parallax__layer__2 {
+.parallax-layer-depth-2 {
   transform: translateZ(-300px) scale(4) translateY(calc((100vh - 66.6666666667vw) / 5 )); }
 
-.parallax__layer__3 {
+.parallax-layer-depth-3 {
   transform: translateZ(-200px) scale(3) translateY(calc((100vh - 66.6666666667vw) / 5 )); }
 
-.parallax__layer__4 {
+.parallax-layer-depth-4 {
   transform: translateZ(-100px) scale(2) translateY(calc((100vh - 66.6666666667vw) / 5 )); }
 
-.parallax__layer__5 {
+.parallax-layer-depth-5 {
   transform: translateZ(0px) scale(1) translateY(calc((100vh - 66.6666666667vw) / 5 )); }
 
-.parallax__cover {
+.parallax-foreground {
   transform: translateZ(0px) scale(1) translateY(calc((100vh - 66.6666666667vw) / 5 )); }
 
 * {
   box-sizing: border-box; }
 
-.page-wrapper {
+.main-content {
   padding-left: 100px;
   padding-right: 100px;
   padding-bottom: 100px; }
 
 @media screen and (max-width: 991px) {
-  .page-wrapper {
+  .main-content {
     padding-left: 100px;
     padding-right: 100px; }
 
-  .page-wrapper.home {
+  .main-content.home {
     padding-left: 120px;
     padding-right: 120px; } }
 @media screen and (max-width: 767px) {
-  .page-wrapper,
-  .page-wrapper.home {
+  .main-content,
+  .main-content.home {
     padding-left: 40px;
     padding-right: 40px; } }
 @media screen and (max-width: 479px) {
-  .page-wrapper {
+  .main-content {
     padding-left: 10px;
     padding-right: 10px; }
 
-  .page-wrapper.home {
+  .main-content.home {
     padding-left: 15px;
     padding-right: 15px; } }
-.about-me {
+.about-section {
   margin-bottom: 150px;
   height: auto;
   position: relative;
@@ -183,7 +183,7 @@ textarea.w-select {
   flex-direction: column;
   align-items: center; }
 
-.about-me__image {
+.about-image {
   position: absolute;
   width: 90%;
   max-width: 450px;
@@ -193,16 +193,16 @@ textarea.w-select {
   height: auto;
   inset: -40% 0 0 50%; }
 
-.about-me__text {
+.about-content {
   max-width: 800px;
   padding: 20px;
   z-index: 1;
   position: relative; }
 
-.about-me__text .paragraph-2 {
+.about-content .about-description {
   max-width: 800px; }
 
-.about-me__image img {
+.about-image img {
   display: inline-block;
   width: 100%;
   height: 100%;
@@ -210,28 +210,28 @@ textarea.w-select {
   top: 0; }
 
 @media screen and (max-width: 850px) {
-  .about-me__image {
+  .about-image {
     inset: -20% 0 0 25%; } }
 @media screen and (max-width: 590px) {
-  .about-me__image {
+  .about-image {
     inset: -150px 0 0 0; } }
 @media screen and (max-width: 450px) {
-  .about-me__image {
+  .about-image {
     inset: -100px 0 0 0; } }
-.project-container {
+.projects-section {
   max-width: 990px;
   margin-left: auto;
   margin-right: auto;
   position: relative; }
 
-.project-portfolio__grid {
+.projects-grid {
   grid-column-gap: 30px;
   grid-row-gap: 213px;
   grid-template-columns: 1fr;
   grid-auto-rows: auto;
   display: grid; }
 
-.project-portfolio__item {
+.project-card {
   max-height: 577px;
   grid-area: span 1/span 1/span 1/span 1;
   border: 2px solid #fff8ee;
@@ -249,45 +249,45 @@ textarea.w-select {
   overflow: hidden; }
 
 @media screen and (max-width: 1180px) {
-  .project-portfolio__item {
+  .project-card {
     min-height: auto;
     height: 45vw; } }
 @media screen and (max-width: 991px) {
-  .project-portfolio__item {
+  .project-card {
     justify-content: flex-end;
     height: auto;
     min-height: 750px;
     max-height: none; } }
 @media screen and (max-width: 767px) {
-  .project-portfolio__item {
+  .project-card {
     grid-area: span 1/span 2/span 1/span 2; } }
 @media screen and (max-width: 479px) {
-  .project-portfolio__item {
+  .project-card {
     flex-flow: column;
     align-items: flex-start;
     min-height: 800px; } }
-.project-portfolio__item:hover {
+.project-card:hover {
   box-shadow: 0 0 86px 6px #7038cfcc; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-overlay {
+  .project-card-overlay {
     background-color: #0000001a;
     background-image: linear-gradient(#2d112b, #140814);
     display: block;
     position: absolute;
     inset: 0%; } }
-.project-portfolio__item-text.item-text-width {
+.project-card-content.content-width-constrained {
   max-width: 399px; }
 
-.project-portfolio__item-text {
+.project-card-content {
   z-index: 2;
   width: 492px;
   position: relative; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-text {
+  .project-card-content {
     width: 100%; } }
-.category-heading {
+.project-category {
   color: #fff8ee82;
   letter-spacing: 5px;
   margin-top: 0;
@@ -295,13 +295,13 @@ textarea.w-select {
   font-size: 20px;
   font-weight: 400; }
 
-.project-portfolio__item-text.item-text-width {
+.project-card-content.content-width-constrained {
   max-width: 399px; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-text {
+  .project-card-content {
     width: 100%; } }
-.text-highlight {
+.text-highlighted {
   color: #47e98d;
   background-color: #4d28a9cc;
   text-decoration: none;
@@ -313,16 +313,16 @@ h1 {
   font-weight: 700;
   line-height: 46px; }
 
-.heading-3 {
+.section-title {
   line-height: 46px;
   word-break: break-word;
   -moz-hyphens: auto;
   hyphens: auto; }
 
-.text-highlight:hover {
+.text-highlighted:hover {
   background-color: #7038cfcc; }
 
-.project-portfolio__item-image {
+.project-card-image {
   perspective: 2000px;
   perspective-origin: 50% 100%;
   width: 60%;
@@ -332,131 +332,131 @@ h1 {
   transform-style: flat; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-image {
+  .project-card-image {
     width: 92%;
     height: 71vw;
     margin-bottom: 37px;
     inset: 0% 0% auto auto; } }
 @media screen and (max-width: 767px) {
-  .project-portfolio__item-image {
+  .project-card-image {
     height: 83vw; } }
 @media screen and (max-width: 479px) {
-  .project-portfolio__item-image {
+  .project-card-image {
     min-width: 280px;
     height: 86vw;
     min-height: 340px; } }
-.project-portfolio__item-image.openSim2Real,
-.project-portfolio__item-image.fume-extractor,
-.project-portfolio__item-image.buell {
+.project-card-image.project-opensim2real,
+.project-card-image.project-fume-extractor,
+.project-card-image.project-buell {
   width: 60%;
   max-height: 507px;
   transform: rotate(0);
   right: 5%;
   top: 5%; }
 
-.project-portfolio__item-image.buell {
+.project-card-image.project-buell {
   right: -5%; }
 
-.project-portfolio__item-image.self-driving-car {
+.project-card-image.project-self-driving-car {
   max-height: 507px; }
 
-.project-portfolio__item-image.resume {
+.project-card-image.project-resume {
   perspective: none;
   width: 90%; }
 
-.project-portfolio__item-image.robot253 {
+.project-card-image.project-robot253 {
   inset: 5% 0% 0% auto; }
 
-.project-portfolio__item-image.a40austin {
+.project-card-image.project-a40austin {
   inset: 0% 0% 0% auto; }
 
-.project-portfolio__item-image.esk8 {
+.project-card-image.project-esk8 {
   inset: 10% -3% 0% auto; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-image.openSim2Real {
+  .project-card-image.project-opensim2real {
     width: 90%;
     height: 60vw;
     max-height: 522px;
     top: 4%;
     inset: 0 -20% auto auto; }
 
-  .project-portfolio__item-image.fume-extractor {
+  .project-card-image.project-fume-extractor {
     width: 90%;
     height: 60vw;
     max-height: 590px;
     top: 4%;
     inset: 0 -10% auto auto; }
 
-  .project-portfolio__item-image.self-driving-car {
+  .project-card-image.project-self-driving-car {
     max-height: 522px;
     top: 4%;
     left: 0;
     right: 0; }
 
-  .project-portfolio__item-image.buell {
+  .project-card-image.project-buell {
     max-height: 522px;
     height: 50vw;
     right: 0; }
 
-  .project-portfolio__item-image.robot253,
-  .project-portfolio__item-image.a40austin,
-  .project-portfolio__item-image.esk8 {
+  .project-card-image.project-robot253,
+  .project-card-image.project-a40austin,
+  .project-card-image.project-esk8 {
     max-height: 522px;
     height: 50vw;
     width: 90%;
     justify-content: center;
     inset: 0 -20% auto auto; } }
 @media screen and (max-width: 767px) {
-  .project-portfolio__item-image.openSim2Real,
-  .project-portfolio__item-image.fume-extractor,
-  .project-portfolio__item-image.self-driving-car,
-  .project-portfolio__item-image.buell {
+  .project-card-image.project-opensim2real,
+  .project-card-image.project-fume-extractor,
+  .project-card-image.project-self-driving-car,
+  .project-card-image.project-buell {
     height: 67vw; }
 
-  .project-portfolio__item-image.openSim2Real,
-  .project-portfolio__item-image.fume-extractor {
+  .project-card-image.project-opensim2real,
+  .project-card-image.project-fume-extractor {
     left: 5%; }
 
-  .project-portfolio__item-image.self-driving-car {
+  .project-card-image.project-self-driving-car {
     left: 5%;
     right: 5%; }
 
-  .project-portfolio__item-image.robot253,
-  .project-portfolio__item-image.a40austin,
-  .project-portfolio__item-image.esk8 {
+  .project-card-image.project-robot253,
+  .project-card-image.project-a40austin,
+  .project-card-image.project-esk8 {
     max-height: 522px;
     height: 70vw;
     width: 90%;
     inset: -5% auto auto auto; } }
 @media screen and (max-width: 479px) {
-  .project-portfolio__item-image.openSim2Real,
-  .project-portfolio__item-image.fume-extractor,
-  .project-portfolio__item-image.self-driving-car,
-  .project-portfolio__item-image.buell {
+  .project-card-image.project-opensim2real,
+  .project-card-image.project-fume-extractor,
+  .project-card-image.project-self-driving-car,
+  .project-card-image.project-buell {
     height: 57vw;
     min-height: 240px; }
 
-  .project-portfolio__item-image.fume-extractor,
-  .project-portfolio__item-image.openSim2Real {
+  .project-card-image.project-fume-extractor,
+  .project-card-image.project-opensim2real {
     top: 1%; }
 
-  .project-portfolio__item-image.robot253,
-  .project-portfolio__item-image.esk8 {
+  .project-card-image.project-robot253,
+  .project-card-image.project-esk8 {
     top: 0%;
     inset: -5% 5% auto auto; }
 
-  .project-portfolio__item-image.buell {
+  .project-card-image.project-buell {
     top: 0%;
     inset: -2% 5% auto auto; }
 
-  .project-portfolio__item-image.self-driving-car {
+  .project-card-image.project-self-driving-car {
     left: 8%;
     right: 8%; }
 
-  .project-portfolio__item-image.resume {
+  .project-card-image.project-resume {
     inset: 15% 0% auto auto; } }
-.project-portfolio__item-image-container {
+.project-card-media {
   transform-origin: 50% 100%;
   width: auto;
   min-width: 50px;
@@ -470,7 +470,7 @@ h1 {
   transition: opacity 0.5s ease-in-out; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-image-container {
+  .project-card-media {
     width: 70vw;
     top: 3%;
     bottom: auto;
@@ -500,19 +500,19 @@ img {
   /* Maintain aspect ratio */
   aspect-ratio: 637 / 824; }
 
-.background,
-.splash {
+.background-layer,
+.splash-layer {
   opacity: 1;
   height: 100%;
   position: absolute;
   inset: 0%;
   z-index: 4; }
 
-.project-portfolio__item-image-container .fumes,
-.splash {
+.project-card-media .fume-animation,
+.splash-layer {
   opacity: 0; }
 
-.project-portfolio__item-image-container .fumes {
+.project-card-media .fume-animation {
   position: absolute;
   transform: rotate(80deg);
   height: 20% !important;
@@ -521,21 +521,21 @@ img {
   z-index: 6 !important; }
 
 @media screen and (max-width: 991px) {
-  .project-portfolio__item-image-container .fumes {
+  .project-card-media .fume-animation {
     inset: 58% auto auto 65% !important; } }
 @media screen and (max-width: 767px) {
-  .project-portfolio__item-image-container .fumes {
+  .project-card-media .fume-animation {
     inset: 58% auto auto 73% !important; } }
 @media screen and (max-width: 479px) {
-  .project-portfolio__item-image-container .fumes {
+  .project-card-media .fume-animation {
     inset: 56% auto auto 62% !important; } }
 @media screen and (max-width: 400px) {
-  .project-portfolio__item-image-container .fumes {
+  .project-card-media .fume-animation {
     inset: 56% auto auto 180px !important; } }
 @media screen and (max-width: 350px) {
-  .project-portfolio__item-image-container .fumes {
+  .project-card-media .fume-animation {
     inset: 56% auto auto 75% !important; } }
-.foreground {
+.foreground-layer {
   opacity: 0;
   height: 100%;
   width: auto;
@@ -547,10 +547,10 @@ img {
   .background {
     opacity: 0 !important; }
 
-  .foreground,
-  .splash {
+  .foreground-layer,
+  .splash-layer {
     opacity: 1 !important; } }
-.button-portfolio--tile-2 {
+.project-cta-button {
   z-index: 2;
   letter-spacing: 3.5px;
   text-transform: uppercase;
@@ -566,34 +566,34 @@ img {
   position: relative; }
 
 @media screen and (max-width: 991px) {
-  .button-portfolio--tile-2 {
+  .project-cta-button {
     z-index: 10;
     position: relative; } }
-.project-portfolio__item-image.project-portfolio__item-image.self-driving-car .image-wrapper {
+.project-card-image.project-self-driving-car .image-container {
   min-height: 100%;
   min-width: 100%; }
 
-.laptop-keyboard-div {
+.laptop-keyboard {
   width: 104%;
   position: absolute;
   inset: 62.5% -2% auto auto; }
 
 @media screen and (max-width: 991px) {
-  .laptop-keyboard-div {
+  .laptop-keyboard {
     width: 65.5vw;
     top: 32.2vw;
     right: -1.5vw; } }
 @media screen and (max-width: 767px) {
-  .laptop-keyboard-div {
+  .laptop-keyboard {
     width: 71vw;
     top: 34.9vw;
     right: 3.5vw; } }
 @media screen and (max-width: 479px) {
-  .laptop-keyboard-div {
+  .laptop-keyboard {
     width: 78vw;
     top: 38.5vw;
     right: 5.6vw; } }
-.laptop-screen-div {
+.laptop-screen {
   transform-origin: 50% 100%;
   width: 80%;
   position: absolute;
@@ -601,18 +601,18 @@ img {
   transform: none; }
 
 @media screen and (max-width: 991px) {
-  .laptop-screen-div {
+  .laptop-screen {
     width: 50vw;
     right: 6.1vw; } }
 @media screen and (max-width: 767px) {
-  .laptop-screen-div {
+  .laptop-screen {
     width: 54vw;
     right: 12.1vw; } }
 @media screen and (max-width: 479px) {
-  .laptop-screen-div {
+  .laptop-screen {
     width: 60vw;
     right: 14.7vw; } }
-.comp-screen {
+.computer-screen {
   opacity: 0;
   background-image: url(/assets/projects/self-driving-car/screen.gif);
   background-position: 50%;
@@ -623,7 +623,7 @@ img {
   inset: 9.5% auto auto 3.6%;
   z-index: 999; }
 
-.tablet-div {
+.tablet-frame {
   transform-origin: 50% 100%;
   transform-style: flat;
   width: 100%;
@@ -632,18 +632,18 @@ img {
   transform: none; }
 
 @media screen and (max-width: 991px) {
-  .tablet-div {
+  .tablet-frame {
     width: 70vw;
     top: 0%;
     bottom: auto;
     right: -7vw; } }
 @media screen and (max-width: 767px) {
-  .tablet-div {
+  .tablet-frame {
     width: 90vw; } }
 @media screen and (max-width: 479px) {
-  .tablet-div {
+  .tablet-frame {
     width: 96vw; } }
-.tablet-screen {
+.tablet-display {
   opacity: 0;
   transform-style: preserve-3d;
   background-image: url(/assets/resume/resume_rotated.png);
@@ -655,7 +655,7 @@ img {
   inset: auto 13.3% 4.8% auto;
   transform: translateZ(-2000px) rotateX(54deg) rotateY(0) rotate(-45.1deg);
   z-index: 999; }
-  .tablet-screen:after {
+  .tablet-display:after {
     content: '';
     position: absolute;
     top: 0;
@@ -677,26 +677,26 @@ img {
 #contact-form-name-label {
   grid-area: 1/1/2/2; }
 
-.contact-form-name-input {
+.contact-name-field {
   grid-area: 2/1/3/2; }
 
 #contact-form-email-label {
   grid-area: 1/2/2/3; }
 
-.contact-form-email-input {
+.contact-email-field {
   grid-area: 2/2/3/3; }
 
 #contact-form-message-label {
   grid-area: 3/1/4/3; }
 
-.contact-form-message-textarea {
+.contact-message-field {
   grid-area: 4/1/5/3; }
 
 #contact-form-submit {
   grid-area: 5/2/6/3;
   justify-self: end; }
 
-.contact-recaptcha {
+.contact-recaptcha-field {
   grid-area: 5/1/6/2; }
 
 @media screen and (max-width: 991px) {
@@ -706,37 +706,37 @@ img {
   #contact-form-name-label {
     grid-area: 1/1/2/2; }
 
-  .contact-form-name-input {
+  .contact-name-field {
     grid-area: 2/1/3/2; }
 
   #contact-form-email-label {
     grid-area: 3/1/4/2; }
 
-  .contact-form-email-input {
+  .contact-email-field {
     grid-area: 4/1/5/2; }
 
   #contact-form-message-label {
     grid-area: 5/1/6/2; }
 
-  .contact-form-message-textarea {
+  .contact-message-field {
     grid-area: 6/1/7/2; }
 
   #contact-form-submit {
     grid-area: 8/1/9/2;
     justify-self: start; }
 
-  .contact-recaptcha {
+  .contact-recaptcha-field {
     grid-area: 7/1/8/2; } }
 @media screen and (max-width: 767px) {
   #contact-form-submit {
     justify-self: start; } }
-.round-field {
+.form-field-rounded {
   background-color: var(--warm-white);
   border-radius: 5px;
   min-height: 60px;
   margin-bottom: 20px; }
 
-.textarea.round-field {
+.textarea.form-field-rounded {
   min-height: 140px;
   padding-top: 14px;
   padding-bottom: 14px; }

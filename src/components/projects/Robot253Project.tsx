@@ -10,21 +10,21 @@ const projectConfig: ProjectConfig = {
 
 export const Robot253Project: React.FC = () => {
   return (
-    <BaseProjectItem config={projectConfig} className="robot253">
-      <ProjectImageContainer className="project-portfolio__item-image-container">
+    <BaseProjectItem config={projectConfig} className="project-robot253">
+      <ProjectImageContainer className="project-card-media" imageClassName="project-robot253">
         <ProjectImage
           src="/assets/projects/253robot/foreground.png"
-          className="foreground"
+          className="foreground-layer"
           style={{ opacity: 0 }}
         />
         <ProjectImage
           src="/assets/projects/253robot/background2.png"
-          className="background"
+          className="background-layer"
           style={{ opacity: 1 }}
         />
         <ProjectImage
           src="/assets/projects/253robot/splash.png"
-          className="splash"
+          className="splash-layer"
           style={{ opacity: 0 }}
         />
       </ProjectImageContainer>

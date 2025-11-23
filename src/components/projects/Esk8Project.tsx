@@ -10,20 +10,20 @@ const projectConfig: ProjectConfig = {
 
 export const Esk8Project: React.FC = () => {
   return (
-    <BaseProjectItem config={projectConfig} className="esk8">
-      <div className="project-portfolio__item-image esk8">
-        <div className="project-portfolio__item-image-container">
+    <BaseProjectItem config={projectConfig} className="project-esk8">
+      <div className="project-card-image project-esk8">
+        <div className="project-card-media">
           <img
             src="/assets/projects/esk8/foreground.png"
             alt=""
-            className="foreground"
+            className="foreground-layer"
             loading="lazy"
             style={{ opacity: 0 }}
           />
           <img
             src="/assets/projects/esk8/background.svg"
             alt=""
-            className="background"
+            className="background-layer"
             loading="lazy"
             style={{ opacity: 1 }}
           />

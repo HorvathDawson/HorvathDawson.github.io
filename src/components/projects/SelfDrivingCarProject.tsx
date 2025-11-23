@@ -18,37 +18,37 @@ export const SelfDrivingCarProject: React.FC = () => {
   return (
     <BaseProjectItem 
       config={projectConfig} 
-      className="self-driving-car"
+      className="project-self-driving-car"
       customAnimations={customAnimations}
     >
-      <div className="project-portfolio__item-image self-driving-car">
-        <div className="laptop-screen-div">
+      <div className="project-card-image project-self-driving-car">
+        <div className="laptop-screen">
           <ProjectImage
             src="/assets/projects/self-driving-car/computer-foreground.svg"
-            className="foreground"
+            className="foreground-layer"
             style={{ opacity: 0 }}
           />
           <ProjectImage
             src="/assets/projects/self-driving-car/computer-background.svg"
-            className="background"
+            className="background-layer"
             style={{ opacity: 1 }}
           />
           <div
-            className="comp-screen splash"
+            className="computer-screen splash-layer"
             style={{
               opacity: 0
             }}
           />
         </div>
-        <div className="laptop-keyboard-div">
+        <div className="laptop-keyboard">
           <ProjectImage
             src="/assets/projects/self-driving-car/computer-keys-foreground.svg"
-            className="foreground"
+            className="foreground-layer"
             style={{ opacity: 0 }}
           />
           <ProjectImage
             src="/assets/projects/self-driving-car/computer-keys-background.svg"
-            className="background"
+            className="background-layer"
             style={{ opacity: 1 }}
           />
         </div>

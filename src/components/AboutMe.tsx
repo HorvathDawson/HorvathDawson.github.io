@@ -7,10 +7,10 @@ interface AboutMeProps {
 
 export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
   return (
-    <div className="about-me">
-      <div className="about-me__text">
-        <h1 className="heading-3">{content.title}</h1>
-        <p className="paragraph-2">
+    <div className="about-section">
+      <div className="about-content">
+        <h1 className="section-title">{content.title}</h1>
+        <p className="about-description">
           {content.description.split('\n\n').map((paragraph: string, index: number) => (
             <React.Fragment key={index}>
               {paragraph}
@@ -24,7 +24,7 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
           ))}
         </p>
       </div>
-      <div className="about-me__image">
+      <div className="about-image">
         <img src={content.image} alt="About me" loading="lazy" />
       </div>
     </div>

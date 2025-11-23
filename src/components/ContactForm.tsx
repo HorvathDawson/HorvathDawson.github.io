@@ -61,7 +61,7 @@ export const ContactForm: React.FC = () => {
 
   return (
     <div style={{ marginTop: '150px' }}>
-      <h1 className="heading-3">Contact Me</h1>
+      <h1 className="section-title">Contact Me</h1>
       <form 
         id="contact-form"
         onSubmit={handleSubmit}
@@ -74,7 +74,7 @@ export const ContactForm: React.FC = () => {
         </label>
         <input
           id="entry.2005620554"
-          className="round-field w-input contact-form-name-input"
+          className="form-field-rounded form-input contact-name-field"
           type="text"
           name="entry.2005620554"
           value={formData.fullName}
@@ -89,7 +89,7 @@ export const ContactForm: React.FC = () => {
         </label>
         <input
           id="entry.1045781291"
-          className="round-field w-input contact-form-email-input"
+          className="form-field-rounded form-input contact-email-field"
           type="email"
           name="entry.1045781291"
           value={formData.email}
@@ -104,7 +104,7 @@ export const ContactForm: React.FC = () => {
         </label>
         <textarea
           id="entry.839337160"
-          className="textarea round-field w-input contact-form-message-textarea"
+          className="textarea form-field-rounded form-input contact-message-field"
           name="entry.839337160"
           value={formData.message}
           onChange={handleInputChange}
@@ -112,13 +112,13 @@ export const ContactForm: React.FC = () => {
           maxLength={5000}
         />
 
-        <div className="g-recaptcha contact-recaptcha" data-theme="light"
+        <div className="g-recaptcha contact-recaptcha-field" data-theme="light"
              data-sitekey="6LeBU6gqAAAAAEJDe5diUdowY2Q0cwpk0GyEdSdy"></div>
 
         <input 
           id="contact-form-submit" 
           type="submit"
-          className="button-portfolio--tile-2 w-button"
+          className="project-cta-button button"
           value="Submit"
         />
       </form>

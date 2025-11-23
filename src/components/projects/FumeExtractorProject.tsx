@@ -10,34 +10,34 @@ const projectConfig: ProjectConfig = {
 
 export const FumeExtractorProject: React.FC = () => {
   return (
-    <BaseProjectItem config={projectConfig} className="fume-extractor">
-      <div className="project-portfolio__item-image fume-extractor">
-        <div className="project-portfolio__item-image-container">
+    <BaseProjectItem config={projectConfig} className="project-fume-extractor">
+      <div className="project-card-image project-fume-extractor">
+        <div className="project-card-media">
           <img
             src="/assets/projects/fume-extractor/arm.png"
             alt=""
-            className="foreground"
+            className="foreground-layer"
             loading="lazy"
             style={{ opacity: 0 }}
           />
           <img
             src="/assets/projects/fume-extractor/arm-edge.png"
             alt=""
-            className="background"
+            className="background-layer"
             loading="lazy"
             style={{ opacity: 1 }}
           />
           <img
             src="/assets/projects/fume-extractor/splash.png"
             alt=""
-            className="splash"
+            className="splash-layer"
             loading="lazy"
             style={{ opacity: 0 }}
           />
           <img
             src="/assets/projects/fume-extractor/fumes.gif"
             alt=""
-            className="splash fumes"
+            className="splash-layer fume-animation"
             loading="lazy"
             style={{ opacity: 0 }}
           />

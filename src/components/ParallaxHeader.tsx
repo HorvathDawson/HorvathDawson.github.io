@@ -7,7 +7,7 @@ export const ParallaxHeader: React.FC = () => {
       {parallaxLayers.map((layer) => (
         <div
           key={layer.id}
-          className={`parallax__layer parallax__layer__${layer.id.slice(-1)}`}
+          className={`parallax-layer parallax-layer-depth-${layer.id.slice(-1)}`}
         >
           <img src={layer.src} alt="" />
         </div>

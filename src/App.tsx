@@ -34,7 +34,7 @@ function App() {
         const offsetY = (mouseY - centerY) * 0.002;
 
         if (window.innerWidth > 991) {
-          document.querySelectorAll('.project-portfolio__item-image').forEach((element) => {
+          document.querySelectorAll('.project-card-image').forEach((element) => {
             (element as HTMLElement).style.transform = `translate3d(${offsetX}%, ${offsetY}%, 0)`;
           });
         }
@@ -57,7 +57,7 @@ function App() {
         const maxDistance = windowHeight / 2;
 
         // Self-driving car laptop screen rotation
-        document.querySelectorAll('.project-portfolio__item-image.self-driving-car .laptop-screen-div').forEach((item) => {
+        document.querySelectorAll('.project-card-image.project-self-driving-car .laptop-screen').forEach((item) => {
           const rect = item.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.min(0, 1.5 * windowCenterY - itemCenterY);
@@ -68,7 +68,7 @@ function App() {
         });
 
         // A40 Austin car translation
-        document.querySelectorAll('.project-portfolio__item-image.a40austin .project-portfolio__item-image-container').forEach((car) => {
+        document.querySelectorAll('.project-card-image.project-a40austin .project-card-media').forEach((car) => {
           const rect = car.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.max(0, itemCenterY - windowCenterY);
@@ -85,7 +85,7 @@ function App() {
         });
 
         // Buell motor parts explosion
-        document.querySelectorAll('.project-portfolio__item').forEach((item) => {
+        document.querySelectorAll('.project-card').forEach((item) => {
           const rect = item.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.abs(itemCenterY - windowCenterY);
@@ -113,7 +113,7 @@ function App() {
       });
     };
 
-    const parallaxContainer = document.querySelector('.parallax');
+    const parallaxContainer = document.querySelector('.parallax-container');
     if (parallaxContainer) {
       parallaxContainer.addEventListener('scroll', handleScroll);
     }
@@ -132,13 +132,13 @@ function App() {
     };
   }, []);
   return (
-    <div className="parallax">
+    <div className="parallax-container">
       <ParallaxHeader />
-      <div className="parallax__cover">
-        <div className="page-wrapper home">
+      <div className="parallax-foreground">
+        <div className="main-content home">
           <AboutMe content={aboutMeContent} />
-          <div className="project-container">
-            <div className="project-portfolio__grid">
+          <div className="projects-section">
+            <div className="projects-grid">
               <OpenSim2RealProject />
               <SelfDrivingCarProject />
               <Robot253Project />

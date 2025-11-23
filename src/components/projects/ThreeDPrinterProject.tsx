@@ -11,19 +11,19 @@ const projectConfig: ProjectConfig = {
 export const ThreeDPrinterProject: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="3dprinter">
-      <div className="project-portfolio__item-image">
-        <div className="project-portfolio__item-image-container">
+      <div className="project-card-image">
+        <div className="project-card-media">
           <img
             src="/assets/projects/3dprinter/foreground.png"
             alt=""
-            className="foreground"
+            className="foreground-layer"
             loading="lazy"
             style={{ opacity: 0 }}
           />
           <img
             src="/assets/projects/3dprinter/background.png"
             alt=""
-            className="background"
+            className="background-layer"
             loading="lazy"
             style={{ opacity: 1 }}
           />

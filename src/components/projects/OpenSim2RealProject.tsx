@@ -1,5 +1,5 @@
 import React from 'react';
-import { BaseProjectItem, ProjectImageContainer, type ProjectConfig } from './BaseProjectItem';
+import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
 
 const projectConfig: ProjectConfig = {
   id: 'opensim2real',
@@ -13,14 +13,14 @@ const projectConfig: ProjectConfig = {
 export const OpenSim2RealProject: React.FC = () => {
 
   return (
-    <BaseProjectItem config={projectConfig} className="openSim2Real">
-      <ProjectImageContainer className="project-portfolio__item-image opensim2real">
-        <div className="project-portfolio__item-image-container">
+    <BaseProjectItem config={projectConfig} className="project-opensim2real">
+      <div className="project-card-image project-opensim2real">
+        <div className="project-card-media">
           {/* Body spin animation - shows on hover */}
           <img
             src="/assets/projects/opensim2real/leg-spin-body-small.gif"
             alt=""
-            className="foreground"
+            className="foreground-layer"
             loading="lazy"
             style={{ opacity: 0 }}
           />
@@ -28,12 +28,12 @@ export const OpenSim2RealProject: React.FC = () => {
           <img
             src="/assets/projects/opensim2real/leg-spin-edge-small.gif"
             alt=""
-            className="background"
+            className="background-layer"
             loading="lazy"
             style={{ opacity: 1 }}
           />
         </div>
-      </ProjectImageContainer>
+      </div>
     </BaseProjectItem>
   );
 };
