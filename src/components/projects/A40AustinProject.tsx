@@ -1,5 +1,6 @@
 import React from 'react';
-import { BaseProjectItem, ProjectImageContainer, ProjectImage, type ProjectConfig } from './BaseProjectItem';
+import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
+import { VintageCarDisplay } from '../visuals';
 
 const projectConfig: ProjectConfig = {
   id: 'a40austin',
@@ -21,18 +22,9 @@ export const A40AustinProject: React.FC = () => {
       className="project-a40austin"
       customAnimations={customAnimations}
     >
-      <ProjectImageContainer className="project-card-media" imageClassName="project-a40austin">
-        <ProjectImage
-          src="/assets/projects/a40austin/foreground.png"
-          className="foreground-layer"
-          style={{ opacity: 0 }}
-        />
-        <ProjectImage
-          src="/assets/projects/a40austin/background.png"
-          className="background-layer"
-          style={{ opacity: 1 }}
-        />
-      </ProjectImageContainer>
+      <div className="project-card-image project-a40austin">
+        <VintageCarDisplay />
+      </div>
     </BaseProjectItem>
   );
 };

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
+import { SpinningLeg } from '../visuals';
 
 const projectConfig: ProjectConfig = {
   id: 'opensim2real',
@@ -15,24 +16,7 @@ export const OpenSim2RealProject: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="project-opensim2real">
       <div className="project-card-image project-opensim2real">
-        <div className="project-card-media">
-          {/* Body spin animation - shows on hover */}
-          <img
-            src="/assets/projects/opensim2real/leg-spin-body-small.gif"
-            alt=""
-            className="foreground-layer"
-            loading="lazy"
-            style={{ opacity: 0 }}
-          />
-          {/* Edge spin animation - shows by default */}
-          <img
-            src="/assets/projects/opensim2real/leg-spin-edge-small.gif"
-            alt=""
-            className="background-layer"
-            loading="lazy"
-            style={{ opacity: 1 }}
-          />
-        </div>
+        <SpinningLeg />
       </div>
     </BaseProjectItem>
   );

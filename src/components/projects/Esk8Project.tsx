@@ -1,5 +1,6 @@
 import React from 'react';
 import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
+import { SkateboardDisplay } from '../visuals';
 
 const projectConfig: ProjectConfig = {
   id: 'esk8',
@@ -12,22 +13,7 @@ export const Esk8Project: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="project-esk8">
       <div className="project-card-image project-esk8">
-        <div className="project-card-media">
-          <img
-            src="/assets/projects/esk8/foreground.png"
-            alt=""
-            className="foreground-layer"
-            loading="lazy"
-            style={{ opacity: 0 }}
-          />
-          <img
-            src="/assets/projects/esk8/background.svg"
-            alt=""
-            className="background-layer"
-            loading="lazy"
-            style={{ opacity: 1 }}
-          />
-        </div>
+        <SkateboardDisplay />
       </div>
     </BaseProjectItem>
   );

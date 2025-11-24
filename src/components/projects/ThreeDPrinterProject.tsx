@@ -1,5 +1,6 @@
 import React from 'react';
 import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
+import { PrinterDisplay } from '../visuals';
 
 const projectConfig: ProjectConfig = {
   id: '3dprinter',
@@ -12,22 +13,7 @@ export const ThreeDPrinterProject: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="3dprinter">
       <div className="project-card-image">
-        <div className="project-card-media">
-          <img
-            src="/assets/projects/3dprinter/foreground.png"
-            alt=""
-            className="foreground-layer"
-            loading="lazy"
-            style={{ opacity: 0 }}
-          />
-          <img
-            src="/assets/projects/3dprinter/background.png"
-            alt=""
-            className="background-layer"
-            loading="lazy"
-            style={{ opacity: 1 }}
-          />
-        </div>
+        <PrinterDisplay />
       </div>
     </BaseProjectItem>
   );

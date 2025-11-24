@@ -1,5 +1,6 @@
 import React from 'react';
-import { BaseProjectItem, ProjectImageContainer, ProjectImage, type ProjectConfig } from './BaseProjectItem';
+import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
+import { MotorcycleParts } from '../visuals';
 
 const projectConfig: ProjectConfig = {
   id: 'buell',
@@ -21,43 +22,9 @@ export const BuellProject: React.FC = () => {
       className="project-buell"
       customAnimations={customAnimations}
     >
-      <ProjectImageContainer className="project-card-media" imageClassName="project-buell">
-        <ProjectImage
-          src="/assets/projects/buell/motor_images/section-view.gif"
-          className="foreground-layer"
-          style={{ opacity: 0 }}
-        />
-        <ProjectImage
-          src="/assets/projects/buell/motor_images/case.png"
-          className="background-layer"
-          style={{ opacity: 1 }}
-        />
-        <ProjectImage
-          src="/assets/projects/buell/motor_images/left-cylinder.png"
-          className="background-layer"
-          style={{ opacity: 1 }}
-        />
-        <ProjectImage
-          src="/assets/projects/buell/motor_images/cylinder-barrel.png"
-          className="background-layer part__1"
-          style={{ opacity: 1 }}
-        />
-        <ProjectImage
-          src="/assets/projects/buell/motor_images/rocker-box.png"
-          className="background-layer part__2"
-          style={{ opacity: 1 }}
-        />
-        <ProjectImage
-          src="/assets/projects/buell/motor_images/rocker-box-top.png"
-          className="background-layer part__3"
-          style={{ opacity: 1 }}
-        />
-        <ProjectImage
-          src="/assets/projects/buell/motor_images/push-rods.png"
-          className="background-layer part__4"
-          style={{ opacity: 1 }}
-        />
-      </ProjectImageContainer>
+      <div className="project-card-image project-buell">
+        <MotorcycleParts />
+      </div>
     </BaseProjectItem>
   );
 };

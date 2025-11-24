@@ -1,5 +1,6 @@
 import React from 'react';
-import { BaseProjectItem, ProjectImage, type ProjectConfig } from './BaseProjectItem';
+import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
+import { LaptopWithScreen } from '../visuals';
 
 const projectConfig: ProjectConfig = {
   id: 'self-driving-car',
@@ -22,36 +23,7 @@ export const SelfDrivingCarProject: React.FC = () => {
       customAnimations={customAnimations}
     >
       <div className="project-card-image project-self-driving-car">
-        <div className="laptop-screen">
-          <ProjectImage
-            src="/assets/projects/self-driving-car/computer-foreground.svg"
-            className="foreground-layer"
-            style={{ opacity: 0 }}
-          />
-          <ProjectImage
-            src="/assets/projects/self-driving-car/computer-background.svg"
-            className="background-layer"
-            style={{ opacity: 1 }}
-          />
-          <div
-            className="computer-screen splash-layer"
-            style={{
-              opacity: 0
-            }}
-          />
-        </div>
-        <div className="laptop-keyboard">
-          <ProjectImage
-            src="/assets/projects/self-driving-car/computer-keys-foreground.svg"
-            className="foreground-layer"
-            style={{ opacity: 0 }}
-          />
-          <ProjectImage
-            src="/assets/projects/self-driving-car/computer-keys-background.svg"
-            className="background-layer"
-            style={{ opacity: 1 }}
-          />
-        </div>
+        <LaptopWithScreen />
       </div>
     </BaseProjectItem>
   );
