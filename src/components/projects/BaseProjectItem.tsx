@@ -101,8 +101,12 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
     };
   }, [onMouseEnter, onMouseLeave, customAnimations]);
 
+  const rootClass = ['project-card', config.id, className];
+  // Keep the CTA in-flow for OpenSim2Real and Resume; other cards get cornered CTAs
+  if (config.id !== 'opensim2real' && config.id !== 'resume') rootClass.push('cta-corner');
+
   return (
-    <div ref={itemRef} className={`project-card ${config.id} ${className}`}>
+    <div ref={itemRef} className={rootClass.filter(Boolean).join(' ')}>
       <div className="project-card-overlay"></div>
       <div className="project-card-content content-width-constrained">
         <h6 className="project-category">{config.category}</h6>
@@ -116,19 +120,33 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
           )}
         </h1>
         <p className="about-description">{config.description}</p>
+          {/* For OpenSim2Real we render the CTA inside the content so it stays left-justified */}
+          { (config.id === 'opensim2real' || config.id === 'resume') && config.link && config.buttonText && (
+            <a
+              href={config.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="project-cta-button button"
+              {...(config.downloadable ? { download: true } : {})}
+              style={{ display: 'inline-block', marginTop: '18px' }}
+            >
+              {config.buttonText}
+            </a>
+          )}
       </div>
       {children}
-      {config.link && config.buttonText && (
-        <a
-          href={config.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="project-cta-button button"
-          {...(config.downloadable ? { download: true } : {})}
-        >
-          {config.buttonText}
-        </a>
-      )}
+  {/* Other projects render CTA here (and may be cornered via CSS) */}
+  {config.id !== 'opensim2real' && config.id !== 'resume' && config.link && config.buttonText && (
+          <a
+            href={config.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="project-cta-button button"
+            {...(config.downloadable ? { download: true } : {})}
+          >
+            {config.buttonText}
+          </a>
+        )}
     </div>
   );
 };
@@ -150,9 +168,9 @@ export const ProjectImageContainer: React.FC<{
   imageClassName?: string;
   children: React.ReactNode;
 }> = ({ className = "project-card-media", imageClassName = "", children }) => (
-  <div className={`project-card-image ${imageClassName}`.trim()}>
-    <div className={className}>
-      {children}
-    </div>
+  // Render only the media viewport. The outer .project-card-image wrapper was removed
+  // to ensure the media element is the direct child used for layout and hover behaviors.
+  <div className={[className, imageClassName].filter(Boolean).join(' ')}>
+    {children}
   </div>
 );

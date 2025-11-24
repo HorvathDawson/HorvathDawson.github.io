@@ -163,6 +163,32 @@ textarea.form-select {
     padding-left: 120px;
     padding-right: 120px; } }
 @media screen and (max-width: 767px) {
+
+/* Ensure consistent media sizing on wide layouts — override legacy per-project width/inset rules
+   This makes every project-card-media take the same remaining space next to the content. */
+@media screen and (min-width: 992px) {
+  .project-card-media {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: none !important;
+    /* reset positional offsets that were ported from the old wrapper */
+    right: auto !important;
+    left: auto !important;
+    top: auto !important;
+    inset: auto !important;
+  }
+  .project-card {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .project-card.cta-corner .project-cta-button {
+    position: absolute;
+    bottom: 35px;
+    left: 30px;
+    z-index: 3;
+  }
+}
   .main-content,
   .main-content.home {
     padding-left: 40px;
@@ -321,160 +347,81 @@ h1 {
 
 .text-highlighted:hover {
   background-color: #7038cfcc; }
+/* Removed per-project media positioning to keep .project-card-media consistent for every project */
+.project-card {
+  /* Ensure default layout is horizontal so content + media sit side-by-side */
+  display: flex;
+  flex-direction: row;
+}
 
-.project-card-image {
-  perspective: 2000px;
-  perspective-origin: 50% 100%;
-  width: 60%;
-  height: 90%;
-  position: absolute;
-  inset: auto 0% 0% auto;
-  transform-style: flat; }
-
-@media screen and (max-width: 991px) {
-  .project-card-image {
-    width: 92%;
-    height: 71vw;
-    margin-bottom: 37px;
-    inset: 0% 0% auto auto; } }
-@media screen and (max-width: 767px) {
-  .project-card-image {
-    height: 83vw; } }
-@media screen and (max-width: 479px) {
-  .project-card-image {
-    min-width: 280px;
-    height: 86vw;
-    min-height: 340px; } }
-.project-card-image.project-opensim2real,
-.project-card-image.project-fume-extractor,
-.project-card-image.project-buell {
-  width: 60%;
-  max-height: 507px;
-  transform: rotate(0);
-  right: 5%;
-  top: 5%; }
-
-.project-card-image.project-buell {
-  right: -5%; }
-
-.project-card-image.project-self-driving-car {
-  max-height: 507px; }
-
-.project-card-image.project-resume {
-  perspective: none;
-  width: 90%; }
-
-.project-card-image.project-robot253 {
-  inset: 5% 0% 0% auto; }
-
-.project-card-image.project-a40austin {
-  inset: 0% 0% 0% auto; }
-
-.project-card-image.project-esk8 {
-  inset: 10% -3% 0% auto; }
-
-@media screen and (max-width: 991px) {
-  .project-card-image.project-opensim2real {
-    width: 90%;
-    height: 60vw;
-    max-height: 522px;
-    top: 4%;
-    inset: 0 -20% auto auto; }
-
-  .project-card-image.project-fume-extractor {
-    width: 90%;
-    height: 60vw;
-    max-height: 590px;
-    top: 4%;
-    inset: 0 -10% auto auto; }
-
-  .project-card-image.project-self-driving-car {
-    max-height: 522px;
-    top: 4%;
-    left: 0;
-    right: 0; }
-
-  .project-card-image.project-buell {
-    max-height: 522px;
-    height: 50vw;
-    right: 0; }
-
-  .project-card-image.project-robot253,
-  .project-card-image.project-a40austin,
-  .project-card-image.project-esk8 {
-    max-height: 522px;
-    height: 50vw;
-    width: 90%;
-    justify-content: center;
-    inset: 0 -20% auto auto; } }
-@media screen and (max-width: 767px) {
-  .project-card-image.project-opensim2real,
-  .project-card-image.project-fume-extractor,
-  .project-card-image.project-self-driving-car,
-  .project-card-image.project-buell {
-    height: 67vw; }
-
-  .project-card-image.project-opensim2real,
-  .project-card-image.project-fume-extractor {
-    left: 5%; }
-
-  .project-card-image.project-self-driving-car {
-    left: 5%;
-    right: 5%; }
-
-  .project-card-image.project-robot253,
-  .project-card-image.project-a40austin,
-  .project-card-image.project-esk8 {
-    max-height: 522px;
-    height: 70vw;
-    width: 90%;
-    inset: -5% auto auto auto; } }
-@media screen and (max-width: 479px) {
-  .project-card-image.project-opensim2real,
-  .project-card-image.project-fume-extractor,
-  .project-card-image.project-self-driving-car,
-  .project-card-image.project-buell {
-    height: 57vw;
-    min-height: 240px; }
-
-  .project-card-image.project-fume-extractor,
-  .project-card-image.project-opensim2real {
-    top: 1%; }
-
-  .project-card-image.project-robot253,
-  .project-card-image.project-esk8 {
-    top: 0%;
-    inset: -5% 5% auto auto; }
-
-  .project-card-image.project-buell {
-    top: 0%;
-    inset: -2% 5% auto auto; }
-
-  .project-card-image.project-self-driving-car {
-    left: 8%;
-    right: 8%; }
-
-  .project-card-image.project-resume {
-    inset: 15% 0% auto auto; } }
 .project-card-media {
   transform-origin: 50% 100%;
-  width: auto;
-  min-width: 50px;
+  /* Fill remaining horizontal space next to the content block */
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0; /* allow shrinking inside flex */
+  transition: opacity 0.5s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: transparent;
+  /* In wide layouts use the project card height */
   height: 100%;
-  min-height: 100%;
-  position: absolute;
-  top: auto;
-  right: 5%;
-  bottom: 0%;
-  transform: none;
-  transition: opacity 0.5s ease-in-out; }
+  max-height: 100%;
+}
 
+/* The media frame hosts a visual with an intrinsic design size.
+   Center the intrinsic visual and allow it to scale down to fit the frame. */
+.project-media-frame {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.project-media-frame > * {
+  /* Visual roots provide intrinsic px width/height; allow them to scale responsively */
+  max-width: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+  display: block;
+}
+
+/* Stacked / narrow layouts: media becomes full-width and defines its own height */
 @media screen and (max-width: 991px) {
+  .project-card {
+  flex-direction: column;
+  justify-content: flex-end;
+  }
+
   .project-card-media {
-    width: 70vw;
-    top: 3%;
-    bottom: auto;
-    justify-content: center; } }
+    width: 100%;
+    height: 60vw;
+    max-height: 520px;
+    align-self: stretch;
+  order: -1; /* make media render above the content */
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .project-card-media {
+    width: 100%;
+    height: 72vw;
+    max-height: 640px;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .project-card-media {
+    width: 100%;
+    height: 80vw;
+    max-height: none;
+  }
+}
+
 img {
   vertical-align: middle;
   max-width: 100%;
@@ -643,27 +590,8 @@ img {
 @media screen and (max-width: 479px) {
   .tablet-frame {
     width: 96vw; } }
-.tablet-display {
-  opacity: 0;
-  transform-style: preserve-3d;
-  background-image: url(/assets/resume/resume_rotated.png);
-  background-position: 50%;
-  background-size: cover;
-  width: 73.5%;
-  height: 92%;
-  position: absolute;
-  inset: auto 13.3% 4.8% auto;
-  transform: translateZ(-2000px) rotateX(54deg) rotateY(0) rotate(-45.1deg);
-  z-index: 999; }
-  .tablet-display:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--purple);
-    opacity: 0.5; }
+
+/* tablet display styles were moved into the component to avoid stacking-context issues */
 
 #contact-form {
   grid-column-gap: 20px;

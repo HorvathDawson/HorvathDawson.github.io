@@ -22,8 +22,10 @@ export const A40AustinProject: React.FC = () => {
       className="project-a40austin"
       customAnimations={customAnimations}
     >
-      <div className="project-card-image project-a40austin">
-        <VintageCarDisplay />
+      <div className="project-card-media">
+        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '16/9', margin: '0 auto', position: 'relative' }}>
+          <VintageCarDisplay />
+        </div>
       </div>
     </BaseProjectItem>
   );

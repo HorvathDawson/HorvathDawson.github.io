@@ -50,25 +50,26 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
     <div 
       ref={containerRef}
       className={`fume-extractor-arm ${className}`.trim()}
-      style={{ position: 'relative', width: '100%', height: '100%' }}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
     >
-      {/* Arm foreground - shows on hover */}
-      <img
-        src="/assets/projects/fume-extractor/arm.png"
-        alt="Fume extractor arm"
-        className="foreground-layer"
-        loading="lazy"
-        style={{ 
-          opacity: 0,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-          zIndex: 5
-        }}
-      />
+      <div style={{ width: 700, height: 500, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
+        {/* Arm foreground - shows on hover */}
+        <img
+          src="/assets/projects/fume-extractor/arm.png"
+          alt="Fume extractor arm"
+          className="foreground-layer"
+          loading="lazy"
+          style={{ 
+            opacity: 0,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            zIndex: 5
+          }}
+        />
       {/* Arm edge - shows by default */}
       <img
         src="/assets/projects/fume-extractor/arm-edge.png"
@@ -103,24 +104,23 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
           zIndex: 4
         }}
       />
-      {/* Fume animation - shows on hover */}
-      <img
-        src="/assets/projects/fume-extractor/fumes.gif"
-        alt="Fume animation"
-        className="splash-layer fume-animation"
-        loading="lazy"
-        style={{ 
-          opacity: 0,
-          position: 'absolute',
-          transform: 'rotate(80deg)',
-          height: '20%',
-          top: '58%',
-          left: '75%',
-          width: 'auto',
-          objectFit: 'contain',
-          zIndex: 6
-        }}
-      />
+        {/* Fume animation - shows on hover */}
+        <img
+          src="/assets/projects/fume-extractor/fumes.gif"
+          alt="Fume animation"
+          className="splash-layer fume-animation"
+          loading="lazy"
+          style={{ 
+            opacity: 0,
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            zIndex: 6
+          }}
+        />
+      </div>
     </div>
   );
 };

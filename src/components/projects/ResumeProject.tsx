@@ -15,8 +15,10 @@ const projectConfig: ProjectConfig = {
 export const ResumeProject: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="project-resume">
-      <div className="project-card-image project-resume">
-        <TabletDisplay />
+      <div className="project-card-media">
+        <div className="project-media-frame" style={{ height: '100%', maxHeight: '100%', aspectRatio: '3/4', margin: '0 auto', position: 'relative' }}>
+          <TabletDisplay />
+        </div>
       </div>
     </BaseProjectItem>
   );

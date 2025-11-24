@@ -2,14 +2,10 @@ import React, { useRef, useEffect } from 'react';
 
 export interface RobotDisplayProps {
   className?: string;
-  size?: 'small' | 'medium' | 'large';
-  position?: 'left' | 'center' | 'right';
 }
 
 export const RobotDisplay: React.FC<RobotDisplayProps> = ({ 
-  className = '', 
-  size = 'medium',
-  position = 'right'
+  className = ''
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -46,38 +42,22 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
     };
   }, []);
 
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return { width: '50%', height: '40%' };
-      case 'large':
-        return { width: '90%', height: '90%' };
-      default:
-        return { width: '70%', height: '70%' };
-    }
-  };
-
-  const getPositionStyles = () => {
-    switch (position) {
-      case 'left':
-        return { left: '5%', right: 'auto', top: '5%', bottom: 'auto' };
-      case 'center':
-        return { left: '50%', transform: 'translateX(-50%)', right: 'auto', top: '5%', bottom: 'auto' };
-      default:
-        return { right: 'auto', left: 'auto', top: '5%', bottom: 'auto', insetInlineStart: '5%', insetInlineEnd: '0%' };
-    }
-  };
+  // size and position props are intentionally ignored — visuals fill the media viewport
 
   const containerStyles = {
     position: 'absolute' as const,
-    ...getSizeStyles(),
-    ...getPositionStyles(),
+    inset: 0 as const,
+    width: '100%',
+    height: '100%'
   };
 
-  const mediaStyles = {
-    position: 'relative' as const,
-    width: '100%',
-    height: '100%',
+  // intrinsic frame size: visual authors should treat 800x600 as the design canvas
+  const intrinsicFrameStyles = {
+    width: 800,
+    height: 600,
+    maxWidth: '100%',
+    maxHeight: '100%',
+    position: 'relative' as const
   };
 
   const imageStyles = {
@@ -96,7 +76,8 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
       className={`robot-display ${className}`.trim()}
       style={containerStyles}
     >
-      <div style={mediaStyles}>
+      <div style={intrinsicFrameStyles}>
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         {/* Robot foreground - shows on hover */}
         <img
           src="/assets/projects/253robot/foreground.png"
@@ -122,6 +103,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
           style={{ ...imageStyles, opacity: 0 }}
         />
       </div>
+    </div>
     </div>
   );
 };

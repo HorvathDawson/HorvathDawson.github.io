@@ -12,8 +12,10 @@ const projectConfig: ProjectConfig = {
 export const ThreeDPrinterProject: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="3dprinter">
-      <div className="project-card-image">
-        <PrinterDisplay />
+      <div className="project-card-media">
+        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '16/9', margin: '0 auto', position: 'relative' }}>
+          <PrinterDisplay />
+        </div>
       </div>
     </BaseProjectItem>
   );

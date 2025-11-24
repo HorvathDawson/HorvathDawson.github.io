@@ -12,8 +12,10 @@ const projectConfig: ProjectConfig = {
 export const Robot253Project: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="project-robot253">
-      <div className="project-card-image project-robot253">
-        <RobotDisplay />
+      <div className="project-card-media">
+        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '16/10', margin: '0 auto', position: 'relative' }}>
+          <RobotDisplay />
+        </div>
       </div>
     </BaseProjectItem>
   );

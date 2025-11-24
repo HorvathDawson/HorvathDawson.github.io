@@ -47,25 +47,26 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
     <div 
       ref={containerRef}
       className={`motorcycle-parts ${className}`.trim()}
-      style={{ position: 'relative', width: '100%', height: '100%' }}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
     >
-      {/* Section view animation - shows on hover */}
-      <img
-        src="/assets/projects/buell/motor_images/section-view.gif"
-        alt="Buell motorcycle engine section view"
-        className="foreground-layer"
-        loading="lazy"
-        style={{ 
-          opacity: 0,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain',
-          zIndex: 5
-        }}
-      />
+      <div style={{ width: 900, height: 700, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
+        {/* Section view animation - shows on hover */}
+        <img
+          src="/assets/projects/buell/motor_images/section-view.gif"
+          alt="Buell motorcycle engine section view"
+          className="foreground-layer"
+          loading="lazy"
+          style={{ 
+            opacity: 0,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            zIndex: 5
+          }}
+        />
       
       {/* Static engine case - shows by default */}
       <img
@@ -103,8 +104,8 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
         }}
       />
       
-      {/* Exploding parts - animated by scroll */}
-      <img
+  {/* Exploding parts - animated by scroll */}
+  <img
         src="/assets/projects/buell/motor_images/cylinder-barrel.png"
         alt="Buell motorcycle cylinder barrel"
         className="background-layer part__1"
@@ -168,6 +169,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
           zIndex: 4
         }}
       />
+      </div>
     </div>
   );
 };

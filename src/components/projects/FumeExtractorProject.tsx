@@ -12,8 +12,10 @@ const projectConfig: ProjectConfig = {
 export const FumeExtractorProject: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="project-fume-extractor">
-      <div className="project-card-image project-fume-extractor">
-        <FumeExtractorArm />
+      <div className="project-card-media">
+        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '4/3', margin: '0 auto', position: 'relative' }}>
+          <FumeExtractorArm />
+        </div>
       </div>
     </BaseProjectItem>
   );

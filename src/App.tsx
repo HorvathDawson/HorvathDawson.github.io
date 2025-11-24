@@ -34,7 +34,7 @@ function App() {
         const offsetY = (mouseY - centerY) * 0.002;
 
         if (window.innerWidth > 991) {
-          document.querySelectorAll('.project-card-image').forEach((element) => {
+          document.querySelectorAll('.project-card-media').forEach((element) => {
             (element as HTMLElement).style.transform = `translate3d(${offsetX}%, ${offsetY}%, 0)`;
           });
         }
@@ -57,7 +57,7 @@ function App() {
         const maxDistance = windowHeight / 2;
 
         // Self-driving car laptop screen rotation
-        document.querySelectorAll('.project-card-image.project-self-driving-car .laptop-screen').forEach((item) => {
+  document.querySelectorAll('.project-card-media.project-self-driving-car .laptop-screen').forEach((item) => {
           const rect = item.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.min(0, 1.5 * windowCenterY - itemCenterY);
@@ -68,7 +68,7 @@ function App() {
         });
 
         // A40 Austin car translation
-        document.querySelectorAll('.project-card-image.project-a40austin .project-card-media').forEach((car) => {
+  document.querySelectorAll('.project-a40austin .project-card-media').forEach((car) => {
           const rect = car.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.max(0, itemCenterY - windowCenterY);

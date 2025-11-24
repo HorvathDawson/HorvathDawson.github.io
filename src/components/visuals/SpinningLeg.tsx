@@ -48,40 +48,42 @@ export const SpinningLeg: React.FC<SpinningLegProps> = ({
     <div 
       ref={containerRef}
       className={`spinning-leg ${className}`.trim()}
-      style={{ position: 'relative', width: '100%', height: '100%' }}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
     >
-      {/* Body spin animation - shows on hover */}
-      <img
-        src="/assets/projects/opensim2real/leg-spin-body-small.gif"
-        alt="OpenSim2Real spinning leg body animation"
-        className="foreground-layer"
-        loading="lazy"
-        style={{ 
-          opacity: 0,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain'
-        }}
-      />
-      {/* Edge spin animation - shows by default */}
-      <img
-        src="/assets/projects/opensim2real/leg-spin-edge-small.gif"
-        alt="OpenSim2Real spinning leg edge animation"
-        className="background-layer"
-        loading="lazy"
-        style={{ 
-          opacity: 1,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          objectFit: 'contain'
-        }}
-      />
+      <div style={{ width: 600, height: 900, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
+        {/* Body spin animation - shows on hover */}
+        <img
+          src="/assets/projects/opensim2real/leg-spin-body-small.gif"
+          alt="OpenSim2Real spinning leg body animation"
+          className="foreground-layer"
+          loading="lazy"
+          style={{ 
+            opacity: 0,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain'
+          }}
+        />
+        {/* Edge spin animation - shows by default */}
+        <img
+          src="/assets/projects/opensim2real/leg-spin-edge-small.gif"
+          alt="OpenSim2Real spinning leg edge animation"
+          className="background-layer"
+          loading="lazy"
+          style={{ 
+            opacity: 1,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain'
+          }}
+        />
+      </div>
     </div>
   );
 };
