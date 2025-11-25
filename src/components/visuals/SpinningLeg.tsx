@@ -1,5 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useVisualsForceHover } from './VisualsContext';
+
+// Import your Sprite Sheets
+import bodySprite from '/assets/projects/opensim2real/leg-spin-body-small-sprite-sheet.png';
+import edgeSprite from '/assets/projects/opensim2real/leg-spin-edge-small-sprite-sheet.png';
 
 export interface SpinningLegProps {
   className?: string;
@@ -11,85 +15,102 @@ export const SpinningLeg: React.FC<SpinningLegProps> = ({
   forceHover
 }) => {
   const contextForce = useVisualsForceHover();
-  const effectiveForceHover = forceHover ?? contextForce ?? false;
-  const containerRef = useRef<HTMLDivElement>(null);
+  const showBody = forceHover ?? contextForce ?? false;
+  const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+  // --- CONFIGURATION ---
+  const FRAMES = 24;
+  const WIDTH = 637; 
+  const HEIGHT = 824;
+  const DURATION = '2s'; 
+  // ---------------------
 
-    const handleMouseEnter = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const background = container.querySelector('.background-layer') as HTMLElement;
-      
-      if (foreground && background) {
-        foreground.style.opacity = '1';
-        background.style.opacity = '0';
-      }
-    };
-
-    const handleMouseLeave = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const background = container.querySelector('.background-layer') as HTMLElement;
-      
-      if (foreground && background) {
-        foreground.style.opacity = '0';
-        background.style.opacity = '1';
-      }
-    };
-
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
-
-
+  // Math: 
+  // 1. We scale the strip so it is (Frames * 100)% of the container width.
+  // 2. We force height to 100% of the container.
+  const bgSize = `${FRAMES * 100}% 100%`;
+  const stepCount = FRAMES - 1;
+  const animName = `spin-${FRAMES}`;
 
   return (
+    // 1. OUTER WRAPPER:
+    // This fills the parent (project-card-media) completely.
+    // It uses Flexbox to CENTER the actual leg animation in the middle of the available space.
     <div 
-      ref={containerRef}
-      data-spinning-leg
       className={className}
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      data-spinning-leg-wrapper
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{ 
+        position: 'absolute', 
+        inset: 0, 
+        width: '100%', 
+        height: '100%', 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden' 
+      }}
     >
-      <div style={{ width: 600, height: 900, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
-        {/* Body spin animation - shows on hover */}
-        <img
-          src="/assets/projects/opensim2real/leg-spin-body-small.gif"
-          alt="OpenSim2Real spinning leg body animation"
-          className="foreground-layer"
-          loading="lazy"
+      <style>{`
+        @keyframes ${animName} {
+          from { background-position: 0% 0; }
+          to { background-position: 100% 0; }
+        }
+        .spinning-leg-layer {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          background-repeat: no-repeat;
+          background-size: ${bgSize};
+          animation: ${animName} ${DURATION} steps(${stepCount}) infinite;
+          
+          image-rendering: -webkit-optimize-contrast; 
+          image-rendering: crisp-edges;
+        }
+      `}</style>
+
+      {/* 2. INNER CONTAINER (The Leg):
+          - Enforces Aspect Ratio (637/824).
+          - max-width/max-height: 100% prevents it from overflowing the wrapper.
+          - height/width: auto allows the aspect-ratio to drive the dimensions.
+      */}
+      <div
+        data-spinning-leg-inner
+        style={{
+          position: 'relative',
+          aspectRatio: `${WIDTH} / ${HEIGHT}`,
+          
+          // These 3 lines create the "contain" logic:
+          // Try to fill width, but stop if height hits the edge first (and vice versa)
+          width: '100%',
+          height: 'auto',
+          maxHeight: '100%',
+          maxWidth: '100%' 
+        }}
+      >
+        {/* Background Layer (Edge) */}
+        <div 
+          className="spinning-leg-layer"
           style={{ 
-            opacity: effectiveForceHover ? 1 : 0,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain'
-          }}
+            backgroundImage: `url(${edgeSprite})`,
+            opacity: (showBody || isHovered) ? 0 : 1,
+            zIndex: 1,
+            transition: 'opacity 0.2s', 
+          }} 
         />
-        {/* Edge spin animation - shows by default */}
-        <img
-          src="/assets/projects/opensim2real/leg-spin-edge-small.gif"
-          alt="OpenSim2Real spinning leg edge animation"
-          className="background-layer"
-          loading="lazy"
+
+        {/* Foreground Layer (Body) */}
+        <div 
+          className="spinning-leg-layer"
           style={{ 
-            opacity: effectiveForceHover ? 0 : 1,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain'
-          }}
+            backgroundImage: `url(${bodySprite})`,
+            opacity: (showBody || isHovered) ? 1 : 0,
+            zIndex: 2,
+            transition: 'opacity 0.2s',
+            pointerEvents: 'none'
+          }} 
         />
       </div>
     </div>

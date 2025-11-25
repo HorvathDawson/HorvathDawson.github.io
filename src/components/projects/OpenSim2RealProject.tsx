@@ -16,7 +16,7 @@ export const OpenSim2RealProject: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="project-opensim2real">
       <div className="project-card-media">
-        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '637/824', margin: '0 auto', position: 'relative' }}>
+        <div className="project-media-frame" style={{ width: 'auto', maxHeight: '100%', aspectRatio: '637/824', margin: '0 auto', position: 'relative' }}>
           <SpinningLeg />
         </div>
       </div>
