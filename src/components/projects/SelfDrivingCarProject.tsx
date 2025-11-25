@@ -16,17 +16,17 @@ export const SelfDrivingCarProject: React.FC = () => {
     // We could move specific logic here if needed for better encapsulation
   };
 
-    return (
-      <BaseProjectItem 
-        config={projectConfig} 
-        className="project-self-driving-car"
-        customAnimations={customAnimations}
-      >
-        <div className="project-card-media">
-          <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '16/10', margin: '0 auto', position: 'relative' }}>
-            <LaptopWithScreen />
-          </div>
+  return (
+    <BaseProjectItem
+      config={projectConfig}
+      className="project-self-driving-car"
+      customAnimations={customAnimations}
+    >
+      <div className="project-card-media">
+        <div className="project-media-frame" style={{ width: '100%', height: '100%', margin: '0 auto', position: 'relative' }}>
+          <LaptopWithScreen />
         </div>
-      </BaseProjectItem>
+      </div>
+    </BaseProjectItem>
   );
 };

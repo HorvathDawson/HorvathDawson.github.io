@@ -57,27 +57,27 @@ function App() {
         const maxDistance = windowHeight / 2;
 
         // Self-driving car laptop screen rotation
-  document.querySelectorAll('.project-card-media.project-self-driving-car .laptop-screen').forEach((item) => {
+        document.querySelectorAll('.project-self-driving-car .laptop-screen').forEach((item) => {
           const rect = item.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.min(0, 1.5 * windowCenterY - itemCenterY);
-          let rotation = Math.min(60, -60 * (distanceToCenter / maxDistance));
+          let rotation = Math.min(50, -100 * (distanceToCenter / maxDistance));
           rotation = -rotation;
 
           (item as HTMLElement).style.transform = `rotateX(${rotation}deg)`;
         });
 
         // A40 Austin car translation
-  document.querySelectorAll('.project-a40austin .project-card-media').forEach((car) => {
+        document.querySelectorAll('.project-a40austin .vintage-car-display').forEach((car) => {
           const rect = car.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.max(0, itemCenterY - windowCenterY);
           const factor = Math.max(0, distanceToCenter / windowCenterY);
-          
+
           const baseDistance = -150;
           const angleInDegrees = 30;
           const angleInRadians = (angleInDegrees * Math.PI) / 180;
-          
+
           const translateX = baseDistance * factor * Math.cos(angleInRadians);
           const translateY = baseDistance * factor * Math.sin(angleInRadians);
 
@@ -90,7 +90,7 @@ function App() {
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.abs(itemCenterY - windowCenterY);
           const factor = Math.max(0, 1 - distanceToCenter / windowCenterY);
-          
+
           const baseDistance = 30;
           const angleInDegrees = 60;
           const angleInRadians = (angleInDegrees * Math.PI) / 180;

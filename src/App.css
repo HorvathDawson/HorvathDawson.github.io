@@ -520,7 +520,7 @@ img {
   min-height: 100%;
   min-width: 100%; }
 
-.laptop-keyboard {
+/* .laptop-keyboard {
   width: 104%;
   position: absolute;
   inset: 62.5% -2% auto auto; }
@@ -539,8 +539,8 @@ img {
   .laptop-keyboard {
     width: 78vw;
     top: 38.5vw;
-    right: 5.6vw; } }
-.laptop-screen {
+    right: 5.6vw; } } */
+/* .laptop-screen {
   transform-origin: 50% 100%;
   width: 80%;
   position: absolute;
@@ -558,8 +558,8 @@ img {
 @media screen and (max-width: 479px) {
   .laptop-screen {
     width: 60vw;
-    right: 14.7vw; } }
-.computer-screen {
+    right: 14.7vw; } } */
+/* .computer-screen {
   opacity: 0;
   background-image: url(/assets/projects/self-driving-car/screen.gif);
   background-position: 50%;
@@ -568,7 +568,7 @@ img {
   height: 86.5%;
   position: absolute;
   inset: 9.5% auto auto 3.6%;
-  z-index: 999; }
+  z-index: 999; } */
 
 .tablet-frame {
   transform-origin: 50% 100%;
