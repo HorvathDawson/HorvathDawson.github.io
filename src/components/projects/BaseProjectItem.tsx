@@ -23,7 +23,7 @@ interface BaseProjectItemProps {
   className?: string;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
-  customAnimations?: (element: HTMLDivElement) => void;
+  customAnimations?: (element: HTMLDivElement) => void | (() => void);
   children: React.ReactNode;
 }
 
@@ -104,9 +104,11 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
     item.addEventListener('mouseenter', handleMouseEnter);
     item.addEventListener('mouseleave', handleMouseLeave);
 
-    // Apply custom animations if provided
+    // Apply custom animations if provided. If the function returns a cleanup, call it on unmount.
+    let customCleanup: void | (() => void);
     if (customAnimations) {
-      customAnimations(item);
+      const maybeCleanup = customAnimations(item);
+      if (typeof maybeCleanup === 'function') customCleanup = maybeCleanup;
     }
 
     // Observe layout changes to detect when the project-card has collapsed (stacked)
@@ -121,8 +123,9 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
     window.addEventListener('resize', handleWindowResize);
 
     return () => {
-      item.removeEventListener('mouseenter', handleMouseEnter);
-      item.removeEventListener('mouseleave', handleMouseLeave);
+  item.removeEventListener('mouseenter', handleMouseEnter);
+  item.removeEventListener('mouseleave', handleMouseLeave);
+  if (customCleanup) customCleanup();
       ro.disconnect();
       window.removeEventListener('resize', handleWindowResize);
     };

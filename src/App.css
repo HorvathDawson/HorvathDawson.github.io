@@ -468,12 +468,13 @@ img {
   z-index: 5; }
 
 @media screen and (max-width: 991px) {
-  .background {
+  .background-layer {
     opacity: 0 !important; }
 
   .foreground-layer,
   .splash-layer {
     opacity: 1 !important; } }
+
 .project-cta-button {
   z-index: 2;
   letter-spacing: 3.5px;

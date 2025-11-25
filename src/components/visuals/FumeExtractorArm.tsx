@@ -51,7 +51,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, []);
+  }, [effectiveForceHover]);
 
   return (
     <div 
@@ -115,16 +115,17 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
         <img
           src="/assets/projects/fume-extractor/fumes.gif"
           alt="Fume animation"
-          className="splash-layer fume-animation"
+          className="splash-layer"
           loading="lazy"
           style={{ 
             opacity: effectiveForceHover ? 1 : 0,
-            position: 'absolute',
+            position: 'relative',
             width: '20%',
             height: '20%',
-            left: '75%',
-            top: '15%',
-            transform: 'rotate(80deg)',
+            minHeight: 0,
+            top: '65%',
+            left: '87%',
+            transform: 'translate(-50%, -50%) rotate(80deg)',
             objectFit: 'contain',
             zIndex: 6
           }}
