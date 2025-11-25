@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useVisualsForceHover } from './VisualsContext';
 
 export interface MotorcyclePartsProps {
@@ -14,39 +14,8 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
   const effectiveForceHover = forceHover ?? contextForce ?? false;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleMouseEnter = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const backgrounds = container.querySelectorAll('.background-layer:not([data-part])') as NodeListOf<HTMLElement>;
-      
-      if (foreground) foreground.style.opacity = '1';
-      backgrounds.forEach(el => el.style.opacity = '0');
-    };
-
-    const handleMouseLeave = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const backgrounds = container.querySelectorAll('.background-layer:not([data-part])') as NodeListOf<HTMLElement>;
-      
-      if (foreground) foreground.style.opacity = '0';
-      backgrounds.forEach(el => el.style.opacity = '1');
-    };
-
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-
-    // Scroll-based explosion animation is handled by parent component via App.tsx
-    // The parts with data-part="1", "2", etc. will be animated by the global scroll handler
-
-    return () => {
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
+  // Hover behavior is handled by BaseProjectItem via VisualsForceHoverContext.
+  // Visuals should only read `effectiveForceHover` and render accordingly.
 
 
 

@@ -14,40 +14,8 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
   const contextForce = useVisualsForceHover();
   const effectiveForceHover = forceHover ?? contextForce ?? false;
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleMouseEnter = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const background = container.querySelector('.background-layer') as HTMLElement;
-      const splash = container.querySelector('.splash-layer') as HTMLElement;
-      
-      if (foreground) foreground.style.opacity = '1';
-      if (background) background.style.opacity = '0';
-      if (splash) splash.style.opacity = '1';
-    };
-
-    const handleMouseLeave = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const background = container.querySelector('.background-layer') as HTMLElement;
-      const splash = container.querySelector('.splash-layer') as HTMLElement;
-      
-      if (foreground) foreground.style.opacity = '0';
-      if (background) background.style.opacity = '1';
-      if (splash) splash.style.opacity = '0';
-    };
-
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [/* intentionally no deps */]);
+  // Hover behavior is handled by BaseProjectItem via VisualsForceHoverContext.
+  // Visuals should only read `effectiveForceHover` and render accordingly.
 
   // size and position props are intentionally ignored — visuals fill the media viewport
 

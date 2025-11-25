@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useVisualsForceHover } from './VisualsContext';
 
 // Import your Sprite Sheets
@@ -16,7 +16,6 @@ export const SpinningLeg: React.FC<SpinningLegProps> = ({
 }) => {
   const contextForce = useVisualsForceHover();
   const showBody = forceHover ?? contextForce ?? false;
-  const [isHovered, setIsHovered] = useState(false);
 
   // --- CONFIGURATION ---
   const FRAMES = 24;
@@ -39,8 +38,6 @@ export const SpinningLeg: React.FC<SpinningLegProps> = ({
     <div 
       className={className}
       data-spinning-leg-wrapper
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       style={{ 
         position: 'absolute', 
         inset: 0, 
@@ -92,10 +89,10 @@ export const SpinningLeg: React.FC<SpinningLegProps> = ({
       >
         {/* Background Layer (Edge) */}
         <div 
-          className="spinning-leg-layer"
+          className="spinning-leg-layer background-layer"
           style={{ 
             backgroundImage: `url(${edgeSprite})`,
-            opacity: (showBody || isHovered) ? 0 : 1,
+            opacity: showBody ? 0 : 1,
             zIndex: 1,
             transition: 'opacity 0.2s', 
           }} 
@@ -103,10 +100,10 @@ export const SpinningLeg: React.FC<SpinningLegProps> = ({
 
         {/* Foreground Layer (Body) */}
         <div 
-          className="spinning-leg-layer"
+          className="spinning-leg-layer foreground-layer"
           style={{ 
             backgroundImage: `url(${bodySprite})`,
-            opacity: (showBody || isHovered) ? 1 : 0,
+            opacity: showBody ? 1 : 0,
             zIndex: 2,
             transition: 'opacity 0.2s',
             pointerEvents: 'none'

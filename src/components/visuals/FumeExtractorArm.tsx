@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useVisualsForceHover } from './VisualsContext';
 
 export interface FumeExtractorArmProps {
@@ -14,44 +14,8 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
   const contextForce = useVisualsForceHover();
   const effectiveForceHover = forceHover ?? contextForce ?? false;
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleMouseEnter = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const background = container.querySelector('.background-layer') as HTMLElement;
-      const splash = container.querySelector('.splash-layer') as HTMLElement;
-      const fumeAnimation = container.querySelector('.fume-animation') as HTMLElement;
-      
-      if (foreground) foreground.style.opacity = '1';
-      if (background) background.style.opacity = '0';
-      if (splash) splash.style.opacity = '1';
-      if (fumeAnimation) fumeAnimation.style.opacity = '1';
-    };
-
-    const handleMouseLeave = () => {
-      if (effectiveForceHover) return;
-      const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const background = container.querySelector('.background-layer') as HTMLElement;
-      const splash = container.querySelector('.splash-layer') as HTMLElement;
-      const fumeAnimation = container.querySelector('.fume-animation') as HTMLElement;
-      
-      if (foreground) foreground.style.opacity = '0';
-      if (background) background.style.opacity = '1';
-      if (splash) splash.style.opacity = '0';
-      if (fumeAnimation) fumeAnimation.style.opacity = '0';
-    };
-
-    container.addEventListener('mouseenter', handleMouseEnter);
-    container.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [effectiveForceHover]);
+  // Hover behavior is handled by BaseProjectItem via VisualsForceHoverContext.
+  // Visuals should only read `effectiveForceHover` and render accordingly.
 
   return (
     <div 
