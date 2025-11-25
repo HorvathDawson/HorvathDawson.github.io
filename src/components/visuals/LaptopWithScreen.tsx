@@ -47,7 +47,7 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
     };
 
     const observer = new ResizeObserver(updateSize);
-    if (container.parentElement) observer.observe(container.parentElement);
+    if (container.parentElement instanceof Node) observer.observe(container.parentElement as Element);
     window.addEventListener('resize', updateSize);
     requestAnimationFrame(updateSize);
 

@@ -37,6 +37,7 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const lastMousePos = useRef<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     const item = itemRef.current;
@@ -73,6 +74,9 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
         (canvas as HTMLCanvasElement).dataset.hover = 'true';
       });
 
+      // Add box shadow to project card when hovered
+      try { item.style.boxShadow = '0 0 86px 6px #7038cfcc'; } catch (e) { /* ignore */ }
+
       // Call custom mouse enter handler if provided
       if (onMouseEnter) onMouseEnter();
     };
@@ -97,12 +101,50 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
         (canvas as HTMLCanvasElement).dataset.hover = 'false';
       });
 
+      // Remove box shadow when mouse leaves
+      try { item.style.boxShadow = ''; } catch (e) { /* ignore */ }
+
       // Call custom mouse leave handler if provided
       if (onMouseLeave) onMouseLeave();
     };
 
     item.addEventListener('mouseenter', handleMouseEnter);
     item.addEventListener('mouseleave', handleMouseLeave);
+
+    // Track last known mouse position so we can detect "virtual" mouseenter
+    // events that occur when the page is scrolled and an element moves under
+    // a stationary cursor.
+    const updateMousePos = (ev: MouseEvent) => {
+      lastMousePos.current = { x: ev.clientX, y: ev.clientY };
+    };
+    window.addEventListener('mousemove', updateMousePos);
+
+    // Scroll handler: when scrolling, check if the last known mouse position
+    // is currently over this project card. Use rAF to debounce rapid scroll.
+    let scrollRaf = 0 as number | null;
+    const scrollCheck = () => {
+      if (!lastMousePos.current) return;
+      const { x, y } = lastMousePos.current;
+      const el = document.elementFromPoint(x, y);
+      const isOver = !!el && item.contains(el);
+      if (isOver) {
+        handleMouseEnter();
+      } else {
+        handleMouseLeave();
+      }
+    };
+
+    const onScroll = () => {
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollCheck();
+        scrollRaf = 0;
+      }) as unknown as number;
+    };
+
+    const parallax = document.querySelector('.parallax-container') as HTMLElement | null;
+    if (parallax) parallax.addEventListener('scroll', onScroll, { passive: true });
+    else window.addEventListener('scroll', onScroll, { passive: true });
 
     // Apply custom animations if provided. If the function returns a cleanup, call it on unmount.
     let customCleanup: void | (() => void);
@@ -128,6 +170,9 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
   if (customCleanup) customCleanup();
       ro.disconnect();
       window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener('mousemove', updateMousePos);
+      if (parallax) parallax.removeEventListener('scroll', onScroll as EventListener);
+      else window.removeEventListener('scroll', onScroll as EventListener);
     };
   }, [onMouseEnter, onMouseLeave, customAnimations, isCollapsed]);
 
@@ -146,22 +191,22 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
       foregrounds.forEach((el: Element) => { (el as HTMLElement).style.opacity = '1'; });
       splashes.forEach((el: Element) => { (el as HTMLElement).style.opacity = '1'; });
       canvases.forEach((canvas: Element) => { (canvas as HTMLCanvasElement).dataset.hover = 'true'; });
+      // When collapsed, also visually indicate hover with shadow
+      try { item.style.boxShadow = '0 0 86px 6px #7038cfcc'; } catch (e) { /* ignore */ }
     } else {
       backgrounds.forEach((el: Element) => { (el as HTMLElement).style.opacity = '1'; });
       foregrounds.forEach((el: Element) => { (el as HTMLElement).style.opacity = '0'; });
       splashes.forEach((el: Element) => { (el as HTMLElement).style.opacity = '0'; });
       canvases.forEach((canvas: Element) => { (canvas as HTMLCanvasElement).dataset.hover = 'false'; });
+      try { item.style.boxShadow = ''; } catch (e) { /* ignore */ }
     }
   }, [isCollapsed]);
 
   const rootClass = ['project-card', config.id, className];
-  // Keep the CTA in-flow for OpenSim2Real and Resume; other cards get cornered CTAs
-  if (config.id !== 'opensim2real' && config.id !== 'resume') rootClass.push('cta-corner');
 
   return (
     <VisualsForceHoverContext.Provider value={isCollapsed}>
       <div ref={itemRef} className={rootClass.filter(Boolean).join(' ')}>
-      <div className="project-card-overlay"></div>
       <div className="project-card-content content-width-constrained">
         <h6 className="project-category">{config.category}</h6>
         <h1 className="section-title">
