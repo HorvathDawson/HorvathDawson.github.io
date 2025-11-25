@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
 import { MotorcycleParts } from '../visuals';
 
@@ -10,58 +10,80 @@ const projectConfig: ProjectConfig = {
 };
 
 export const BuellProject: React.FC = () => {
-  // Custom animations for motor parts explosion (handled by global scroll handler in App.tsx)
-  const customAnimations = (_element: HTMLDivElement) => {
-    const root = document.querySelector('.project-buell');
-    if (!root) return;
+  
+  const customAnimations = useCallback((rootElement: HTMLElement) => {
+    // 1. SELECT PARTS
+    // Find all elements with data-part attribute inside this component
+    const parts = Array.from(rootElement.querySelectorAll('[data-part]')) as HTMLElement[];
+    
+    // 2. SELECT FRAME (Static Reference)
+    // We measure this to calculate scroll position
+    const frame = rootElement.querySelector('.project-media-frame') as HTMLElement | null;
 
-    const parts = Array.from(root.querySelectorAll('[data-part]')) as HTMLElement[];
-    if (!parts.length) return;
+    if (!parts.length || !frame) return;
 
     let raf = 0;
-    const container = document.querySelector('.parallax-container') as HTMLElement | null || window;
 
     const onScroll = () => {
       if (raf) return;
+      
       raf = requestAnimationFrame(() => {
+        // Measure the static frame relative to viewport
+        const rect = frame.getBoundingClientRect();
         const windowHeight = window.innerHeight;
         const windowCenterY = windowHeight / 2;
 
+        // Calculate center of the image
+        const itemCenterY = rect.top + rect.height / 2;
+        
+        // Calculate Distance from Center (Absolute)
+        // We use Math.abs because we want it to explode if it's too high OR too low.
+        // It should only be fully assembled when exactly in the center.
+        const distanceToCenter = Math.abs(itemCenterY - windowCenterY);
+        
+        // Calculate Factor (0 to 1)
+        // 0 = At center (Assembled)
+        // 1 = At edge of screen (Exploded)
+        // We clamp at 1 so parts don't fly off to infinity if you have a tall monitor
+        const factor = Math.min(1, distanceToCenter / (windowHeight / 2));
 
-  const rect = root.getBoundingClientRect();
-  const itemCenterY = rect.top + rect.height / 2;
-  const distanceToCenter = Math.abs(itemCenterY - windowCenterY);
-  // Invert behavior: parts start away (when far from center) and move toward center as the card approaches
-  const factor = Math.min(1, distanceToCenter / windowCenterY);
-
-        const baseDistance = 30;
+        // CONFIGURATION
+        const baseDistance = 40; // Pixels of separation per part index
         const angleInDegrees = 60;
         const angleInRadians = (angleInDegrees * Math.PI) / 180;
 
         parts.forEach((part) => {
           const partAttr = part.getAttribute('data-part');
           if (!partAttr) return;
+          
           const partNumber = parseInt(partAttr, 10);
-          const distance = baseDistance * partNumber * factor;
+          
+          // The higher the part number, the further it moves
+          const totalDistance = baseDistance * partNumber * factor;
 
-          const translateX = distance * Math.cos(angleInRadians);
-          const translateY = -distance * Math.sin(angleInRadians);
+          // Calculate X/Y vector based on 60 degree angle
+          const translateX = totalDistance * Math.cos(angleInRadians);
+          // Negative Y moves UP (exploding outwards)
+          const translateY = -totalDistance * Math.sin(angleInRadians);
 
-          part.style.transform = `translate(${translateX}px, ${translateY}px)`;
+          part.style.transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
         });
 
         raf = 0;
       });
     };
 
-    (container as any).addEventListener ? (container as any).addEventListener('scroll', onScroll) : window.addEventListener('scroll', onScroll);
+    // 3. ATTACH LISTENERS
+    window.addEventListener('scroll', onScroll, { passive: true });
+    
+    // Initial calculation
     onScroll();
 
     return () => {
-      (container as any).removeEventListener ? (container as any).removeEventListener('scroll', onScroll) : window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  };
+  }, []);
 
   return (
     <BaseProjectItem 
@@ -70,7 +92,20 @@ export const BuellProject: React.FC = () => {
       customAnimations={customAnimations}
     >
       <div className="project-card-media">
-        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '4/3', margin: '0 auto', position: 'relative' }}>
+        <div 
+          className="project-media-frame" 
+          style={{ 
+            width: '100%', 
+            maxHeight: '100%', 
+            aspectRatio: '4/3', 
+            margin: '0 auto', 
+            position: 'relative',
+            // Overflow visible is usually needed for "exploded" views 
+            // so parts can float outside the box slightly
+            overflow: 'visible' 
+          }}
+        >
+          {/* The MotorcycleParts component contains the svg/divs with [data-part="1"], etc. */}
           <MotorcycleParts />
         </div>
       </div>

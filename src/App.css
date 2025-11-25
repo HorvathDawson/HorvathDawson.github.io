@@ -26,6 +26,19 @@ body {
   font-family: Space Mono, sans-serif;
   font-size: 14px;
   line-height: 20px;
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  width: 100%;
+}
+
+html {
+  /* This controls the main browser scrollbar */
+  overflow-y: scroll; 
+  scroll-behavior: smooth; 
+}
+
+#root, .app-container {
+  height: auto;
+  overflow: visible;
 }
 
 .about-description {

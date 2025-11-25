@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { BaseProjectItem, type ProjectConfig } from './BaseProjectItem';
 import { VintageCarDisplay } from '../visuals';
 
@@ -10,53 +10,71 @@ const projectConfig: ProjectConfig = {
 };
 
 export const A40AustinProject: React.FC = () => {
-  // Custom animations for car sliding (handled by global scroll handler in App.tsx)
-  const customAnimations = (_element: HTMLDivElement) => {
-    // Move the A40 car translation animation here so it's scoped to this project
-    const root = document.querySelector('.project-a40austin');
-    if (!root) return;
 
-    const car = root.querySelector('[data-vintage-car]') as HTMLElement | null;
-    if (!car) return;
+  // We use useCallback to keep the function reference stable
+  const customAnimations = useCallback((rootElement: HTMLElement) => {
+    
+    // 1. FIND THE CAR
+    // Since the attribute is inside the component, querySelector will find it deep inside rootElement
+    const car = rootElement.querySelector('[data-vintage-car]') as HTMLElement | null;
+    
+    // 2. FIND THE FRAME (Static Reference)
+    // We MUST measure the frame because it stays still. 
+    // If we measure the car, the math breaks as soon as the car moves.
+    const frame = rootElement.querySelector('.project-media-frame') as HTMLElement | null;
+
+    if (!car || !frame) return;
 
     let raf = 0;
-    const container = document.querySelector('.parallax-container') as HTMLElement | null || window;
 
     const onScroll = () => {
       if (raf) return;
+      
       raf = requestAnimationFrame(() => {
-        const rect = car.getBoundingClientRect();
+        // Measure the STATIC frame relative to the viewport
+        const rect = frame.getBoundingClientRect();
         const windowHeight = window.innerHeight;
         const windowCenterY = windowHeight / 2;
+        
+        // Calculate where the center of the frame is
         const itemCenterY = rect.top + rect.height / 2;
-        const distanceToCenter = Math.max(0, itemCenterY - windowCenterY);
-        const factor = Math.max(0, distanceToCenter / windowCenterY);
+        
+        // Calculate Distance from Center
+        // Positive = Below center (scrolling in)
+        // Negative = Above center (scrolled past)
+        const distanceToCenter = itemCenterY - windowCenterY;
+        
+        // Calculate Factor (0 to 1)
+        // We clamp it at 0 so it stops moving once it reaches the center/top
+        let factor = distanceToCenter / windowCenterY;
+        factor = Math.max(0, factor); 
 
-        const baseDistance = -150;
-        const angleInDegrees = 30;
-        const angleInRadians = (angleInDegrees * Math.PI) / 180;
+        // Animation Values
+        // Start 200px to the left, 100px down
+        const baseDistance = -200; 
+        
+        const translateX = baseDistance * factor;
+        const translateY = 100 * factor;
 
-        const translateX = baseDistance * factor * Math.cos(angleInRadians);
-        const translateY = baseDistance * factor * Math.sin(angleInRadians);
-
-        car.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        // Apply transform to the CAR
+        car.style.transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
 
         raf = 0;
       });
     };
 
-    // Attach to parallax container if present otherwise window
-    container.addEventListener ? container.addEventListener('scroll', onScroll) : window.addEventListener('scroll', onScroll);
-
-    // Run once to initialize
+    // Attach to window (since we fixed the scroll container earlier)
+    window.addEventListener('scroll', onScroll, { passive: true });
+    
+    // Initial call to align
     onScroll();
 
-    // return cleanup fn
+    // Cleanup
     return () => {
-      container.removeEventListener ? container.removeEventListener('scroll', onScroll) : window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('scroll', onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  };
+  }, []);
 
   return (
     <BaseProjectItem 
@@ -65,7 +83,20 @@ export const A40AustinProject: React.FC = () => {
       customAnimations={customAnimations}
     >
       <div className="project-card-media">
-        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '16/9', margin: '0 auto', position: 'relative' }}>
+        <div 
+          className="project-media-frame" 
+          style={{ 
+            width: '100%', 
+            maxHeight: '100%', 
+            aspectRatio: '16/9', 
+            margin: '0 auto', 
+            position: 'relative',
+            overflow: 'hidden' // Masks the car when it slides in from outside
+          }}
+        >
+          {/* We do not need a wrapper div here anymore.
+            The [data-vintage-car] attribute is inside this component.
+          */}
           <VintageCarDisplay />
         </div>
       </div>
