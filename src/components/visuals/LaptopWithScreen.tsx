@@ -1,14 +1,23 @@
 import React, { useRef, useEffect } from 'react';
+import { useVisualsForceHover } from './VisualsContext';
 
 export interface LaptopWithScreenProps {
   className?: string;
 }
 
+export interface LaptopWithScreenProps {
+  className?: string;
+  forceHover?: boolean;
+}
+
 export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
-  className = ''
+  className = '',
+  forceHover
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const contextForce = useVisualsForceHover();
+  const effectiveForceHover = forceHover ?? contextForce ?? false;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -54,6 +63,7 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
     requestAnimationFrame(updateSize);
 
     const handleMouseEnter = () => {
+      if (effectiveForceHover) return;
       const foregrounds = container.querySelectorAll('.foreground-layer') as NodeListOf<HTMLElement>;
       const backgrounds = container.querySelectorAll('.background-layer') as NodeListOf<HTMLElement>;
       const screens = container.querySelectorAll('.computer-screen') as NodeListOf<HTMLElement>;
@@ -64,6 +74,7 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
     };
 
     const handleMouseLeave = () => {
+      if (effectiveForceHover) return;
       const foregrounds = container.querySelectorAll('.foreground-layer') as NodeListOf<HTMLElement>;
       const backgrounds = container.querySelectorAll('.background-layer') as NodeListOf<HTMLElement>;
       const screens = container.querySelectorAll('.computer-screen') as NodeListOf<HTMLElement>;
@@ -87,7 +98,8 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`laptop-with-screen ${className}`.trim()}
+      data-laptop-with-screen
+      className={className}
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}
     >
       {/* Sized content container */}
@@ -102,11 +114,7 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
         }}
       >
 
-        {/* Laptop Screen Group 
-              Original: top: 50, left: 150, width: 700, height: 450 (Ref: 1000x700)
-              % Top: 7.14%, Left: 15%, Width: 70%, Height: 64.28%
-          */}
-        <div className="laptop-screen" style={{
+        <div data-laptop-screen style={{
           position: 'absolute',
           top: '7.14%',
           left: '15%',
@@ -115,59 +123,15 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
           transformOrigin: '50% 100%',
           transformStyle: 'preserve-3d',
         }}>
-          <img
-            src="/assets/projects/self-driving-car/computer-foreground.svg"
-            alt="Self-driving car computer foreground"
-            className="foreground-layer"
-            loading="lazy"
-            style={{ opacity: 0, position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-          />
-          <img
-            src="/assets/projects/self-driving-car/computer-background.svg"
-            alt="Self-driving car computer background"
-            className="background-layer"
-            loading="lazy"
-            style={{ opacity: 1, position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-          />
-          {/* Splash Screen - Adjusted to fit inside the monitor bezel */}
-          <div
-            className="computer-screen splash-layer"
-            style={{
-              opacity: 0,
-              position: 'absolute',
-              top: '6%',
-              left: '6%',
-              width: '88%',
-              height: '80%',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundImage: 'url(/assets/projects/self-driving-car/screen.gif)',
-              zIndex: 6
-            }}
-          />
+          <img src="/assets/projects/self-driving-car/computer-foreground.svg" alt="Self-driving car computer foreground" className="foreground-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+          <img src="/assets/projects/self-driving-car/computer-background.svg" alt="Self-driving car computer background" className="background-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 0 : 1, position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
+          <div className="splash-layer computer-screen" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', top: '6%', left: '6%', width: '88%', height: '80%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: 'url(/assets/projects/self-driving-car/screen.gif)', zIndex: 6 }} />
         </div>
 
-        {/* Laptop Keyboard Group 
-              Original: top: 480, left: 100, width: 800, height: 200
-              % Top: 68.57%, Left: 10%, Width: 80%, Height: 28.57%
-          */}
-        <div className="laptop-keyboard" style={{ position: 'absolute', top: '68.57%', left: '10%', width: '80%', height: '28.57%' }}>
-          <img
-            src="/assets/projects/self-driving-car/computer-keys-foreground.svg"
-            alt="Self-driving car keyboard foreground"
-            className="foreground-layer"
-            loading="lazy"
-            style={{ opacity: 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
-          />
-          <img
-            src="/assets/projects/self-driving-car/computer-keys-background.svg"
-            alt="Self-driving car keyboard background"
-            className="background-layer"
-            loading="lazy"
-            style={{ opacity: 1, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
-          />
+        <div data-laptop-keyboard style={{ position: 'absolute', top: '68.57%', left: '10%', width: '80%', height: '28.57%' }}>
+          <img src="/assets/projects/self-driving-car/computer-keys-foreground.svg" alt="Self-driving car keyboard foreground" className="foreground-layer" loading="lazy" style={{ opacity: 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }} />
+          <img src="/assets/projects/self-driving-car/computer-keys-background.svg" alt="Self-driving car keyboard background" className="background-layer" loading="lazy" style={{ opacity: 1, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
-
       </div>
     </div>
   );

@@ -57,7 +57,7 @@ function App() {
         const maxDistance = windowHeight / 2;
 
         // Self-driving car laptop screen rotation
-        document.querySelectorAll('.project-self-driving-car .laptop-screen').forEach((item) => {
+        document.querySelectorAll('.project-self-driving-car [data-laptop-screen]').forEach((item) => {
           const rect = item.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.min(0, 1.5 * windowCenterY - itemCenterY);
@@ -68,7 +68,7 @@ function App() {
         });
 
         // A40 Austin car translation
-        document.querySelectorAll('.project-a40austin .vintage-car-display').forEach((car) => {
+        document.querySelectorAll('.project-a40austin [data-vintage-car]').forEach((car) => {
           const rect = car.getBoundingClientRect();
           const itemCenterY = rect.top + rect.height / 2;
           const distanceToCenter = Math.max(0, itemCenterY - windowCenterY);
@@ -95,11 +95,10 @@ function App() {
           const angleInDegrees = 60;
           const angleInRadians = (angleInDegrees * Math.PI) / 180;
 
-          item.querySelectorAll('[class*="part__"]').forEach((part) => {
-            const match = (part as HTMLElement).className.match(/part__(\d+)/);
-            if (!match) return;
-
-            const partNumber = parseInt(match[1], 10);
+          item.querySelectorAll('[data-part]').forEach((part) => {
+            const partAttr = (part as HTMLElement).getAttribute('data-part');
+            if (!partAttr) return;
+            const partNumber = parseInt(partAttr, 10);
             const distance = baseDistance * partNumber * factor;
 
             const translateX = distance * Math.cos(angleInRadians);

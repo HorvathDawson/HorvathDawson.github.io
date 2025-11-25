@@ -1,19 +1,25 @@
 import React, { useRef, useEffect } from 'react';
+import { useVisualsForceHover } from './VisualsContext';
 
 export interface FumeExtractorArmProps {
   className?: string;
+  forceHover?: boolean;
 }
 
 export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({ 
-  className = ''
+  className = '',
+  forceHover
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const contextForce = useVisualsForceHover();
+  const effectiveForceHover = forceHover ?? contextForce ?? false;
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleMouseEnter = () => {
+      if (effectiveForceHover) return;
       const foreground = container.querySelector('.foreground-layer') as HTMLElement;
       const background = container.querySelector('.background-layer') as HTMLElement;
       const splash = container.querySelector('.splash-layer') as HTMLElement;
@@ -26,6 +32,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
     };
 
     const handleMouseLeave = () => {
+      if (effectiveForceHover) return;
       const foreground = container.querySelector('.foreground-layer') as HTMLElement;
       const background = container.querySelector('.background-layer') as HTMLElement;
       const splash = container.querySelector('.splash-layer') as HTMLElement;
@@ -60,7 +67,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
           className="foreground-layer"
           loading="lazy"
           style={{ 
-            opacity: 0,
+            opacity: effectiveForceHover ? 1 : 0,
             position: 'absolute',
             top: 0,
             left: 0,
@@ -77,7 +84,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
         className="background-layer"
         loading="lazy"
         style={{ 
-          opacity: 1,
+          opacity: effectiveForceHover ? 0 : 1,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -94,7 +101,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
         className="splash-layer"
         loading="lazy"
         style={{ 
-          opacity: 0,
+          opacity: effectiveForceHover ? 1 : 0,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -111,11 +118,13 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
           className="splash-layer fume-animation"
           loading="lazy"
           style={{ 
-            opacity: 0,
+            opacity: effectiveForceHover ? 1 : 0,
             position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
+            width: '20%',
+            height: '20%',
+            left: '75%',
+            top: '15%',
+            transform: 'rotate(80deg)',
             objectFit: 'contain',
             zIndex: 6
           }}

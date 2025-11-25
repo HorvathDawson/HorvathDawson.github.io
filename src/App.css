@@ -358,6 +358,7 @@ h1 {
   transform-origin: 50% 100%;
   /* Fill remaining horizontal space next to the content block */
   position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-width: 0; /* allow shrinking inside flex */
   transition: opacity 0.5s ease-in-out;
@@ -455,33 +456,9 @@ img {
   inset: 0%;
   z-index: 4; }
 
-.project-card-media .fume-animation,
 .splash-layer {
-  opacity: 0; }
-
-.project-card-media .fume-animation {
-  position: absolute;
-  transform: rotate(80deg);
-  height: 20% !important;
-  min-height: 20% !important;
-  inset: 58% auto auto 75% !important;
-  z-index: 6 !important; }
-
-@media screen and (max-width: 991px) {
-  .project-card-media .fume-animation {
-    inset: 58% auto auto 65% !important; } }
-@media screen and (max-width: 767px) {
-  .project-card-media .fume-animation {
-    inset: 58% auto auto 73% !important; } }
-@media screen and (max-width: 479px) {
-  .project-card-media .fume-animation {
-    inset: 56% auto auto 62% !important; } }
-@media screen and (max-width: 400px) {
-  .project-card-media .fume-animation {
-    inset: 56% auto auto 180px !important; } }
-@media screen and (max-width: 350px) {
-  .project-card-media .fume-animation {
-    inset: 56% auto auto 75% !important; } }
+  opacity: 0;
+}
 .foreground-layer {
   opacity: 0;
   height: 100%;
@@ -495,7 +472,7 @@ img {
     opacity: 0 !important; }
 
   .foreground-layer,
-  .splash-layer {
+  .alash-layer {
     opacity: 1 !important; } }
 .project-cta-button {
   z-index: 2;

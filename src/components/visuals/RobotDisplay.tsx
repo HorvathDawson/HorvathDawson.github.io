@@ -1,19 +1,25 @@
 import React, { useRef, useEffect } from 'react';
+import { useVisualsForceHover } from './VisualsContext';
 
 export interface RobotDisplayProps {
   className?: string;
+  forceHover?: boolean;
 }
 
 export const RobotDisplay: React.FC<RobotDisplayProps> = ({ 
-  className = ''
+  className = '',
+  forceHover
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const contextForce = useVisualsForceHover();
+  const effectiveForceHover = forceHover ?? contextForce ?? false;
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleMouseEnter = () => {
+      if (effectiveForceHover) return;
       const foreground = container.querySelector('.foreground-layer') as HTMLElement;
       const background = container.querySelector('.background-layer') as HTMLElement;
       const splash = container.querySelector('.splash-layer') as HTMLElement;
@@ -24,6 +30,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
     };
 
     const handleMouseLeave = () => {
+      if (effectiveForceHover) return;
       const foreground = container.querySelector('.foreground-layer') as HTMLElement;
       const background = container.querySelector('.background-layer') as HTMLElement;
       const splash = container.querySelector('.splash-layer') as HTMLElement;
@@ -40,7 +47,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, []);
+  }, [/* intentionally no deps */]);
 
   // size and position props are intentionally ignored — visuals fill the media viewport
 
@@ -70,10 +77,16 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
     transition: 'opacity 0.3s ease',
   };
 
+  // initial styles reflect forceHover prop: if true, show foreground + splash
+  const initialForegroundOpacity = effectiveForceHover ? 1 : 0;
+  const initialBackgroundOpacity = effectiveForceHover ? 0 : 1;
+  const initialSplashOpacity = effectiveForceHover ? 1 : 0;
+
   return (
     <div 
       ref={containerRef}
-      className={`robot-display ${className}`.trim()}
+      data-robot-display
+      className={className}
       style={containerStyles}
     >
       <div style={intrinsicFrameStyles}>
@@ -84,7 +97,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
           alt="Robot 253 foreground"
           className="foreground-layer"
           loading="lazy"
-          style={{ ...imageStyles, opacity: 0 }}
+          style={{ ...imageStyles, opacity: initialForegroundOpacity }}
         />
         {/* Robot background - shows by default */}
         <img
@@ -92,7 +105,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
           alt="Robot 253 background"
           className="background-layer"
           loading="lazy"
-          style={{ ...imageStyles, opacity: 1 }}
+          style={{ ...imageStyles, opacity: initialBackgroundOpacity }}
         />
         {/* Robot splash overlay - shows on hover */}
         <img
@@ -100,7 +113,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
           alt="Robot 253 splash"
           className="splash-layer"
           loading="lazy"
-          style={{ ...imageStyles, opacity: 0 }}
+          style={{ ...imageStyles, opacity: initialSplashOpacity }}
         />
       </div>
     </div>

@@ -1,12 +1,17 @@
 import React, { useRef, useEffect } from 'react';
+import { useVisualsForceHover } from './VisualsContext';
 
 export interface MotorcyclePartsProps {
   className?: string;
+  forceHover?: boolean;
 }
 
 export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({ 
-  className = ''
+  className = '',
+  forceHover
 }) => {
+  const contextForce = useVisualsForceHover();
+  const effectiveForceHover = forceHover ?? contextForce ?? false;
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -14,16 +19,18 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
     if (!container) return;
 
     const handleMouseEnter = () => {
+      if (effectiveForceHover) return;
       const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const backgrounds = container.querySelectorAll('.background-layer:not([class*="part__"])') as NodeListOf<HTMLElement>;
+      const backgrounds = container.querySelectorAll('.background-layer:not([data-part])') as NodeListOf<HTMLElement>;
       
       if (foreground) foreground.style.opacity = '1';
       backgrounds.forEach(el => el.style.opacity = '0');
     };
 
     const handleMouseLeave = () => {
+      if (effectiveForceHover) return;
       const foreground = container.querySelector('.foreground-layer') as HTMLElement;
-      const backgrounds = container.querySelectorAll('.background-layer:not([class*="part__"])') as NodeListOf<HTMLElement>;
+      const backgrounds = container.querySelectorAll('.background-layer:not([data-part])') as NodeListOf<HTMLElement>;
       
       if (foreground) foreground.style.opacity = '0';
       backgrounds.forEach(el => el.style.opacity = '1');
@@ -33,7 +40,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
     container.addEventListener('mouseleave', handleMouseLeave);
 
     // Scroll-based explosion animation is handled by parent component via App.tsx
-    // The parts with class "part__1", "part__2", etc. will be animated by the global scroll handler
+    // The parts with data-part="1", "2", etc. will be animated by the global scroll handler
 
     return () => {
       container.removeEventListener('mouseenter', handleMouseEnter);
@@ -46,7 +53,8 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
   return (
     <div 
       ref={containerRef}
-      className={`motorcycle-parts ${className}`.trim()}
+      data-motorcycle-parts
+      className={className}
       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
     >
       <div style={{ width: 900, height: 700, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
@@ -57,7 +65,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
           className="foreground-layer"
           loading="lazy"
           style={{ 
-            opacity: 0,
+            opacity: effectiveForceHover ? 1 : 0,
             position: 'absolute',
             top: 0,
             left: 0,
@@ -75,7 +83,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
         className="background-layer"
         loading="lazy"
         style={{ 
-          opacity: 1,
+          opacity: effectiveForceHover ? 0 : 1,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -93,7 +101,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
         className="background-layer"
         loading="lazy"
         style={{ 
-          opacity: 1,
+          opacity: effectiveForceHover ? 0 : 1,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -105,13 +113,14 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       />
       
   {/* Exploding parts - animated by scroll */}
-  <img
-        src="/assets/projects/buell/motor_images/cylinder-barrel.png"
-        alt="Buell motorcycle cylinder barrel"
-        className="background-layer part__1"
+    <img
+      src="/assets/projects/buell/motor_images/cylinder-barrel.png"
+      alt="Buell motorcycle cylinder barrel"
+      data-part="1"
+      className="background-layer"
         loading="lazy"
         style={{ 
-          opacity: 1,
+          opacity: effectiveForceHover ? 0 : 1,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -124,10 +133,11 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       <img
         src="/assets/projects/buell/motor_images/rocker-box.png"
         alt="Buell motorcycle rocker box"
-        className="background-layer part__2"
+        data-part="2"
+        className="background-layer"
         loading="lazy"
         style={{ 
-          opacity: 1,
+          opacity: effectiveForceHover ? 0 : 1,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -140,10 +150,11 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       <img
         src="/assets/projects/buell/motor_images/rocker-box-top.png"
         alt="Buell motorcycle rocker box top"
-        className="background-layer part__3"
+        data-part="3"
+        className="background-layer"
         loading="lazy"
         style={{ 
-          opacity: 1,
+          opacity: effectiveForceHover ? 0 : 1,
           position: 'absolute',
           top: 0,
           left: 0,
@@ -156,10 +167,11 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       <img
         src="/assets/projects/buell/motor_images/push-rods.png"
         alt="Buell motorcycle push rods"
-        className="background-layer part__4"
+        data-part="4"
+        className="background-layer"
         loading="lazy"
         style={{ 
-          opacity: 1,
+          opacity: effectiveForceHover ? 0 : 1,
           position: 'absolute',
           top: 0,
           left: 0,

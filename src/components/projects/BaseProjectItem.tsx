@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { VisualsForceHoverContext } from '../visuals/VisualsContext';
 
 export interface ProjectConfig {
   id: string;
@@ -35,13 +36,25 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
   children
 }) => {
   const itemRef = useRef<HTMLDivElement>(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const item = itemRef.current;
     if (!item) return;
 
+    // Helper to check whether the project card is in the stacked/collapsed layout
+    const checkCollapsed = () => {
+      if (!item) return;
+      const style = getComputedStyle(item);
+      setIsCollapsed(style.flexDirection === 'column');
+    };
+
+    // Initialize collapsed state immediately
+    checkCollapsed();
+
     // Default hover animations
     const handleMouseEnter = () => {
+      if (isCollapsed) return;
       const backgrounds = item.querySelectorAll('.background-layer');
       const foregrounds = item.querySelectorAll('.foreground-layer');
       const splashes = item.querySelectorAll('.splash-layer');
@@ -65,6 +78,7 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
     };
 
     const handleMouseLeave = () => {
+      if (isCollapsed) return;
       const backgrounds = item.querySelectorAll('.background-layer');
       const foregrounds = item.querySelectorAll('.foreground-layer');
       const splashes = item.querySelectorAll('.splash-layer');
@@ -95,18 +109,55 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
       customAnimations(item);
     }
 
+    // Observe layout changes to detect when the project-card has collapsed (stacked)
+    const ro = new ResizeObserver(() => {
+      // ResizeObserver may fire when sizes change; recompute collapsed state
+      checkCollapsed();
+    });
+    ro.observe(item);
+
+    // Also listen to window resize events as a reliable fallback when layout rules change
+    const handleWindowResize = () => checkCollapsed();
+    window.addEventListener('resize', handleWindowResize);
+
     return () => {
       item.removeEventListener('mouseenter', handleMouseEnter);
       item.removeEventListener('mouseleave', handleMouseLeave);
+      ro.disconnect();
+      window.removeEventListener('resize', handleWindowResize);
     };
-  }, [onMouseEnter, onMouseLeave, customAnimations]);
+  }, [onMouseEnter, onMouseLeave, customAnimations, isCollapsed]);
+
+  // When collapsed state changes, immediately apply the forced-hover visuals state
+  useEffect(() => {
+    const item = itemRef.current;
+    if (!item) return;
+
+    const backgrounds = item.querySelectorAll('.background-layer');
+    const foregrounds = item.querySelectorAll('.foreground-layer');
+    const splashes = item.querySelectorAll('.splash-layer');
+    const canvases = item.querySelectorAll('canvas');
+
+    if (isCollapsed) {
+      backgrounds.forEach((el: Element) => { (el as HTMLElement).style.opacity = '0'; });
+      foregrounds.forEach((el: Element) => { (el as HTMLElement).style.opacity = '1'; });
+      splashes.forEach((el: Element) => { (el as HTMLElement).style.opacity = '1'; });
+      canvases.forEach((canvas: Element) => { (canvas as HTMLCanvasElement).dataset.hover = 'true'; });
+    } else {
+      backgrounds.forEach((el: Element) => { (el as HTMLElement).style.opacity = '1'; });
+      foregrounds.forEach((el: Element) => { (el as HTMLElement).style.opacity = '0'; });
+      splashes.forEach((el: Element) => { (el as HTMLElement).style.opacity = '0'; });
+      canvases.forEach((canvas: Element) => { (canvas as HTMLCanvasElement).dataset.hover = 'false'; });
+    }
+  }, [isCollapsed]);
 
   const rootClass = ['project-card', config.id, className];
   // Keep the CTA in-flow for OpenSim2Real and Resume; other cards get cornered CTAs
   if (config.id !== 'opensim2real' && config.id !== 'resume') rootClass.push('cta-corner');
 
   return (
-    <div ref={itemRef} className={rootClass.filter(Boolean).join(' ')}>
+    <VisualsForceHoverContext.Provider value={isCollapsed}>
+      <div ref={itemRef} className={rootClass.filter(Boolean).join(' ')}>
       <div className="project-card-overlay"></div>
       <div className="project-card-content content-width-constrained">
         <h6 className="project-category">{config.category}</h6>
@@ -134,7 +185,7 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
             </a>
           )}
       </div>
-      {children}
+        {children}
   {/* Other projects render CTA here (and may be cornered via CSS) */}
   {config.id !== 'opensim2real' && config.id !== 'resume' && config.link && config.buttonText && (
           <a
@@ -148,6 +199,7 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
           </a>
         )}
     </div>
+    </VisualsForceHoverContext.Provider>
   );
 };
 

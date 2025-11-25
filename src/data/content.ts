@@ -122,10 +122,10 @@ export const projects: Project[] = [
       background: '/assets/projects/buell/motor_images/case.png',
       additionalImages: [
         { src: '/assets/projects/buell/motor_images/left-cylinder.png', type: 'background' },
-        { src: '/assets/projects/buell/motor_images/cylinder-barrel.png', className: 'part__1', type: 'part' },
-        { src: '/assets/projects/buell/motor_images/rocker-box.png', className: 'part__2', type: 'part' },
-        { src: '/assets/projects/buell/motor_images/rocker-box-top.png', className: 'part__3', type: 'part' },
-        { src: '/assets/projects/buell/motor_images/push-rods.png', className: 'part__4', type: 'part' }
+        { src: '/assets/projects/buell/motor_images/cylinder-barrel.png', type: 'part' },
+        { src: '/assets/projects/buell/motor_images/rocker-box.png', type: 'part' },
+        { src: '/assets/projects/buell/motor_images/rocker-box-top.png', type: 'part' },
+        { src: '/assets/projects/buell/motor_images/push-rods.png', type: 'part' }
       ]
     },
     animations: {
@@ -142,7 +142,7 @@ export const projects: Project[] = [
       background: '/assets/projects/fume-extractor/arm-edge.png',
       splash: '/assets/projects/fume-extractor/splash.png',
       additionalImages: [
-        { src: '/assets/projects/fume-extractor/fumes.gif', className: 'fumes', type: 'splash' }
+        { src: '/assets/projects/fume-extractor/fumes.gif', type: 'splash' }
       ]
     }
   },
