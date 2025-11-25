@@ -1,105 +1,111 @@
 import React, { useEffect, useRef } from 'react';
 import { parallaxLayers } from '../data/content';
 
-// Helper: compute the transform for a given depth index (0..5)
-const depthTransform = (depthIndex: number) => {
-  const z = -500 + depthIndex * 100; // -500, -400, ... 0
-  const scale = 6 - depthIndex; // 6,5,4,3,2,1
-  const translateY = `translateY(calc((100vh - 66.6666666667vw) / 5))`;
-  return `translateZ(${z}px) scale(${scale}) ${translateY}`;
-};
-
-export const ParallaxHeaderCSS: React.FC = () => {
-  return (
-    <>
-      {parallaxLayers.map((layer) => {
-        const depth = Number(layer.id.slice(-1));
-        const style: React.CSSProperties = {
-          position: 'absolute',
-          display: 'flex',
-          height: '100vh',
-          minHeight: '100vh',
-          width: '100vw',
-          minWidth: '100vw',
-          justifyContent: 'center',
-          transform: depthTransform(depth),
-        };
-
-        const imgStyle: React.CSSProperties = {
-          display: 'block',
-          width: '100vw',
-          minWidth: 500,
-          minHeight: '333.3333333333px',
-          height: '66.6666666667vw',
-        };
-
-        return (
-          <div key={layer.id} style={style}>
-            <img src={layer.src} alt="" style={imgStyle} />
-          </div>
-        );
-      })}
-    </>
-  );
-};
-
-export const ParallaxHeaderJS: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+export const ParallaxHeader: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // CONFIGURATION
+  // 0.5 = The furthest back layer moves at 50% speed
+  const MAX_PARALLAX_LAG = 1; 
 
   useEffect(() => {
-    let raf = 0 as number | null;
+    let rafId: number;
+    const container = containerRef.current;
+
     const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        const scrolled = window.scrollY || window.pageYOffset;
-        // Move each layer at a factor proportional to its depth
-        const layers = containerRef.current?.children;
-        if (layers) {
-          Array.from(layers).forEach((child, i) => {
-            const depth = Number((child as HTMLElement).dataset.depth ?? i);
-            const speed = (6 - depth) * 0.05; // tuning constant
-            const y = scrolled * speed;
-            (child as HTMLElement).style.transform = `translate3d(0, ${y}px, 0) translateZ(${ -500 + depth*100 }px) scale(${6 - depth})`;
-          });
-        }
-        raf = 0;
-      }) as unknown as number;
+      if (!container) return;
+
+      const scrolled = window.scrollY;
+
+      // Optimization: Stop calculating if we are way past the header
+      if (scrolled > container.offsetHeight + 200) return;
+
+      rafId = requestAnimationFrame(() => {
+        const layers = container.querySelectorAll<HTMLElement>('[data-parallax-layer]');
+        
+        layers.forEach((layer) => {
+          // Read the speed (0 for foreground, 0.5 for background)
+          const speed = parseFloat(layer.dataset.speed || '0');
+          
+          if (speed !== 0) {
+            // DIRECT SYNC: No easing, no lag.
+            // We calculate the exact position immediately.
+            // Positive Y moves the element DOWN, countering the UPWARD scroll.
+            const yPos = scrolled * speed;
+            layer.style.transform = `translate3d(0, ${yPos}px, 0)`;
+          }
+        });
+      });
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    // kick once
-    onScroll();
+    onScroll(); // Initial align
 
     return () => {
-      window.removeEventListener('scroll', onScroll as EventListener);
-      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 
+  // Sort layers (Back to Front)
+  const sortedLayers = [...parallaxLayers].sort((a, b) => {
+    const depthA = Number(a.id.replace(/\D/g, ''));
+    const depthB = Number(b.id.replace(/\D/g, ''));
+    return depthA - depthB;
+  });
+
+  const maxDepthIndex = sortedLayers.length - 1;
+
+  // Image Dimensions
+  const imgStyle: React.CSSProperties = {
+    display: 'block',
+    width: '100%',
+    height: '66.666vw', 
+    minHeight: '333px', 
+    objectFit: 'cover',
+  };
+
   return (
-    <div ref={containerRef} style={{ position: 'relative' }}>
-      {parallaxLayers.map((layer) => {
-        const depth = Number(layer.id.slice(-1));
-        const style: React.CSSProperties = {
-          position: 'absolute',
+    <div 
+      ref={containerRef} 
+      className="parallax-container"
+      style={{ 
+        position: 'relative', 
+        width: '100%',
+        overflow: 'hidden',
+        zIndex: 0
+      }}
+    >
+      {sortedLayers.map((layer, index) => {
+        const isForeground = index === maxDepthIndex;
+        
+        // Calculate Speed
+        // Foreground (Front) -> Speed 0 (Moves with page)
+        // Background (Back)  -> Speed 0.5 (Moves slower than page)
+        const depthRatio = index / maxDepthIndex; 
+        const speed = (1 - depthRatio) * MAX_PARALLAX_LAG;
+
+        const layerStyle: React.CSSProperties = {
+          // Foreground is relative (sets the height). Others are absolute (sit behind).
+          position: isForeground ? 'relative' : 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: index,
           display: 'flex',
-          height: '100vh',
-          minHeight: '100vh',
-          width: '100vw',
-          minWidth: '100vw',
           justifyContent: 'center',
-          transform: depthTransform(depth),
-        };
-        const imgStyle: React.CSSProperties = {
-          display: 'block',
-          width: '100vw',
-          minWidth: 500,
-          minHeight: '333.3333333333px',
-          height: '66.6666666667vw',
+          // 'will-change' tells the browser to optimize this layer for movement
+          willChange: 'transform', 
         };
 
         return (
-          <div key={layer.id} data-depth={depth} style={style}>
+          <div
+            key={layer.id}
+            data-parallax-layer
+            data-speed={isForeground ? 0 : speed}
+            style={layerStyle}
+          >
             <img src={layer.src} alt="" style={imgStyle} />
           </div>
         );
@@ -108,6 +114,4 @@ export const ParallaxHeaderJS: React.FC = () => {
   );
 };
 
-// Default export maintains compatibility with existing imports — CSS-style inline version
-export const ParallaxHeader = ParallaxHeaderCSS;
 export default ParallaxHeader;

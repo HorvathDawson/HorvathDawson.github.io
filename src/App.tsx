@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ParallaxHeader } from './components/ParallaxHeader';
 import { AboutMe } from './components/AboutMe';
 import { ContactForm } from './components/ContactForm';
@@ -18,7 +18,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    // Mouse tracking for shuffle effect
+    // Mouse tracking for shuffle effect (Project Cards)
     let mouseAnimationFrame: number;
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -53,44 +53,46 @@ function App() {
       }
     };
   }, []);
-  const parallaxContainerStyle: React.CSSProperties = {
-    backgroundColor: '#FEDCC8',
-    perspectiveOrigin: 'center',
-    perspective: '100px',
-    height: '100vh',
-    overflowX: 'hidden',
-    overflowY: 'auto',
+
+  // 1. CONTAINER STYLE
+  // Removed "height: 100vh" and "overflow: auto". 
+  // We want the Window to scroll, not this div.
+  const appContainerStyle: React.CSSProperties = {
+    backgroundColor: '#FEDCC8', // Background color behind parallax layers
+    minHeight: '100vh',
     position: 'relative',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex'
+    overflowX: 'hidden', // Prevents horizontal scrollbar if images are wide
   };
 
-  const parallaxForegroundStyle: React.CSSProperties = {
+  // 2. CONTENT STYLE
+  // This sits strictly BELOW the header.
+  // We add zIndex to ensure it sits on top of any background artifacts.
+  const mainContentStyle: React.CSSProperties = {
     backgroundImage: 'url("/assets/parallax_header/foreground_color.png")',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center center',
+    backgroundRepeat: 'repeat-y', // Changed to repeat or no-repeat depending on your image
+    backgroundPosition: 'top center',
     backgroundSize: 'cover',
     position: 'relative',
-    top: 'calc(max(100vw, 500px) * 0.6666666667 * 0.99)',
-    height: 'max-content',
-    width: '100vw',
-    minWidth: '100%',
-    minHeight: '200vh',
-    zIndex: 2,
-    paddingTop: '100px'
+    zIndex: 10, // Ensures content sits on top of the bottom of the parallax header
+    width: '100%',
+    paddingTop: '50px', // Spacing between header and first text
+    paddingBottom: '50px'
   };
-  // Match the layer-5 transform so the foreground aligns with the closest layer
-  parallaxForegroundStyle.transform = `translateZ(0px) scale(1) translateY(calc((100vh - 66.6666666667vw) / 5))`;
 
   return (
-    <div className="parallax-container" style={parallaxContainerStyle}>
+    <div className="app-container" style={appContainerStyle}>
+      
+      {/* The Header sits at the top. 
+        Because we fixed ParallaxHeader.tsx to use 'relative' positioning 
+        for the foreground, it will naturally push the content below it down.
+      */}
       <ParallaxHeader />
-      <div className="parallax-foreground" style={parallaxForegroundStyle}>
+
+      {/* Main Content Area */}
+      <div className="parallax-foreground" style={mainContentStyle}>
         <div className="main-content home">
           <AboutMe content={aboutMeContent} />
+          
           <div className="projects-section">
             <div className="projects-grid">
               <OpenSim2RealProject />
