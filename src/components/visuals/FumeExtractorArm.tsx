@@ -57,9 +57,27 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
     <div 
       ref={containerRef}
       className={`fume-extractor-arm ${className}`.trim()}
-      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+      style={{ 
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'visible'
+      }}
     >
-      <div style={{ width: 700, height: 500, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
+      <div
+        style={{
+          width: 'auto',
+          height: '100%',
+          aspectRatio: '317 / 327',
+          position: 'relative',
+          maxWidth: '100%',
+          maxHeight: '100%',
+        }}
+      >
         {/* Arm foreground - shows on hover */}
         <img
           src="/assets/projects/fume-extractor/arm.png"
@@ -124,7 +142,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
             height: '20%',
             minHeight: 0,
             top: '65%',
-            left: '87%',
+            left: '90%',
             transform: 'translate(-50%, -50%) rotate(80deg)',
             objectFit: 'contain',
             zIndex: 6
