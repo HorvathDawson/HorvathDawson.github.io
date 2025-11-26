@@ -60,6 +60,7 @@ function App() {
   const appContainerStyle: React.CSSProperties = {
     backgroundColor: '#FEDCC8', // Background color behind parallax layers
     minHeight: '100vh',
+    width: '100vw',
     position: 'relative',
     overflowX: 'hidden', // Prevents horizontal scrollbar if images are wide
   };

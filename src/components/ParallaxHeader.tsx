@@ -5,8 +5,7 @@ export const ParallaxHeader: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // CONFIGURATION
-  // 0.5 = The furthest back layer moves at 50% speed
-  const MAX_PARALLAX_LAG = 1; 
+  const MAX_PARALLAX_LAG = 0.85; 
 
   useEffect(() => {
     let rafId: number;
@@ -17,20 +16,15 @@ export const ParallaxHeader: React.FC = () => {
 
       const scrolled = window.scrollY;
 
-      // Optimization: Stop calculating if we are way past the header
+      // Optimization check
       if (scrolled > container.offsetHeight + 200) return;
 
       rafId = requestAnimationFrame(() => {
         const layers = container.querySelectorAll<HTMLElement>('[data-parallax-layer]');
         
         layers.forEach((layer) => {
-          // Read the speed (0 for foreground, 0.5 for background)
           const speed = parseFloat(layer.dataset.speed || '0');
-          
           if (speed !== 0) {
-            // DIRECT SYNC: No easing, no lag.
-            // We calculate the exact position immediately.
-            // Positive Y moves the element DOWN, countering the UPWARD scroll.
             const yPos = scrolled * speed;
             layer.style.transform = `translate3d(0, ${yPos}px, 0)`;
           }
@@ -39,7 +33,7 @@ export const ParallaxHeader: React.FC = () => {
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // Initial align
+    onScroll(); 
 
     return () => {
       window.removeEventListener('scroll', onScroll);
@@ -56,60 +50,92 @@ export const ParallaxHeader: React.FC = () => {
 
   const maxDepthIndex = sortedLayers.length - 1;
 
-  // Image Dimensions
-  const imgStyle: React.CSSProperties = {
-    display: 'block',
+  // --- STYLES ---
+
+  // 1. OUTER WRAPPER
+  // - Full Width
+  // - Background Texture (visible in margins)
+  // - Centers the content
+  // - overflow: hidden triggers the clipping for parallax
+  const outerWrapperStyle: React.CSSProperties = {
+    position: 'relative',
     width: '100%',
-    height: '66.666vw', 
-    minHeight: '333px', 
-    objectFit: 'cover',
+    display: 'flex', 
+    justifyContent: 'center',
+    overflow: 'hidden', 
+    zIndex: 0,
+    
+    // Background Texture
+    backgroundImage: 'url("/assets/parallax_header/foreground_color.png")',
+    backgroundRepeat: 'repeat', 
+    backgroundPosition: 'center',
+  };
+
+  // 2. INNER CONTAINER
+  // - Wraps tightly around the images
+  // - No fixed dimensions; determined by the foreground image
+  const innerHeaderStyle: React.CSSProperties = {
+    position: 'relative',
+    width: 'auto',
+    height: 'auto',
   };
 
   return (
-    <div 
-      ref={containerRef} 
-      className="parallax-container"
-      style={{ 
-        position: 'relative', 
-        width: '100%',
-        overflow: 'hidden',
-        zIndex: 0
-      }}
-    >
-      {sortedLayers.map((layer, index) => {
-        const isForeground = index === maxDepthIndex;
-        
-        // Calculate Speed
-        // Foreground (Front) -> Speed 0 (Moves with page)
-        // Background (Back)  -> Speed 0.5 (Moves slower than page)
-        const depthRatio = index / maxDepthIndex; 
-        const speed = (1 - depthRatio) * MAX_PARALLAX_LAG;
+    <div ref={containerRef} style={outerWrapperStyle}>
+      <div style={innerHeaderStyle}>
+        {sortedLayers.map((layer, index) => {
+          const isForeground = index === maxDepthIndex;
+          const isBackground = index === 0;
+          
+          const depthRatio = index / maxDepthIndex; 
+          const speed = (1 - depthRatio) * MAX_PARALLAX_LAG;
 
-        const layerStyle: React.CSSProperties = {
-          // Foreground is relative (sets the height). Others are absolute (sit behind).
-          position: isForeground ? 'relative' : 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: index,
-          display: 'flex',
-          justifyContent: 'center',
-          // 'will-change' tells the browser to optimize this layer for movement
-          willChange: 'transform', 
-        };
+          // 3. LAYER STYLES
+          const layerStyle: React.CSSProperties = {
+            // Foreground is relative to push the parent container's size.
+            // Backgrounds are absolute to sit behind it.
+            position: isForeground ? 'relative' : 'absolute',
+            top: 0,
+            left: 0,
+            
+            // These ensure background layers match the foreground layer exactly
+            width: '100%',
+            height: '100%',
+            
+            zIndex: index,
+            willChange: 'transform',
+            
+            // Apply warm-white to Layer 0
+            backgroundColor: isBackground ? 'var(--warm-white)' : undefined,
+          };
 
-        return (
-          <div
-            key={layer.id}
-            data-parallax-layer
-            data-speed={isForeground ? 0 : speed}
-            style={layerStyle}
-          >
-            <img src={layer.src} alt="" style={imgStyle} />
-          </div>
-        );
-      })}
+          // 4. IMAGE STYLES
+          // This is the logic that enforces "80vh OR 100% width"
+          const imgStyle: React.CSSProperties = {
+            display: 'block',
+            // If the screen is TALL: Limit height to 80vh
+            maxHeight: '80vh', 
+            // If the screen is NARROW: Limit width to 100%
+            maxWidth: '100%',  
+            // Maintain aspect ratio within those limits
+            width: 'auto',
+            height: 'auto',
+            // Ensure background layers cover the calculated area
+            objectFit: 'cover', 
+          };
+
+          return (
+            <div
+              key={layer.id}
+              data-parallax-layer
+              data-speed={isForeground ? 0 : speed}
+              style={layerStyle}
+            >
+              <img src={layer.src} alt="" style={imgStyle} />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
