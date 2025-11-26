@@ -17,6 +17,54 @@ import {
 import './App.css';
 
 function App() {
+
+  // --- NEW: SEO Metadata & Console Easter Eggs ---
+  useEffect(() => {
+    // 1. SEO / Metadata Injection
+    document.title = "Austin's Portfolio | Engineering & Design";
+    
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', 'Portfolio of Austin: A showcase of robotics, software engineering, self-driving cars, and DIY fabrication projects.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = "description";
+      meta.content = "Portfolio of Austin: A showcase of robotics, software engineering, self-driving cars, and DIY fabrication projects.";
+      document.head.appendChild(meta);
+    }
+
+    // 2. Console Easter Egg
+    const styles = [
+      'color: #ff4500', 
+      'background: #2a2a2a', 
+      'font-size: 14px', 
+      'padding: 10px', 
+      'border-radius: 5px',
+      'border: 2px solid #ff8c00'
+    ].join(';');
+
+    const funMessage = `
+    (
+      )
+     ( )  .   
+      |  /_\  
+    __|__/_|__ 
+   /_________\ 
+     |     |   
+   
+   Hey there, explorer! 🌲 
+   If you're looking at this, you probably enjoy code as much as I do.
+   
+   Feel free to poke around the source or reach out via the contact form!
+    `;
+
+    console.log(`%c 🏕️ Welcome to the Portfolio! `, styles);
+    console.log(funMessage);
+    console.log("Built with React, TypeScript, and a lot of coffee ☕");
+
+  }, []);
+  // ----------------------------------------------
+
   useEffect(() => {
     // Mouse tracking for shuffle effect (Project Cards)
     let mouseAnimationFrame: number;

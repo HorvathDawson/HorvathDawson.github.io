@@ -6,6 +6,8 @@ export const ParallaxHeader: React.FC = () => {
   
   // CONFIGURATION
   const MAX_PARALLAX_LAG = 0.85; 
+  const ANIMATION_DURATION = '90s'; // Over a minute
+  const NIGHT_COLOR = '#0f172a'; // Deep midnight blue
 
   useEffect(() => {
     let rafId: number;
@@ -15,13 +17,10 @@ export const ParallaxHeader: React.FC = () => {
       if (!container) return;
 
       const scrolled = window.scrollY;
-
-      // Optimization check
       if (scrolled > container.offsetHeight + 200) return;
 
       rafId = requestAnimationFrame(() => {
         const layers = container.querySelectorAll<HTMLElement>('[data-parallax-layer]');
-        
         layers.forEach((layer) => {
           const speed = parseFloat(layer.dataset.speed || '0');
           if (speed !== 0) {
@@ -41,7 +40,6 @@ export const ParallaxHeader: React.FC = () => {
     };
   }, []);
 
-  // Sort layers (Back to Front)
   const sortedLayers = [...parallaxLayers].sort((a, b) => {
     const depthA = Number(a.id.replace(/\D/g, ''));
     const depthB = Number(b.id.replace(/\D/g, ''));
@@ -52,11 +50,6 @@ export const ParallaxHeader: React.FC = () => {
 
   // --- STYLES ---
 
-  // 1. OUTER WRAPPER
-  // - Full Width
-  // - Background Texture (visible in margins)
-  // - Centers the content
-  // - overflow: hidden triggers the clipping for parallax
   const outerWrapperStyle: React.CSSProperties = {
     position: 'relative',
     width: '100%',
@@ -64,16 +57,12 @@ export const ParallaxHeader: React.FC = () => {
     justifyContent: 'center',
     overflow: 'hidden', 
     zIndex: 0,
-    
-    // Background Texture
+    // Background Texture (The "Margins")
     backgroundImage: 'url("/assets/parallax_header/foreground_color.png")',
     backgroundRepeat: 'repeat', 
     backgroundPosition: 'center',
   };
 
-  // 2. INNER CONTAINER
-  // - Wraps tightly around the images
-  // - No fixed dimensions; determined by the foreground image
   const innerHeaderStyle: React.CSSProperties = {
     position: 'relative',
     width: 'auto',
@@ -81,62 +70,68 @@ export const ParallaxHeader: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} style={outerWrapperStyle}>
-      <div style={innerHeaderStyle}>
-        {sortedLayers.map((layer, index) => {
-          const isForeground = index === maxDepthIndex;
-          const isBackground = index === 0;
-          
-          const depthRatio = index / maxDepthIndex; 
-          const speed = (1 - depthRatio) * MAX_PARALLAX_LAG;
+    <>
+      {/* 1. Define the Animation Keyframes */}
+      <style>
+        {`
+          @keyframes dayNightCycle {
+            0% { background-color: var(--warm-white); }
+            50% { background-color: ${NIGHT_COLOR}; } 
+            100% { background-color: var(--warm-white); }
+          }
+        `}
+      </style>
 
-          // 3. LAYER STYLES
-          const layerStyle: React.CSSProperties = {
-            // Foreground is relative to push the parent container's size.
-            // Backgrounds are absolute to sit behind it.
-            position: isForeground ? 'relative' : 'absolute',
-            top: 0,
-            left: 0,
+      <div ref={containerRef} style={outerWrapperStyle}>
+        <div style={innerHeaderStyle}>
+          {sortedLayers.map((layer, index) => {
+            const isForeground = index === maxDepthIndex;
+            const isBackground = index === 0;
             
-            // These ensure background layers match the foreground layer exactly
-            width: '100%',
-            height: '100%',
-            
-            zIndex: index,
-            willChange: 'transform',
-            
-            // Apply warm-white to Layer 0
-            backgroundColor: isBackground ? 'var(--warm-white)' : undefined,
-          };
+            const depthRatio = index / maxDepthIndex; 
+            const speed = (1 - depthRatio) * MAX_PARALLAX_LAG;
 
-          // 4. IMAGE STYLES
-          // This is the logic that enforces "80vh OR 100% width"
-          const imgStyle: React.CSSProperties = {
-            display: 'block',
-            // If the screen is TALL: Limit height to 80vh
-            maxHeight: '80vh', 
-            // If the screen is NARROW: Limit width to 100%
-            maxWidth: '100%',  
-            // Maintain aspect ratio within those limits
-            width: 'auto',
-            height: 'auto',
-            // Ensure background layers cover the calculated area
-            objectFit: 'cover', 
-          };
+            const layerStyle: React.CSSProperties = {
+              position: isForeground ? 'relative' : 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: index,
+              willChange: 'transform, background-color', // Optimize for color change too
+              
+              // 2. Apply Animation ONLY to the background layer (Layer 0)
+              animation: isBackground 
+                ? `dayNightCycle ${ANIMATION_DURATION} ease-in-out infinite` 
+                : undefined,
+                
+              // Fallback color if animation fails to load
+              backgroundColor: isBackground ? 'var(--warm-white)' : undefined,
+            };
 
-          return (
-            <div
-              key={layer.id}
-              data-parallax-layer
-              data-speed={isForeground ? 0 : speed}
-              style={layerStyle}
-            >
-              <img src={layer.src} alt="" style={imgStyle} />
-            </div>
-          );
-        })}
+            const imgStyle: React.CSSProperties = {
+              display: 'block',
+              maxHeight: '80vh', 
+              maxWidth: '100%',  
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'cover', 
+            };
+
+            return (
+              <div
+                key={layer.id}
+                data-parallax-layer
+                data-speed={isForeground ? 0 : speed}
+                style={layerStyle}
+              >
+                <img src={layer.src} alt="" style={imgStyle} />
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface ContactFormData {
   fullName: string;
@@ -14,6 +14,19 @@ export const ContactForm: React.FC = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  // 1. FIX: Load ReCAPTCHA script dynamically when component mounts
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = "https://www.google.com/recaptcha/api.js";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -27,13 +40,17 @@ export const ContactForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Check if reCAPTCHA is loaded and verified
+    // Note: window.grecaptcha might need a type definition or (window as any)
     const recaptchaResponse = (window as any).grecaptcha?.getResponse();
+    
     if (!recaptchaResponse) {
       alert('Please complete the reCAPTCHA.');
       return;
     }
 
     const googleFormData = new FormData();
+    // 2. FIX: Map your clean state keys to Google Entry IDs here, upon submission
     googleFormData.append('entry.2005620554', formData.fullName);
     googleFormData.append('entry.1045781291', formData.email);
     googleFormData.append('entry.839337160', formData.message);
@@ -43,17 +60,24 @@ export const ContactForm: React.FC = () => {
       method: 'POST',
       body: googleFormData,
       mode: 'no-cors',
+    })
+    .then(() => {
+        setIsSubmitted(true);
+    })
+    .catch(() => {
+        // Because of 'no-cors', errors are hard to catch, but good to have
+        alert("There was an error submitting the form.");
     });
-
-    setIsSubmitted(true);
   };
 
-  // Inline styles for input fields
+  // Inline styles
   const inputStyle: React.CSSProperties = {
-    backgroundColor: 'var(--warm-white)',
+    backgroundColor: 'var(--warm-white, #f0f0f0)', // Fallback color added
     borderRadius: '5px',
     minHeight: '60px',
     marginBottom: '20px',
+    border: '1px solid #ccc', // Added border for visibility
+    padding: '0 15px'
   };
 
   const textareaStyle: React.CSSProperties = {
@@ -65,8 +89,9 @@ export const ContactForm: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div style={{ marginTop: '150px' }}>
-        <div>Your submission has been processed...</div>
+      <div style={{ marginTop: '150px', textAlign: 'center' }}>
+        <h3>Thank you!</h3>
+        <p>Your submission has been processed.</p>
       </div>
     );
   }
@@ -85,21 +110,28 @@ export const ContactForm: React.FC = () => {
             grid-auto-flow: row;
           }
 
-          /* Grid Areas - Desktop */
           #contact-form-name-label { grid-area: 1/1/2/2; }
           .contact-name-field      { grid-area: 2/1/3/2; }
           #contact-form-email-label{ grid-area: 1/2/2/3; }
           .contact-email-field     { grid-area: 2/2/3/3; }
           #contact-form-message-label { grid-area: 3/1/4/3; }
           .contact-message-field   { grid-area: 4/1/5/3; }
-          .contact-recaptcha-field { grid-area: 5/1/6/2; }
+          
+          /* Ensure container has size */
+          .contact-recaptcha-field { 
+            grid-area: 5/1/6/2; 
+            min-height: 78px;
+            margin-bottom: 20px;
+          }
           
           #contact-form-submit {
             grid-area: 5/2/6/3;
             justify-self: end;
+            height: 50px;
+            padding: 0 30px;
+            cursor: pointer;
           }
 
-          /* Tablet/Mobile Breakpoint */
           @media screen and (max-width: 991px) {
             #contact-form {
               grid-template-columns: 1fr;
@@ -117,12 +149,6 @@ export const ContactForm: React.FC = () => {
               justify-self: start;
             }
           }
-
-          @media screen and (max-width: 767px) {
-            #contact-form-submit {
-              justify-self: start;
-            }
-          }
         `}
       </style>
 
@@ -131,19 +157,17 @@ export const ContactForm: React.FC = () => {
         <form 
           id="contact-form"
           onSubmit={handleSubmit}
-          action="https://docs.google.com/forms/d/e/1FAIpQLSd-ORTakZ4IOBgNYOtuETuGr5X5I9a8xMa0kjfiJJVOyTIASg/formResponse"
-          method="POST"
-          target="hidden_iframe"
         >
-          <label id="contact-form-name-label" htmlFor="entry.2005620554">
+          <label id="contact-form-name-label" htmlFor="fullName">
             Full Name
           </label>
           <input
-            id="entry.2005620554"
+            id="fullName"
             className="form-input contact-name-field"
             style={inputStyle}
             type="text"
-            name="entry.2005620554"
+            /* 3. FIX: Name matches State key now */
+            name="fullName" 
             value={formData.fullName}
             onChange={handleInputChange}
             placeholder="Leeroy Jenkins"
@@ -151,15 +175,16 @@ export const ContactForm: React.FC = () => {
             required
           />
 
-          <label id="contact-form-email-label" htmlFor="entry.1045781291">
+          <label id="contact-form-email-label" htmlFor="email">
             Email Address
           </label>
           <input
-            id="entry.1045781291"
+            id="email"
             className="form-input contact-email-field"
             style={inputStyle}
             type="email"
-            name="entry.1045781291"
+            /* 3. FIX: Name matches State key now */
+            name="email"
             value={formData.email}
             onChange={handleInputChange}
             placeholder="JenkinsLeeroy@gmail.com"
@@ -167,21 +192,23 @@ export const ContactForm: React.FC = () => {
             required
           />
 
-          <label id="contact-form-message-label" htmlFor="entry.839337160">
+          <label id="contact-form-message-label" htmlFor="message">
             Message
           </label>
           <textarea
-            id="entry.839337160"
+            id="message"
             className="textarea form-input contact-message-field"
             style={textareaStyle}
-            name="entry.839337160"
+            /* 3. FIX: Name matches State key now */
+            name="message"
             value={formData.message}
             onChange={handleInputChange}
-            placeholder="Hello, I am messaging to tell you about my project, collaboration ideas, or how you can assist my team..."
+            placeholder="Hello..."
             maxLength={5000}
           />
 
-          <div className="g-recaptcha contact-recaptcha-field" data-theme="light"
+          {/* ReCAPTCHA Container */}
+          <div className="g-recaptcha contact-recaptcha-field" 
                data-sitekey="6LeBU6gqAAAAAEJDe5diUdowY2Q0cwpk0GyEdSdy"></div>
 
           <input 
@@ -191,7 +218,6 @@ export const ContactForm: React.FC = () => {
             value="Submit"
           />
         </form>
-        <iframe name="hidden_iframe" id="hidden_iframe" style={{display:'none'}}></iframe>
       </div>
     </>
   );

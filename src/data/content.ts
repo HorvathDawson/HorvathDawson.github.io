@@ -1,4 +1,5 @@
-// Type definitions
+// data/content.ts
+
 export interface ParallaxLayer {
   id: string;
   src: string;
@@ -8,7 +9,8 @@ export interface ParallaxLayer {
 export interface AboutMeContent {
   title: string;
   description: string;
-  image: string;
+  tentImage: string; // Renamed from 'image'
+  logsImage: string; // Added new property
 }
 
 export interface Project {
@@ -50,7 +52,8 @@ export const aboutMeContent: AboutMeContent = {
   description: `I'm a mechatronic and software engineer with a degree in Engineering Physics, who is driven by a passion for designing innovative robotics and software systems. From building cell screening robots to crafting advanced imaging pipelines, I thrive at tackling complex challenges.
 
 Outside of work, I'm an outdoor enthusiast and athlete. Whether it's scuba diving, mountain biking, climbing, or practicing martial arts like Brazilian jiu-jitsu and Muay Thai, I'm constantly seeking new adventures that push my limits and inspire my creativity. The perseverance and problem-solving I've honed through these activities directly influence my approach to engineering.`,
-  image: '/assets/about_me/tent.png'
+  tentImage: '/assets/about_me/tent.png',
+  logsImage: '/assets/about_me/logs.png' // Make sure this file exists in your assets!
 };
 
 export const projects: Project[] = [
