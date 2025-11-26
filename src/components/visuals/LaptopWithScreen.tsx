@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { useVisualsForceHover } from './VisualsContext';
 
 export interface LaptopWithScreenProps {
   className?: string;
@@ -12,8 +11,7 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  const contextForce = useVisualsForceHover();
-  const effectiveForceHover = forceHover ?? contextForce ?? false;
+  const effectiveForceHover = forceHover ?? false;
 
   // ... (Keep existing useEffect resize logic exactly as is) ...
   useEffect(() => {

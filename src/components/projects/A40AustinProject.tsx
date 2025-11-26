@@ -82,24 +82,7 @@ export const A40AustinProject: React.FC = () => {
       className="project-a40austin"
       customAnimations={customAnimations}
     >
-      <div className="project-card-media">
-        <div 
-          className="project-media-frame" 
-          style={{ 
-            width: '100%', 
-            maxHeight: '100%', 
-            aspectRatio: '16/9', 
-            margin: '0 auto', 
-            position: 'relative',
-            overflow: 'hidden' // Masks the car when it slides in from outside
-          }}
-        >
-          {/* We do not need a wrapper div here anymore.
-            The [data-vintage-car] attribute is inside this component.
-          */}
-          <VintageCarDisplay />
-        </div>
-      </div>
+      <VintageCarDisplay />
     </BaseProjectItem>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { useVisualsForceHover } from './VisualsContext';
 
 export interface RobotDisplayProps {
   className?: string;
@@ -11,8 +10,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
   forceHover
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const contextForce = useVisualsForceHover();
-  const effectiveForceHover = forceHover ?? contextForce ?? false;
+  const effectiveForceHover = forceHover ?? false;
 
   // Hover behavior is handled by BaseProjectItem via VisualsForceHoverContext.
   // Visuals should only read `effectiveForceHover` and render accordingly.

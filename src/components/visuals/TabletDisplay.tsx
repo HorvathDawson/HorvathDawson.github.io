@@ -1,5 +1,4 @@
 import React from 'react';
-import { useVisualsForceHover } from './VisualsContext';
 
 export interface TabletDisplayProps {
     className?: string;
@@ -10,8 +9,7 @@ export const TabletDisplay: React.FC<TabletDisplayProps> = ({
     className = '',
     forceHover
 }) => {
-    const contextForce = useVisualsForceHover();
-    const effectiveForceHover = forceHover ?? contextForce ?? false;
+    const effectiveForceHover = forceHover ?? false;
 
     return (
         <div data-tablet-display className={className} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>

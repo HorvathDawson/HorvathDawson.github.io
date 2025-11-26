@@ -12,11 +12,7 @@ const projectConfig: ProjectConfig = {
 export const Esk8Project: React.FC = () => {
   return (
     <BaseProjectItem config={projectConfig} className="project-esk8">
-      <div className="project-card-media">
-        <div className="project-media-frame" style={{ width: '100%', maxHeight: '100%', aspectRatio: '16/9', margin: '0 auto', position: 'relative' }}>
-          <SkateboardDisplay />
-        </div>
-      </div>
+      <SkateboardDisplay />
     </BaseProjectItem>
   );
 };

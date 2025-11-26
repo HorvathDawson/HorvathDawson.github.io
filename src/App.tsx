@@ -71,7 +71,7 @@ function App() {
     backgroundImage: 'url("/assets/parallax_header/foreground_color.png")',
     backgroundRepeat: 'repeat-y', // Changed to repeat or no-repeat depending on your image
     backgroundPosition: 'top center',
-    backgroundSize: 'cover',
+    // backgroundSize: 'cover',
     position: 'relative',
     zIndex: 10, // Ensures content sits on top of the bottom of the parallax header
     width: '100%',

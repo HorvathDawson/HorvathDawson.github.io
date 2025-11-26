@@ -91,24 +91,7 @@ export const BuellProject: React.FC = () => {
       className="project-buell"
       customAnimations={customAnimations}
     >
-      <div className="project-card-media">
-        <div 
-          className="project-media-frame" 
-          style={{ 
-            width: '100%', 
-            maxHeight: '100%', 
-            aspectRatio: '4/3', 
-            margin: '0 auto', 
-            position: 'relative',
-            // Overflow visible is usually needed for "exploded" views 
-            // so parts can float outside the box slightly
-            overflow: 'visible' 
-          }}
-        >
-          {/* The MotorcycleParts component contains the svg/divs with [data-part="1"], etc. */}
-          <MotorcycleParts />
-        </div>
-      </div>
+      <MotorcycleParts />
     </BaseProjectItem>
   );
 };

@@ -163,7 +163,11 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
           </a>
         )}
       </div>
-      {children}
+      <div className="project-card-media">
+        <div className="project-media-frame">
+          {children}
+        </div>
+      </div>
     </div>
   );
 };

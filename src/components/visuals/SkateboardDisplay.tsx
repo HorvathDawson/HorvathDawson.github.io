@@ -1,5 +1,4 @@
 import React from 'react';
-import { useVisualsForceHover } from './VisualsContext';
 
 export interface SkateboardDisplayProps {
   className?: string;
@@ -13,8 +12,7 @@ export const SkateboardDisplay: React.FC<SkateboardDisplayProps> = ({
   className = '',
   forceHover
 }) => {
-  const contextForce = useVisualsForceHover();
-  const effectiveForceHover = forceHover ?? contextForce ?? false;
+  const effectiveForceHover = forceHover ?? false;
   return (
     <div data-skateboard-display className={className} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <div style={{ width: 900, height: 600, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>

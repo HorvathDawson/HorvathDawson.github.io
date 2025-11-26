@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { useVisualsForceHover } from './VisualsContext';
 
 export interface MotorcyclePartsProps {
   className?: string;
@@ -10,8 +9,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
   className = '',
   forceHover
 }) => {
-  const contextForce = useVisualsForceHover();
-  const effectiveForceHover = forceHover ?? contextForce ?? false;
+  const effectiveForceHover = forceHover ?? false;
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Hover behavior is handled by BaseProjectItem via VisualsForceHoverContext.

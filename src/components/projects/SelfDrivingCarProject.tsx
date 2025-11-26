@@ -80,27 +80,7 @@ export const SelfDrivingCarProject: React.FC = () => {
       className="project-self-driving-car"
       customAnimations={customAnimations}
     >
-      <div className="project-card-media">
-        <div 
-          className="project-media-frame" 
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            margin: '0 auto', 
-            position: 'relative',
-            overflow: 'visible', // Must be visible for 3D elements to poke out
-            zIndex: 10,
-            // CRITICAL: Perspective is required for rotateX to look like 3D tilting
-            // otherwise it just looks like the element is getting squashed.
-            perspective: '1000px' 
-          }}
-        >
-          {/* The LaptopWithScreen component should contain the [data-laptop-screen] 
-             attribute on the specific div that represents the screen/lid 
-          */}
-          <LaptopWithScreen />
-        </div>
-      </div>
+      <LaptopWithScreen />
     </BaseProjectItem>
   );
 };

@@ -26,14 +26,13 @@ body {
   font-family: Space Mono, sans-serif;
   font-size: 14px;
   line-height: 20px;
-  overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-x: hidden;
   width: 100%;
 }
 
 html {
-  /* This controls the main browser scrollbar */
-  overflow-y: scroll; 
-  scroll-behavior: smooth; 
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 
 #root, .app-container {
@@ -41,6 +40,7 @@ html {
   overflow: visible;
 }
 
+/* KEEPS THIS CLASS AS REQUESTED */
 .about-description {
   text-shadow: 0 0 4px #000;
   max-width: 480px;
@@ -109,12 +109,6 @@ textarea.form-select {
   display: block;
 }
 
-/* Parallax header styles moved into the ParallaxHeader component as inline styles */
-
-* {
-  box-sizing: border-box;
-}
-
 .main-content {
   padding-left: 100px;
   padding-right: 100px;
@@ -134,10 +128,6 @@ textarea.form-select {
 }
 
 @media screen and (max-width: 767px) {
-
-  /* Ensure consistent media sizing on wide layouts — override legacy per-project width/inset rules
-   This makes every project-card-media take the same remaining space next to the content. */
-
   .main-content,
   .main-content.home {
     padding-left: 40px;
@@ -157,63 +147,7 @@ textarea.form-select {
   }
 }
 
-.about-section {
-  margin-bottom: 150px;
-  height: auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.about-image {
-  position: absolute;
-  width: 90%;
-  max-width: 450px;
-  min-width: 250px;
-  z-index: -1;
-  aspect-ratio: 1/1;
-  height: auto;
-  inset: -40% 0 0 50%;
-}
-
-.about-content {
-  max-width: 800px;
-  padding: 20px;
-  z-index: 1;
-  position: relative;
-}
-
-.about-content .about-description {
-  max-width: 800px;
-}
-
-.about-image img {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-}
-
-@media screen and (max-width: 850px) {
-  .about-image {
-    inset: -20% 0 0 25%;
-  }
-}
-
-@media screen and (max-width: 590px) {
-  .about-image {
-    inset: -150px 0 0 0;
-  }
-}
-
-@media screen and (max-width: 450px) {
-  .about-image {
-    inset: -100px 0 0 0;
-  }
-}
-
+/* Projects Section */
 .projects-section {
   max-width: 990px;
   margin-left: auto;
@@ -245,6 +179,8 @@ textarea.form-select {
   display: flex;
   position: relative;
   overflow: hidden;
+  /* Ensure default layout is horizontal so content + media sit side-by-side */
+  flex-direction: row;
 }
 
 @media screen and (max-width: 1180px) {
@@ -260,6 +196,8 @@ textarea.form-select {
     height: auto;
     min-height: 750px;
     max-height: none;
+    /* Stacked / narrow layouts: media becomes full-width and defines its own height */
+    flex-direction: column;
   }
 }
 
@@ -339,34 +277,22 @@ h1 {
   background-color: #7038cfcc;
 }
 
-/* Removed per-project media positioning to keep .project-card-media consistent for every project */
-.project-card {
-  /* Ensure default layout is horizontal so content + media sit side-by-side */
-  display: flex;
-  flex-direction: row;
-}
-
 .project-card-media {
   transform-origin: 50% 100%;
-  /* Fill remaining horizontal space next to the content block */
   position: relative;
   z-index: 1;
   flex: 1 1 auto;
   min-width: 0;
-  /* allow shrinking inside flex */
   transition: opacity 0.5s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   background: transparent;
-  /* In wide layouts use the project card height */
   height: 100%;
   max-height: 100%;
 }
 
-/* The media frame hosts a visual with an intrinsic design size.
-   Center the intrinsic visual and allow it to scale down to fit the frame. */
 .project-media-frame {
   width: 100%;
   height: 100%;
@@ -378,30 +304,21 @@ h1 {
 }
 
 .project-media-frame>* {
-  /* Visual roots provide intrinsic px width/height; allow them to scale responsively */
   max-width: 100%;
   max-height: 100%;
   box-sizing: border-box;
   display: block;
 }
 
-/* Stacked / narrow layouts: media becomes full-width and defines its own height */
 @media screen and (max-width: 991px) {
-  .project-card {
-    flex-direction: column;
-    justify-content: flex-end;
-  }
-
   .project-card-media {
     width: 100%;
     height: 72vw;
     max-height: none;
     align-self: stretch;
     order: -1;
-    /* make media render above the content */
   }
 }
-
 
 .background-layer,
 .splash-layer {
@@ -457,107 +374,4 @@ h1 {
     z-index: 10;
     position: relative;
   }
-}
-
-/* tablet display styles were moved into the component to avoid stacking-context issues */
-
-#contact-form {
-  grid-column-gap: 20px;
-  grid-row-gap: 7px;
-  grid-template-rows: auto auto;
-  grid-template-columns: 1fr 1fr;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: row;
-  display: grid;
-}
-
-#contact-form-name-label {
-  grid-area: 1/1/2/2;
-}
-
-.contact-name-field {
-  grid-area: 2/1/3/2;
-}
-
-#contact-form-email-label {
-  grid-area: 1/2/2/3;
-}
-
-.contact-email-field {
-  grid-area: 2/2/3/3;
-}
-
-#contact-form-message-label {
-  grid-area: 3/1/4/3;
-}
-
-.contact-message-field {
-  grid-area: 4/1/5/3;
-}
-
-#contact-form-submit {
-  grid-area: 5/2/6/3;
-  justify-self: end;
-}
-
-.contact-recaptcha-field {
-  grid-area: 5/1/6/2;
-}
-
-@media screen and (max-width: 991px) {
-  #contact-form {
-    grid-template-columns: 1fr;
-  }
-
-  #contact-form-name-label {
-    grid-area: 1/1/2/2;
-  }
-
-  .contact-name-field {
-    grid-area: 2/1/3/2;
-  }
-
-  #contact-form-email-label {
-    grid-area: 3/1/4/2;
-  }
-
-  .contact-email-field {
-    grid-area: 4/1/5/2;
-  }
-
-  #contact-form-message-label {
-    grid-area: 5/1/6/2;
-  }
-
-  .contact-message-field {
-    grid-area: 6/1/7/2;
-  }
-
-  #contact-form-submit {
-    grid-area: 8/1/9/2;
-    justify-self: start;
-  }
-
-  .contact-recaptcha-field {
-    grid-area: 7/1/8/2;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  #contact-form-submit {
-    justify-self: start;
-  }
-}
-
-.form-field-rounded {
-  background-color: var(--warm-white);
-  border-radius: 5px;
-  min-height: 60px;
-  margin-bottom: 20px;
-}
-
-.textarea.form-field-rounded {
-  min-height: 140px;
-  padding-top: 14px;
-  padding-bottom: 14px;
 }

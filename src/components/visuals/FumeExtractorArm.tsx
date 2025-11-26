@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useVisualsForceHover } from './VisualsContext';
+// import { useVisualsForceHover } from './VisualsContext';
 
 export interface FumeExtractorArmProps {
   className?: string;
@@ -11,8 +11,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
   forceHover
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const contextForce = useVisualsForceHover();
-  const effectiveForceHover = forceHover ?? contextForce ?? false;
+  const effectiveForceHover = forceHover ?? false;
 
   // Hover behavior is handled by BaseProjectItem via VisualsForceHoverContext.
   // Visuals should only read `effectiveForceHover` and render accordingly.
