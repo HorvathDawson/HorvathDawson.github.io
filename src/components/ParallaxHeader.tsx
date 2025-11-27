@@ -82,7 +82,7 @@ export const ParallaxHeader: React.FC = () => {
         `}
       </style>
 
-      <div ref={containerRef} style={outerWrapperStyle}>
+      <div className="parallax-header-container" ref={containerRef} style={outerWrapperStyle}>
         <div style={innerHeaderStyle}>
           {sortedLayers.map((layer, index) => {
             const isForeground = index === maxDepthIndex;
@@ -111,7 +111,7 @@ export const ParallaxHeader: React.FC = () => {
 
             const imgStyle: React.CSSProperties = {
               display: 'block',
-              maxHeight: '80vh', 
+              maxHeight: '100vh', 
               maxWidth: '100%',  
               width: 'auto',
               height: 'auto',

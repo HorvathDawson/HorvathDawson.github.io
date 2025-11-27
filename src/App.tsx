@@ -21,15 +21,15 @@ function App() {
   // --- NEW: SEO Metadata & Console Easter Eggs ---
   useEffect(() => {
     // 1. SEO / Metadata Injection
-    document.title = "Austin's Portfolio | Engineering & Design";
+    document.title = "Dawson's Portfolio | Engineering & Design";
     
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', 'Portfolio of Austin: A showcase of robotics, software engineering, self-driving cars, and DIY fabrication projects.');
+      metaDesc.setAttribute('content', 'Portfolio of Dawson: A showcase of robotics, software engineering, self-driving cars, and DIY fabrication projects.');
     } else {
       const meta = document.createElement('meta');
       meta.name = "description";
-      meta.content = "Portfolio of Austin: A showcase of robotics, software engineering, self-driving cars, and DIY fabrication projects.";
+      meta.content = "Portfolio of Dawson: A showcase of robotics, software engineering, self-driving cars, and DIY fabrication projects.";
       document.head.appendChild(meta);
     }
 
