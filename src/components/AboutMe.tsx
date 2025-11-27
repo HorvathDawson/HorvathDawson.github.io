@@ -18,11 +18,31 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
           .about-section {
             position: relative;
             min-height: 700px; 
-            margin-bottom: 150px;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow-x: visible; 
+            /* Ensure we don't clip the new gradient if it needs to bleed slightly */
+            overflow-y: visible;
+          }
+
+          /* --- NEW GRADIENT LAYER --- */
+          .gradient-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicking through to things behind it */
+            z-index: 0; /* Sits ON TOP of images (-1) but BELOW text (10) */
+            
+            /* Gradient: Transparent at top -> Deep Blue at bottom */
+            background: linear-gradient(
+              to bottom, 
+              rgba(15, 23, 42, 0) 0%, 
+              rgba(15, 23, 42, 0.4) 60%, 
+              var(--dark-blue) 100%
+            );
           }
 
           .about-content {
@@ -70,7 +90,6 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
           }
 
           /* --- CAMPFIRE GROUP --- */
-          /* This container controls the SIZE of the entire campfire (logs + fire) */
           .campfire-group {
             position: absolute;
             z-index: 2;
@@ -78,7 +97,6 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             right: 95%; 
             bottom: 30%; 
             
-            /* The fire scales relative to this width now */
             width: 180px; 
             height: auto;
             
@@ -88,7 +106,7 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
           }
 
           .logs-img {
-            width: 100%; /* Take full width of group */
+            width: 100%; 
             height: auto;
             display: block;
             position: relative;
@@ -99,13 +117,9 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
           .fire-pit {
             position: absolute;
             z-index: 2; 
-            
-            /* SCALING LOGIC: 
-               Width is % of the campfire-group. 
-               Bottom is % to align with log image. */
-            width: 50%;
+            width: 40%;
             aspect-ratio: 1 / 1; 
-            bottom: 40%; /* Sits slightly inside the logs */
+            bottom: 55%; 
             left: 50%;
             transform: translateX(-50%);
           }
@@ -118,7 +132,6 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             transform: translateX(-50%) rotate(-45deg);
           }
 
-          /* Bloom / Glow */
           .glow-base {
             position: absolute;
             width: 150%;
@@ -130,7 +143,6 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             animation: pulse-glow 3s infinite alternate;
           }
 
-          /* Colors defined by percentages of the fire-pit container */
           .flame-red {
             width: 100%;
             height: 100%;
@@ -193,7 +205,6 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
                right: auto;
                left: 10%; 
                bottom: 20px;
-               /* Make logs slightly smaller on mid-mobile so they don't block text */
                width: 140px; 
             }
           }
@@ -205,16 +216,17 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             
             .campfire-group {
                right: auto;
-               left: -5%; /* Pull slightly left */
+               left: -5%; 
                bottom: 20px;
-               
-               /* Defines size of logs AND fire together */
                width: 30%; 
-               min-width: 80px; /* Don't get too tiny */
+               min-width: 80px; 
             }
           }
         `}
       </style>
+
+      {/* NEW BACKGROUND GRADIENT LAYER */}
+      <div className="gradient-layer"></div>
 
       {/* TEXT CONTENT */}
       <div className="about-content">

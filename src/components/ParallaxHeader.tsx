@@ -3,40 +3,47 @@ import { parallaxLayers } from '../data/content';
 
 export const ParallaxHeader: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  
+  const layerRefs = useRef<(HTMLDivElement | null)[]>([]); 
+
   // CONFIGURATION
   const MAX_PARALLAX_LAG = 0.85; 
-  const ANIMATION_DURATION = '90s'; // Over a minute
-  const NIGHT_COLOR = '#0f172a'; // Deep midnight blue
+  const ANIMATION_DURATION = '90s'; 
+  const NIGHT_COLOR = '#0f172a'; 
+
+  const latestScrollY = useRef(0);
+  const rafId = useRef<number | null>(null);
 
   useEffect(() => {
-    let rafId: number;
-    const container = containerRef.current;
-
     const onScroll = () => {
-      if (!container) return;
-
-      const scrolled = window.scrollY;
-      if (scrolled > container.offsetHeight + 200) return;
-
-      rafId = requestAnimationFrame(() => {
-        const layers = container.querySelectorAll<HTMLElement>('[data-parallax-layer]');
-        layers.forEach((layer) => {
-          const speed = parseFloat(layer.dataset.speed || '0');
-          if (speed !== 0) {
-            const yPos = scrolled * speed;
-            layer.style.transform = `translate3d(0, ${yPos}px, 0)`;
-          }
-        });
-      });
+      latestScrollY.current = window.scrollY;
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); 
+
+    const animate = () => {
+      if (!containerRef.current) return;
+      
+      const currentScroll = latestScrollY.current;
+
+      if (currentScroll < containerRef.current.offsetHeight + 200) {
+        layerRefs.current.forEach((layer) => {
+          if (layer) {
+            const speed = parseFloat(layer.dataset.speed || '0');
+            if (speed !== 0) {
+              const yPos = currentScroll * speed;
+              layer.style.transform = `translate3d(0, ${yPos}px, 0)`; 
+            }
+          }
+        });
+      }
+      rafId.current = requestAnimationFrame(animate);
+    };
+
+    animate();
 
     return () => {
       window.removeEventListener('scroll', onScroll);
-      cancelAnimationFrame(rafId);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
     };
   }, []);
 
@@ -57,7 +64,6 @@ export const ParallaxHeader: React.FC = () => {
     justifyContent: 'center',
     overflow: 'hidden', 
     zIndex: 0,
-    // Background Texture (The "Margins")
     backgroundImage: 'url("/assets/parallax_header/foreground_color.png")',
     backgroundRepeat: 'repeat', 
     backgroundPosition: 'center',
@@ -65,13 +71,23 @@ export const ParallaxHeader: React.FC = () => {
 
   const innerHeaderStyle: React.CSSProperties = {
     position: 'relative',
-    width: 'auto',
+    width: 'auto', 
     height: 'auto',
+  };
+
+  const skyLayerStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%', 
+    height: '100%',
+    zIndex: -1, 
+    animation: `dayNightCycle ${ANIMATION_DURATION} ease-in-out infinite`,
+    backgroundColor: 'var(--warm-white)', 
   };
 
   return (
     <>
-      {/* 1. Define the Animation Keyframes */}
       <style>
         {`
           @keyframes dayNightCycle {
@@ -83,11 +99,14 @@ export const ParallaxHeader: React.FC = () => {
       </style>
 
       <div className="parallax-header-container" ref={containerRef} style={outerWrapperStyle}>
+        
         <div style={innerHeaderStyle}>
+          
+          {/* Sky Layer inside the wrapper */}
+          <div style={skyLayerStyle} />
+
           {sortedLayers.map((layer, index) => {
             const isForeground = index === maxDepthIndex;
-            const isBackground = index === 0;
-            
             const depthRatio = index / maxDepthIndex; 
             const speed = (1 - depthRatio) * MAX_PARALLAX_LAG;
 
@@ -97,16 +116,9 @@ export const ParallaxHeader: React.FC = () => {
               left: 0,
               width: '100%',
               height: '100%',
-              zIndex: index,
-              willChange: 'transform, background-color', // Optimize for color change too
-              
-              // 2. Apply Animation ONLY to the background layer (Layer 0)
-              animation: isBackground 
-                ? `dayNightCycle ${ANIMATION_DURATION} ease-in-out infinite` 
-                : undefined,
-                
-              // Fallback color if animation fails to load
-              backgroundColor: isBackground ? 'var(--warm-white)' : undefined,
+              zIndex: index, 
+              willChange: 'transform', 
+              pointerEvents: 'none', 
             };
 
             const imgStyle: React.CSSProperties = {
@@ -121,7 +133,10 @@ export const ParallaxHeader: React.FC = () => {
             return (
               <div
                 key={layer.id}
-                data-parallax-layer
+                // FIX: Added curly braces to avoid implicit return
+                ref={(el) => {
+                  layerRefs.current[index] = el;
+                }}
                 data-speed={isForeground ? 0 : speed}
                 style={layerStyle}
               >

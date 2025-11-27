@@ -22,7 +22,7 @@ function App() {
   useEffect(() => {
     // 1. SEO / Metadata Injection
     document.title = "Dawson's Portfolio | Engineering & Design";
-    
+
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute('content', 'Portfolio of Dawson: A showcase of robotics, software engineering, self-driving cars, and DIY fabrication projects.');
@@ -35,10 +35,10 @@ function App() {
 
     // 2. Console Easter Egg
     const styles = [
-      'color: #ff4500', 
-      'background: #2a2a2a', 
-      'font-size: 14px', 
-      'padding: 10px', 
+      'color: #ff4500',
+      'background: #2a2a2a',
+      'font-size: 14px',
+      'padding: 10px',
       'border-radius: 5px',
       'border: 2px solid #ff8c00'
     ].join(';');
@@ -130,7 +130,7 @@ function App() {
 
   return (
     <div className="app-container" style={appContainerStyle}>
-      
+
       {/* The Header sits at the top. 
         Because we fixed ParallaxHeader.tsx to use 'relative' positioning 
         for the foreground, it will naturally push the content below it down.
@@ -141,20 +141,22 @@ function App() {
       <div className="parallax-foreground" style={mainContentStyle}>
         <div className="main-content home">
           <AboutMe content={aboutMeContent} />
-          
-          <div className="projects-section">
-            <div className="projects-grid">
-              <OpenSim2RealProject />
-              <SelfDrivingCarProject />
-              <Robot253Project />
-              <A40AustinProject />
-              <BuellProject />
-              <FumeExtractorProject />
-              <Esk8Project />
-              <ThreeDPrinterProject />
-              <ResumeProject />
+
+          <div className="projects-content">
+            <div className="projects-section">
+              <div className="projects-grid">
+                <OpenSim2RealProject />
+                <SelfDrivingCarProject />
+                <Robot253Project />
+                <A40AustinProject />
+                <BuellProject />
+                <FumeExtractorProject />
+                <Esk8Project />
+                <ThreeDPrinterProject />
+                <ResumeProject />
+              </div>
+              <ContactForm />
             </div>
-            <ContactForm />
           </div>
         </div>
       </div>

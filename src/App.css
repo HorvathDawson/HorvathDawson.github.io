@@ -11,6 +11,7 @@
   --source-dark: #001d39;
   --purple: #7038cfcc;
   --dark-purple: #4d28a9cc;
+  --dark-blue: #0f172a;
 }
 
 * {
@@ -109,39 +110,31 @@ textarea.form-select {
   display: block;
 }
 
-.main-content {
+.projects-content {
+  padding-top: 150px;
   padding-left: 100px;
   padding-right: 100px;
   padding-bottom: 100px;
+  background-color: var(--dark-blue);
 }
 
 @media screen and (max-width: 991px) {
-  .main-content {
-    padding-left: 100px;
-    padding-right: 100px;
-  }
-
-  .main-content.home {
+  .projects-content {
     padding-left: 120px;
     padding-right: 120px;
   }
 }
 
 @media screen and (max-width: 767px) {
-  .main-content,
-  .main-content.home {
+  .projects-content {
     padding-left: 40px;
     padding-right: 40px;
   }
 }
 
 @media screen and (max-width: 479px) {
-  .main-content {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
 
-  .main-content.home {
+  .projects-content {
     padding-left: 15px;
     padding-right: 15px;
   }
