@@ -15,8 +15,6 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
   // Hover behavior is handled by BaseProjectItem via VisualsForceHoverContext.
   // Visuals should only read `effectiveForceHover` and render accordingly.
 
-
-
   return (
     <div 
       ref={containerRef}
@@ -79,12 +77,12 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
         }}
       />
       
-  {/* Exploding parts - animated by scroll */}
-    <img
-      src="/assets/projects/buell/motor_images/cylinder-barrel.png"
-      alt="Buell motorcycle cylinder barrel"
-      data-part="1"
-      className="background-layer"
+      {/* Exploding parts - animated by scroll */}
+      <img
+        src="/assets/projects/buell/motor_images/cylinder-barrel.png"
+        alt="Buell motorcycle cylinder barrel"
+        data-part="1"
+        className="background-layer"
         loading="lazy"
         style={{ 
           opacity: effectiveForceHover ? 0 : 1,
@@ -145,7 +143,37 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
           width: '100%',
           height: '100%',
           objectFit: 'contain',
-          zIndex: 4
+          zIndex: 6
+        }}
+      />
+      
+      {/* FIX APPLIED: Switched from <img> to <div> with mask-image.
+          This allows backgroundColor to act as the fill color for the SVG shape.
+      */}
+      <div
+        role="img"
+        aria-label="Buell motorcycle push rods bg"
+        data-part="4"
+        className="background-layer"
+        style={{ 
+          opacity: effectiveForceHover ? 0 : 1,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 5,
+          // The background color becomes the "fill"
+          backgroundColor: 'var(--dark-blue)',
+          // The mask cuts the div into the shape of the SVG
+          maskImage: 'url("/assets/projects/buell/motor_images/push-rods-bg.svg")',
+          WebkitMaskImage: 'url("/assets/projects/buell/motor_images/push-rods-bg.svg")',
+          maskSize: 'contain',
+          WebkitMaskSize: 'contain',
+          maskRepeat: 'no-repeat',
+          WebkitMaskRepeat: 'no-repeat',
+          maskPosition: 'center',
+          WebkitMaskPosition: 'center'
         }}
       />
       </div>
