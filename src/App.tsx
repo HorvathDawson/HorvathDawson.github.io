@@ -125,7 +125,7 @@ function App() {
     zIndex: 10, // Ensures content sits on top of the bottom of the parallax header
     width: '100%',
     paddingTop: '50px', // Spacing between header and first text
-    paddingBottom: '50px'
+    paddingBottom: '0px'
   };
 
   return (

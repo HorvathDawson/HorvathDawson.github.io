@@ -38,7 +38,8 @@ html {
 
 #root, .app-container {
   height: auto;
-  overflow: visible;
+  overflow-y: visible;
+  overflow-x: hidden;
 }
 
 /* KEEPS THIS CLASS AS REQUESTED */

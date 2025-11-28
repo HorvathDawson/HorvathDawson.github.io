@@ -94,8 +94,8 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             position: absolute;
             z-index: 2;
             
-            right: 95%; 
-            bottom: 30%; 
+            right: 85%; 
+            bottom: 15%; 
             
             width: 180px; 
             height: auto;
