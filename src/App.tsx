@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ParallaxHeader } from './components/ParallaxHeader';
 import { AboutMe } from './components/AboutMe';
 import { ContactForm } from './components/ContactForm';
-import { aboutMeContent } from './data/content';
+import { aboutMeContent, parallaxLayers } from './data/content';
 import {
+  BCFishingProject,
   OpenSim2RealProject,
   SelfDrivingCarProject,
   Robot253Project,
@@ -17,6 +18,44 @@ import {
 import './App.css';
 
 function App() {
+  const [ready, setReady] = useState(false);
+
+  // Preload all parallax header images before revealing the site
+  useEffect(() => {
+    let imagesReady = false;
+    let minTimeReady = false;
+
+    const tryReveal = () => {
+      if (imagesReady && minTimeReady) setReady(true);
+    };
+
+    // Minimum time so fast loads don't flash the spinner
+    const timer = setTimeout(() => {
+      minTimeReady = true;
+      tryReveal();
+    }, 400);
+
+    const srcs = parallaxLayers.map((l) => l.src);
+    let loaded = 0;
+    const total = srcs.length;
+
+    const onLoad = () => {
+      loaded++;
+      if (loaded >= total) {
+        imagesReady = true;
+        tryReveal();
+      }
+    };
+
+    srcs.forEach((src) => {
+      const img = new Image();
+      img.onload = onLoad;
+      img.onerror = onLoad;
+      img.src = src;
+    });
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // --- NEW: SEO Metadata & Console Easter Eggs ---
   useEffect(() => {
@@ -131,6 +170,11 @@ function App() {
   return (
     <div className="app-container" style={appContainerStyle}>
 
+      {/* Loading overlay — hides content until header images are ready */}
+      <div className={`loading-overlay${ready ? ' loaded' : ''}`}>
+        <div className="loading-spinner" />
+      </div>
+
       {/* The Header sits at the top. 
         Because we fixed ParallaxHeader.tsx to use 'relative' positioning 
         for the foreground, it will naturally push the content below it down.
@@ -145,6 +189,7 @@ function App() {
           <div className="projects-content">
             <div className="projects-section">
               <div className="projects-grid">
+                <BCFishingProject />
                 <OpenSim2RealProject />
                 <SelfDrivingCarProject />
                 <Robot253Project />

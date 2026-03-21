@@ -58,6 +58,19 @@ Outside of work, I'm an outdoor enthusiast and athlete. Whether it's scuba divin
 
 export const projects: Project[] = [
   {
+    id: 'bc-fishing-regulations',
+    category: 'Web App',
+    title: 'Can I Fish This?',
+    description: 'A web app that simplifies BC fishing regulations, helping anglers quickly find what they can fish, where, and when.',
+    link: 'https://canifishthis.ca',
+    buttonText: 'Visit Site',
+    images: {
+      foreground: '/assets/projects/bc-fishing-regulations/desktop_foreground.svg',
+      background: '/assets/projects/bc-fishing-regulations/desktop_background.svg',
+      splash: '/assets/projects/bc-fishing-regulations/screen.png'
+    }
+  },
+  {
     id: 'opensim2real',
     category: 'Opensource Robotics',
     title: 'OpenSim2Real',

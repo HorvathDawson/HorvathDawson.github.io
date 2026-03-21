@@ -8,3 +8,4 @@ export { VintageCarDisplay, type VintageCarDisplayProps } from './VintageCarDisp
 export { SkateboardDisplay, type SkateboardDisplayProps } from './SkateboardDisplay';
 export { PrinterDisplay, type PrinterDisplayProps } from './PrinterDisplay';
 export { TabletDisplay, type TabletDisplayProps } from './TabletDisplay';
+export { DesktopDisplay, type DesktopDisplayProps } from './DesktopDisplay';

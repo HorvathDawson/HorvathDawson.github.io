@@ -1,4 +1,5 @@
 export { BaseProjectItem } from './BaseProjectItem';
+export { BCFishingProject } from './BCFishingProject';
 export { OpenSim2RealProject } from './OpenSim2RealProject';
 export { SelfDrivingCarProject } from './SelfDrivingCarProject';
 export { Robot253Project } from './Robot253Project';
