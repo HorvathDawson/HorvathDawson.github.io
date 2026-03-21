@@ -3,47 +3,42 @@ import { parallaxLayers } from '../data/content';
 
 export const ParallaxHeader: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const layerRefs = useRef<(HTMLDivElement | null)[]>([]); 
+  const layerRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // CONFIGURATION
   const MAX_PARALLAX_LAG = 0.85; 
   const ANIMATION_DURATION = '90s'; 
   const NIGHT_COLOR = '#0f172a'; 
 
-  const latestScrollY = useRef(0);
-  const rafId = useRef<number | null>(null);
-
   useEffect(() => {
-    const onScroll = () => {
-      latestScrollY.current = window.scrollY;
-    };
+    const container = containerRef.current;
+    if (!container) return;
 
-    window.addEventListener('scroll', onScroll, { passive: true });
+    let rafId: number;
 
+    // Continuous rAF loop — runs at display refresh rate (60/120hz).
+    // Reads scrollY each frame and applies transforms in sync with compositor.
     const animate = () => {
-      if (!containerRef.current) return;
-      
-      const currentScroll = latestScrollY.current;
+      const scrollY = window.scrollY;
 
-      if (currentScroll < containerRef.current.offsetHeight + 200) {
+      if (scrollY < container.offsetHeight + 200) {
         layerRefs.current.forEach((layer) => {
           if (layer) {
             const speed = parseFloat(layer.dataset.speed || '0');
             if (speed !== 0) {
-              const yPos = currentScroll * speed;
-              layer.style.transform = `translate3d(0, ${yPos}px, 0)`; 
+              layer.style.transform = `translate3d(0, ${scrollY * speed}px, 0)`;
             }
           }
         });
       }
-      rafId.current = requestAnimationFrame(animate);
+
+      rafId = requestAnimationFrame(animate);
     };
 
-    animate();
+    rafId = requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (rafId.current) cancelAnimationFrame(rafId.current);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -133,7 +128,6 @@ export const ParallaxHeader: React.FC = () => {
             return (
               <div
                 key={layer.id}
-                // FIX: Added curly braces to avoid implicit return
                 ref={(el) => {
                   layerRefs.current[index] = el;
                 }}

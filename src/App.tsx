@@ -142,14 +142,12 @@ function App() {
   }, []);
 
   // 1. CONTAINER STYLE
-  // Removed "height: 100vh" and "overflow: auto". 
-  // We want the Window to scroll, not this div.
   const appContainerStyle: React.CSSProperties = {
-    backgroundColor: '#FEDCC8', // Background color behind parallax layers
+    backgroundColor: '#FEDCC8',
     minHeight: '100vh',
     width: '100vw',
     position: 'relative',
-    overflowX: 'hidden', // Prevents horizontal scrollbar if images are wide
+    overflowX: 'hidden',
   };
 
   // 2. CONTENT STYLE
