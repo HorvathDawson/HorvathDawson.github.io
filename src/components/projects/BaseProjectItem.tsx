@@ -112,6 +112,52 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
     item.addEventListener('mouseenter', handleMouseEnter);
     item.addEventListener('mouseleave', handleMouseLeave);
     window.addEventListener('resize', handleResize);
+
+    // Track hover state during scroll — browsers suppress mouseenter/leave while scrolling.
+    // pointermove fires during scroll, so we use it to detect hover in real-time.
+    let hovered = false;
+    const checkHover = (e: PointerEvent | MouseEvent) => {
+      const rect = item.getBoundingClientRect();
+      const inside = e.clientX >= rect.left && e.clientX <= rect.right &&
+                     e.clientY >= rect.top && e.clientY <= rect.bottom;
+      if (inside && !hovered) {
+        hovered = true;
+        handleMouseEnter();
+      } else if (!inside && hovered) {
+        hovered = false;
+        handleMouseLeave();
+      }
+    };
+
+    const onScroll = () => {
+      // On scroll, re-check last known pointer position via a synthetic test
+      // We can't get pointer coords from scroll event, so use document-level tracking
+    };
+
+    // Track pointer position globally to re-check on scroll
+    let lastPointerX = -1;
+    let lastPointerY = -1;
+    const trackPointer = (e: PointerEvent) => {
+      lastPointerX = e.clientX;
+      lastPointerY = e.clientY;
+      checkHover(e);
+    };
+    const recheckOnScroll = () => {
+      if (lastPointerX < 0) return;
+      const rect = item.getBoundingClientRect();
+      const inside = lastPointerX >= rect.left && lastPointerX <= rect.right &&
+                     lastPointerY >= rect.top && lastPointerY <= rect.bottom;
+      if (inside && !hovered) {
+        hovered = true;
+        handleMouseEnter();
+      } else if (!inside && hovered) {
+        hovered = false;
+        handleMouseLeave();
+      }
+    };
+
+    document.addEventListener('pointermove', trackPointer);
+    window.addEventListener('scroll', recheckOnScroll, { passive: true });
     
     // Initial check on mount
     handleResize();
@@ -127,6 +173,8 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
       item.removeEventListener('mouseenter', handleMouseEnter);
       item.removeEventListener('mouseleave', handleMouseLeave);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('pointermove', trackPointer);
+      window.removeEventListener('scroll', recheckOnScroll);
       if (customCleanup) customCleanup();
     };
   }, [onMouseEnter, onMouseLeave, customAnimations]);
