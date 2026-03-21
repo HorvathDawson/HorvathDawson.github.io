@@ -129,11 +129,6 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
       }
     };
 
-    const onScroll = () => {
-      // On scroll, re-check last known pointer position via a synthetic test
-      // We can't get pointer coords from scroll event, so use document-level tracking
-    };
-
     // Track pointer position globally to re-check on scroll
     let lastPointerX = -1;
     let lastPointerY = -1;
