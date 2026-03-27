@@ -145,7 +145,7 @@ function App() {
   const appContainerStyle: React.CSSProperties = {
     backgroundColor: '#FEDCC8',
     minHeight: '100vh',
-    width: '100vw',
+    width: '100%',
     position: 'relative',
     overflowX: 'hidden',
   };
@@ -154,13 +154,14 @@ function App() {
   // This sits strictly BELOW the header.
   // We add zIndex to ensure it sits on top of any background artifacts.
   const mainContentStyle: React.CSSProperties = {
-    backgroundImage: 'url("/assets/parallax_header/foreground_color.png")',
-    backgroundRepeat: 'repeat-y', // Changed to repeat or no-repeat depending on your image
+    backgroundImage: 'url("/assets/header/foreground-tile.png")',
+    backgroundRepeat: 'repeat',
     backgroundPosition: 'top center',
     // backgroundSize: 'cover',
     position: 'relative',
     zIndex: 10, // Ensures content sits on top of the bottom of the parallax header
     width: '100%',
+    marginTop: '-2px',
     paddingTop: '50px', // Spacing between header and first text
     paddingBottom: '0px'
   };
@@ -168,30 +169,40 @@ function App() {
   return (
     <div className="app-container" style={appContainerStyle}>
 
+      {/* Skip-to-content link for keyboard users */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
       {/* Loading overlay — hides content until header images are ready */}
-      <div className={`loading-overlay${ready ? ' loaded' : ''}`}>
-        <div className="loading-spinner" />
+      <div
+        className={`loading-overlay${ready ? ' loaded' : ''}`}
+        role="status"
+        aria-live="polite"
+        aria-label="Loading"
+      >
+        <div className="loading-spinner" aria-hidden="true" />
+        <span className="sr-only">{ready ? 'Content loaded' : 'Loading portfolio…'}</span>
       </div>
 
-      {/* The Header sits at the top. 
-        Because we fixed ParallaxHeader.tsx to use 'relative' positioning 
-        for the foreground, it will naturally push the content below it down.
-      */}
-      <ParallaxHeader />
+      {/* Decorative parallax header */}
+      <header aria-label="Decorative parallax landscape">
+        <ParallaxHeader />
+      </header>
 
       {/* Main Content Area */}
-      <div className="parallax-foreground" style={mainContentStyle}>
+      <main id="main-content" className="parallax-foreground" style={mainContentStyle}>
         <div className="main-content home">
           <AboutMe content={aboutMeContent} />
 
-          <div className="projects-content">
+          <section className="projects-content" aria-label="Projects">
             <div className="projects-section">
-              <div className="projects-grid">
+              <div className="projects-grid" role="list">
                 <BCFishingProject />
                 <OpenSim2RealProject />
+                <A40AustinProject />
                 <SelfDrivingCarProject />
                 <Robot253Project />
-                <A40AustinProject />
                 <BuellProject />
                 <FumeExtractorProject />
                 <Esk8Project />
@@ -200,9 +211,9 @@ function App() {
               </div>
               <ContactForm />
             </div>
-          </div>
+          </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -89,8 +89,8 @@ export const ContactForm: React.FC = () => {
 
   if (isSubmitted) {
     return (
-      <div style={{ marginTop: '150px', textAlign: 'center' }}>
-        <h3>Thank you!</h3>
+      <div style={{ marginTop: '150px', textAlign: 'center' }} role="status" aria-live="polite">
+        <h2>Thank you!</h2>
         <p>Your submission has been processed.</p>
       </div>
     );
@@ -153,10 +153,11 @@ export const ContactForm: React.FC = () => {
       </style>
 
       <div style={{ marginTop: '150px' }}>
-        <h1 className="section-title">Contact Me</h1>
+        <h2 className="section-title">Contact Me</h2>
         <form 
           id="contact-form"
           onSubmit={handleSubmit}
+          aria-label="Contact form"
         >
           <label id="contact-form-name-label" htmlFor="fullName">
             Full Name
@@ -173,6 +174,7 @@ export const ContactForm: React.FC = () => {
             placeholder="Leeroy Jenkins"
             maxLength={256}
             required
+            aria-required="true"
           />
 
           <label id="contact-form-email-label" htmlFor="email">
@@ -190,6 +192,7 @@ export const ContactForm: React.FC = () => {
             placeholder="JenkinsLeeroy@gmail.com"
             maxLength={256}
             required
+            aria-required="true"
           />
 
           <label id="contact-form-message-label" htmlFor="message">
@@ -209,7 +212,8 @@ export const ContactForm: React.FC = () => {
 
           {/* ReCAPTCHA Container */}
           <div className="g-recaptcha contact-recaptcha-field" 
-               data-sitekey="6LeBU6gqAAAAAEJDe5diUdowY2Q0cwpk0GyEdSdy"></div>
+               data-sitekey="6LeBU6gqAAAAAEJDe5diUdowY2Q0cwpk0GyEdSdy"
+               aria-label="reCAPTCHA verification"></div>
 
           <input 
             id="contact-form-submit" 

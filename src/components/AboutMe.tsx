@@ -11,19 +11,18 @@ interface AboutMeProps {
 
 export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
   return (
-    <section className="about-section">
+    <section className="about-section" aria-labelledby="about-heading">
       <style>
         {`
           /* --- LAYOUT --- */
           .about-section {
             position: relative;
             min-height: 700px; 
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: visible; 
-            /* Ensure we don't clip the new gradient if it needs to bleed slightly */
-            overflow-y: visible;
+            overflow: visible;
           }
 
           /* --- NEW GRADIENT LAYER --- */
@@ -46,8 +45,8 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
           }
 
           .about-content {
-            max-width: 800px;
-            padding: 60px 20px;
+            max-width: 80vw;
+            padding: 60px 40px;
             text-align: center;
             position: relative;
             z-index: 10; 
@@ -70,7 +69,7 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
           /* --- MAIN GROUP WRAPPER --- */
           .about-image-responsive {
             position: absolute;
-            z-index: -1; 
+            z-index: 1; 
             
             width: 90%;
             max-width: 450px;
@@ -79,6 +78,7 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             height: auto;
 
             inset: -30% 0 0 55%;
+            pointer-events: none;
           }
 
           .tent-img {
@@ -110,16 +110,17 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             height: auto;
             display: block;
             position: relative;
-            z-index: 1; 
+            z-index: 1;
+            filter: sepia(0.08) hue-rotate(240deg);
           }
 
           /* --- CSS FLAME --- */
           .fire-pit {
             position: absolute;
             z-index: 2; 
-            width: 40%;
+            width: 45%;
             aspect-ratio: 1 / 1; 
-            bottom: 55%; 
+            bottom: 50%; 
             left: 50%;
             transform: translateX(-50%);
           }
@@ -130,57 +131,117 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             left: 50%;
             border-radius: 50% 0 50% 50%;
             transform: translateX(-50%) rotate(-45deg);
+            filter: blur(1px);
           }
 
           .glow-base {
             position: absolute;
-            width: 150%;
-            height: 150%;
-            left: -25%;
-            top: -25%;
-            background: radial-gradient(circle, rgba(255,100,0,0.4) 0%, rgba(255,60,0,0) 70%);
-            filter: blur(20px);
-            animation: pulse-glow 3s infinite alternate;
+            width: 200%;
+            height: 200%;
+            left: -50%;
+            top: -50%;
+            background: radial-gradient(circle, rgba(255,140,0,0.35) 0%, rgba(255,80,0,0.15) 40%, rgba(255,60,0,0) 70%);
+            filter: blur(25px);
+            animation: pulse-glow 2.5s infinite alternate ease-in-out;
           }
 
           .flame-red {
             width: 100%;
             height: 100%;
-            background: #ff4500;
-            box-shadow: 0 0 20px #ff4500;
-            animation: burn 1s infinite alternate ease-in-out;
+            background: linear-gradient(to top, #cc3300, #ff4500);
+            box-shadow: 0 0 25px 5px rgba(255,69,0,0.6);
+            animation: burn-main 0.8s infinite alternate ease-in-out;
             z-index: 1;
           }
 
           .flame-orange {
-            width: 75%;
-            height: 75%;
-            background: #ff8c00;
-            box-shadow: 0 0 15px #ff8c00;
-            animation: burn 1.5s infinite alternate-reverse ease-in-out;
+            width: 70%;
+            height: 80%;
+            background: linear-gradient(to top, #ff6600, #ff9900);
+            box-shadow: 0 0 18px 3px rgba(255,140,0,0.5);
+            animation: burn-mid 1.2s infinite alternate-reverse ease-in-out;
             bottom: 5%;
             z-index: 2;
           }
 
           .flame-yellow {
-            width: 50%;
-            height: 50%;
-            background: #ffd700;
-            box-shadow: 0 0 10px #ffd700;
-            animation: burn 2s infinite alternate ease-in-out;
+            width: 45%;
+            height: 55%;
+            background: linear-gradient(to top, #ffaa00, #ffdd44);
+            box-shadow: 0 0 12px 2px rgba(255,215,0,0.5);
+            animation: burn-tip 1.6s infinite alternate ease-in-out;
             bottom: 10%;
             z-index: 3;
           }
 
-          @keyframes burn {
+          .flame-white {
+            width: 25%;
+            height: 30%;
+            background: linear-gradient(to top, #ffe680, #fff8e0);
+            box-shadow: 0 0 8px 2px rgba(255,255,240,0.4);
+            animation: burn-core 2s infinite alternate-reverse ease-in-out;
+            bottom: 12%;
+            z-index: 4;
+            filter: blur(1.5px);
+          }
+
+          /* Sparks */
+          .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #ffcc00;
+            border-radius: 50%;
+            bottom: 80%;
+            z-index: 5;
+            opacity: 0;
+          }
+
+          .spark-1 {
+            left: 40%;
+            animation: spark-rise 2.5s infinite ease-out 0s;
+          }
+          .spark-2 {
+            left: 55%;
+            animation: spark-rise 3s infinite ease-out 0.8s;
+          }
+          .spark-3 {
+            left: 48%;
+            animation: spark-rise 2.8s infinite ease-out 1.5s;
+          }
+
+          @keyframes burn-main {
             0% { transform: translateX(-50%) rotate(-45deg) scale(1); }
-            100% { transform: translateX(-50%) rotate(-45deg) scale(1.1) translate(2px, -2px); }
+            100% { transform: translateX(-50%) rotate(-47deg) scale(1.08) translate(1px, -2px); }
+          }
+
+          @keyframes burn-mid {
+            0% { transform: translateX(-50%) rotate(-45deg) scale(1); }
+            100% { transform: translateX(-50%) rotate(-43deg) scale(1.12) translate(-1px, -3px); }
+          }
+
+          @keyframes burn-tip {
+            0% { transform: translateX(-50%) rotate(-45deg) scale(1); }
+            100% { transform: translateX(-50%) rotate(-48deg) scale(1.15) translate(2px, -2px); }
+          }
+
+          @keyframes burn-core {
+            0% { transform: translateX(-50%) rotate(-45deg) scale(0.9); }
+            100% { transform: translateX(-50%) rotate(-44deg) scale(1.1) translate(-1px, -1px); }
           }
           
           @keyframes pulse-glow {
-            0% { opacity: 0.4; transform: scale(1); }
-            100% { opacity: 0.7; transform: scale(1.2); }
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 0.8; transform: scale(1.15); }
           }
+
+          @keyframes spark-rise {
+            0% { opacity: 0; transform: translateY(0) scale(1); }
+            20% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-40px) translateX(8px) scale(0.3); }
+          }
+
+
 
           /* --- MEDIA QUERIES --- */
           
@@ -230,7 +291,7 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
 
       {/* TEXT CONTENT */}
       <div className="about-content">
-        <h1 className="about-title">{content.title}</h1>
+        <h1 id="about-heading" className="about-title">{content.title}</h1>
         <div className="about-description">
           {content.description.split('\n\n').map((paragraph, index) => (
             <p key={index} className="about-paragraph">
@@ -241,7 +302,7 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
       </div>
 
       {/* MAIN GROUP WRAPPER */}
-      <div className="about-image-responsive">
+      <div className="about-image-responsive" aria-hidden="true">
 
         {/* CAMPFIRE */}
         <div className="campfire-group">
@@ -250,6 +311,10 @@ export const AboutMe: React.FC<AboutMeProps> = ({ content }) => {
             <div className="flame flame-red"></div>
             <div className="flame flame-orange"></div>
             <div className="flame flame-yellow"></div>
+            <div className="flame flame-white"></div>
+            <div className="spark spark-1"></div>
+            <div className="spark spark-2"></div>
+            <div className="spark spark-3"></div>
           </div>
           <img
             src={content.logsImage}

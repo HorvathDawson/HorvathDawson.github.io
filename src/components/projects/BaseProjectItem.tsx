@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export interface ProjectConfig {
   id: string;
@@ -8,6 +9,8 @@ export interface ProjectConfig {
   link?: string;
   buttonText?: string;
   downloadable?: boolean;
+  /** When true, link uses client-side routing instead of opening a new tab. */
+  internal?: boolean;
 }
 
 export interface ProjectImageProps {
@@ -40,8 +43,8 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
     const item = itemRef.current;
     if (!item) return;
 
-    // Helper to determine if we are in tablet/mobile mode
-    const isTablet = () => window.matchMedia('(max-width: 1024px)').matches;
+    // Helper to determine if we are in tablet/mobile mode (matches BREAKPOINTS.tablet = 991)
+    const isTablet = () => window.innerWidth <= 991;
 
     // Default hover animations
     const handleMouseEnter = () => {
@@ -177,36 +180,52 @@ export const BaseProjectItem: React.FC<BaseProjectItemProps> = ({
   const rootClass = ['project-card', config.id, className];
 
   return (
-    <div ref={itemRef} className={rootClass.filter(Boolean).join(' ')}>
-      <div className="project-card-overlay" />
+    <div ref={itemRef} className={rootClass.filter(Boolean).join(' ')} role="listitem" aria-label={config.title}>
+      <div className="project-card-overlay" aria-hidden="true" />
       <div className="project-card-content content-width-constrained">
-        <h6 className="project-category">{config.category}</h6>
-        <h1 className="section-title">
+        <p className="project-category">{config.category}</p>
+        <h2 className="section-title">
           {config.link ? (
-            <a href={config.link} target="_blank" rel="noopener noreferrer">
-              <span className="text-highlighted">{config.title}</span>
-            </a>
+            config.internal ? (
+              <Link to={config.link}>
+                <span className="text-highlighted">{config.title}</span>
+              </Link>
+            ) : (
+              <a href={config.link} target="_blank" rel="noopener noreferrer">
+                <span className="text-highlighted">{config.title}</span>
+              </a>
+            )
           ) : (
             <span className="text-highlighted">{config.title}</span>
           )}
-        </h1>
+        </h2>
         <p className="about-description">{config.description}</p>
         
         {/* Simplified Button Logic */}
         {config.link && config.buttonText && (
-          <a
-            href={config.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="project-cta-button button"
-            {...(config.downloadable ? { download: true } : {})}
-            style={{ display: 'inline-block', marginTop: '18px' }}
-          >
-            {config.buttonText}
-          </a>
+          config.internal ? (
+            <Link
+              to={config.link}
+              className="project-cta-button button"
+              style={{ display: 'inline-block', marginTop: '18px' }}
+            >
+              {config.buttonText}
+            </Link>
+          ) : (
+            <a
+              href={config.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="project-cta-button button"
+              {...(config.downloadable ? { download: true } : {})}
+              style={{ display: 'inline-block', marginTop: '18px' }}
+            >
+              {config.buttonText}
+            </a>
+          )
         )}
       </div>
-      <div className="project-card-media">
+      <div className="project-card-media" aria-hidden="true">
         <div className="project-media-frame">
           {children}
         </div>

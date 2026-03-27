@@ -43,7 +43,7 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
       >
         {/* Arm foreground - shows on hover */}
         <img
-          src="/assets/projects/fume-extractor/arm.png"
+          src="/assets/projects/fume-extractor/arm-colored.png"
           alt="Fume extractor arm"
           className="foreground-layer"
           loading="lazy"
@@ -60,8 +60,8 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
         />
       {/* Arm edge - shows by default */}
       <img
-        src="/assets/projects/fume-extractor/arm-edge.png"
-        alt="Fume extractor arm edge"
+        src="/assets/projects/fume-extractor/arm-outline.png"
+        alt="Fume extractor arm outline"
         className="background-layer"
         loading="lazy"
         style={{ 
@@ -77,8 +77,8 @@ export const FumeExtractorArm: React.FC<FumeExtractorArmProps> = ({
       />
       {/* Splash overlay - shows on hover */}
       <img
-        src="/assets/projects/fume-extractor/splash.png"
-        alt="Fume extractor splash"
+        src="/assets/projects/fume-extractor/glow.png"
+        alt="Fume extractor glow"
         className="splash-layer"
         loading="lazy"
         style={{ 

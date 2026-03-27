@@ -17,14 +17,14 @@ export const PrinterDisplay: React.FC<PrinterDisplayProps> = ({
     <div data-printer-display className={className} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <div style={{ width: 1000, height: 700, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
         <img
-          src="/assets/projects/3dprinter/foreground.png"
+          src="/assets/projects/3d-printer/colored.png"
           alt=""
           className="foreground-layer"
           loading="lazy"
           style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
         />
         <img
-          src="/assets/projects/3dprinter/background.png"
+          src="/assets/projects/3d-printer/outline.png"
           alt=""
           className="background-layer"
           loading="lazy"

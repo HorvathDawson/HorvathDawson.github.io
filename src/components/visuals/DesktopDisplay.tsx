@@ -130,7 +130,7 @@ export const DesktopDisplay: React.FC<DesktopDisplayProps> = ({
         }}
       >
         <img
-          src="/assets/projects/bc-fishing-regulations/desktop_foreground.svg"
+          src="/assets/projects/bc-fishing-regulations/desktop-colored.svg"
           alt=""
           className="foreground-layer"
           loading="lazy"
@@ -145,7 +145,7 @@ export const DesktopDisplay: React.FC<DesktopDisplayProps> = ({
           }}
         />
         <img
-          src="/assets/projects/bc-fishing-regulations/desktop_background.svg"
+          src="/assets/projects/bc-fishing-regulations/desktop-outline.svg"
           alt=""
           className="background-layer"
           loading="lazy"
@@ -172,7 +172,7 @@ export const DesktopDisplay: React.FC<DesktopDisplayProps> = ({
             height: '75%',
             backgroundSize: '100% 100%',
             backgroundPosition: 'center',
-            backgroundImage: 'url(/assets/projects/bc-fishing-regulations/screen.gif)',
+            backgroundImage: 'url(/assets/projects/bc-fishing-regulations/website-demo.gif)',
             transformOrigin: '0 0',
             zIndex: 2147483647
           }}

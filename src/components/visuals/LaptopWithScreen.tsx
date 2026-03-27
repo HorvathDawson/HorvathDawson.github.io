@@ -132,9 +132,9 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
               transform: 'translate(-50%, -100%)',
             }}
           >
-            <img src="/assets/projects/self-driving-car/computer-foreground.svg" alt="" className="foreground-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 3 }} />
-            <img src="/assets/projects/self-driving-car/computer-background.svg" alt="" className="background-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 0 : 1, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 1 }} />
-            <div className="splash-layer computer-screen" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', top: '10%', left: '4%', width: '92%', height: '84%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: 'url(/assets/projects/self-driving-car/screen.gif)', zIndex: 6 }} />
+            <img src="/assets/projects/self-driving-car/computer-colored.svg" alt="" className="foreground-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 3 }} />
+            <img src="/assets/projects/self-driving-car/computer-outline.svg" alt="" className="background-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 0 : 1, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 1 }} />
+            <div className="splash-layer computer-screen" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', top: '10%', left: '4%', width: '92%', height: '84%', backgroundSize: 'cover', backgroundPosition: 'center', backgroundImage: 'url(/assets/projects/self-driving-car/simulation-demo.gif)', zIndex: 6 }} />
           </div>
         </div>
 
@@ -162,8 +162,8 @@ export const LaptopWithScreen: React.FC<LaptopWithScreenProps> = ({
               zIndex: 10
             }}
           >
-             <img src="/assets/projects/self-driving-car/computer-keys-foreground.svg" alt="" className="foreground-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 10 }} />
-             <img src="/assets/projects/self-driving-car/computer-keys-background.svg" alt="" className="background-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 0 : 1, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 10 }} />
+             <img src="/assets/projects/self-driving-car/keyboard-colored.svg" alt="" className="foreground-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 10 }} />
+             <img src="/assets/projects/self-driving-car/keyboard-outline.svg" alt="" className="background-layer" loading="lazy" style={{ opacity: effectiveForceHover ? 0 : 1, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', zIndex: 10 }} />
           </div>
         </div>
       </div>

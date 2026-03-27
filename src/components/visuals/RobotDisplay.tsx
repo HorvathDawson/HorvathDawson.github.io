@@ -59,7 +59,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
         <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         {/* Robot foreground - shows on hover */}
         <img
-          src="/assets/projects/253robot/foreground.png"
+          src="/assets/projects/competition-robot/colored.png"
           alt="Robot 253 foreground"
           className="foreground-layer"
           loading="lazy"
@@ -67,7 +67,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
         />
         {/* Robot background - shows by default */}
         <img
-          src="/assets/projects/253robot/background2.png"
+          src="/assets/projects/competition-robot/outline.png"
           alt="Robot 253 background"
           className="background-layer"
           loading="lazy"
@@ -75,7 +75,7 @@ export const RobotDisplay: React.FC<RobotDisplayProps> = ({
         />
         {/* Robot splash overlay - shows on hover */}
         <img
-          src="/assets/projects/253robot/splash.png"
+          src="/assets/projects/competition-robot/glow.png"
           alt="Robot 253 splash"
           className="splash-layer"
           loading="lazy"

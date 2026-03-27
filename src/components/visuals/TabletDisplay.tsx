@@ -15,14 +15,14 @@ export const TabletDisplay: React.FC<TabletDisplayProps> = ({
         <div data-tablet-display className={className} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
             <div style={{ width: 720, height: 1040, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
                 <img
-                    src="/assets/resume/foreground.png"
+                    src="/assets/resume/colored.png"
                     alt=""
                     className="foreground-layer"
                     loading="lazy"
                     style={{ opacity: effectiveForceHover ? 1 : 0, position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain' }}
                 />
                 <img
-                    src="/assets/resume/background.png"
+                    src="/assets/resume/outline.png"
                     alt=""
                     className="background-layer"
                     loading="lazy"

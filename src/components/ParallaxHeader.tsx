@@ -59,7 +59,7 @@ export const ParallaxHeader: React.FC = () => {
     justifyContent: 'center',
     overflow: 'hidden', 
     zIndex: 0,
-    backgroundImage: 'url("/assets/parallax_header/foreground_color.png")',
+    backgroundImage: 'url("/assets/header/foreground-tile.png")',
     backgroundRepeat: 'repeat', 
     backgroundPosition: 'center',
   };

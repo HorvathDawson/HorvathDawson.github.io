@@ -25,7 +25,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       <div style={{ width: 900, height: 700, maxWidth: '100%', maxHeight: '100%', position: 'relative' }}>
         {/* Section view animation - shows on hover */}
         <img
-          src="/assets/projects/buell/motor_images/section-view.gif"
+          src="/assets/projects/buell-lightning/engine/section-view.gif"
           alt="Buell motorcycle engine section view"
           className="foreground-layer"
           loading="lazy"
@@ -43,7 +43,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       
       {/* Static engine case - shows by default */}
       <img
-        src="/assets/projects/buell/motor_images/case.png"
+        src="/assets/projects/buell-lightning/engine/case.png"
         alt="Buell motorcycle engine case"
         className="background-layer"
         loading="lazy"
@@ -61,7 +61,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       
       {/* Left cylinder - shows by default */}
       <img
-        src="/assets/projects/buell/motor_images/left-cylinder.png"
+        src="/assets/projects/buell-lightning/engine/left-cylinder.png"
         alt="Buell motorcycle left cylinder"
         className="background-layer"
         loading="lazy"
@@ -79,7 +79,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
       
       {/* Exploding parts - animated by scroll */}
       <img
-        src="/assets/projects/buell/motor_images/cylinder-barrel.png"
+        src="/assets/projects/buell-lightning/engine/cylinder-barrel.png"
         alt="Buell motorcycle cylinder barrel"
         data-part="1"
         className="background-layer"
@@ -96,7 +96,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
         }}
       />
       <img
-        src="/assets/projects/buell/motor_images/rocker-box.png"
+        src="/assets/projects/buell-lightning/engine/rocker-box.png"
         alt="Buell motorcycle rocker box"
         data-part="2"
         className="background-layer"
@@ -113,7 +113,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
         }}
       />
       <img
-        src="/assets/projects/buell/motor_images/rocker-box-top.png"
+        src="/assets/projects/buell-lightning/engine/rocker-box-top.png"
         alt="Buell motorcycle rocker box top"
         data-part="3"
         className="background-layer"
@@ -130,7 +130,7 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
         }}
       />
       <img
-        src="/assets/projects/buell/motor_images/push-rods.png"
+        src="/assets/projects/buell-lightning/engine/push-rods.png"
         alt="Buell motorcycle push rods"
         data-part="4"
         className="background-layer"
@@ -166,8 +166,8 @@ export const MotorcycleParts: React.FC<MotorcyclePartsProps> = ({
           // The background color becomes the "fill"
           backgroundColor: 'var(--dark-blue)',
           // The mask cuts the div into the shape of the SVG
-          maskImage: 'url("/assets/projects/buell/motor_images/push-rods-bg.svg")',
-          WebkitMaskImage: 'url("/assets/projects/buell/motor_images/push-rods-bg.svg")',
+          maskImage: 'url("/assets/projects/buell-lightning/engine/push-rods-mask.svg")',
+          WebkitMaskImage: 'url("/assets/projects/buell-lightning/engine/push-rods-mask.svg")',
           maskSize: 'contain',
           WebkitMaskSize: 'contain',
           maskRepeat: 'no-repeat',

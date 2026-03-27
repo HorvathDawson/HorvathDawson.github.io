@@ -1,0 +1,23 @@
+---
+title: "Teardown"
+date: 2022-06-15
+status: complete
+epic: planning
+tags: [teardown]
+---
+
+Pulled the motor and trans first. Disconnected everything, unbolted the mounts, and lifted it out with a cherry picker. The old motor and drivetrain will be sold, none of it is being reused.
+
+After that, separated the body from the frame. Unbolted all the body mounts, disconnected the remaining wiring and brake lines, then lifted the body using two chain hoists attached to the ceiling joists. Worked it up slowly and kept it level. Once it was high enough the frame rolled out underneath on dollies.
+
+The frame is only being kept for measurements. All the body mount locations, bolt patterns, and key dimensions got recorded before anything else happened. The frame itself is done, it's not being modified or reused.
+
+Also found a second A40 for sale that came with a narrowed Ford 8" already done and a bunch of spare parts. Picked that up too. More on that later since some of those parts are going to be useful.
+
+## Body condition
+
+With the body up on the hoists I went over the whole thing. It's in decent shape overall. One rocker panel has some rust that will need cutting out and patching, but the floors, rear quarters, and structural areas are solid.
+
+The rubber seals and gaskets are all shot. Decades old, melted and cracked. Finding replacements for A40-specific rubbers is going to be a challenge since most of this stuff isn't reproduced anymore. That'll be its own project.
+
+Glass is all intact. Trim and chrome need cleaning but they're usable.
