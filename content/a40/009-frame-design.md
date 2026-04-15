@@ -2,7 +2,7 @@
 title: "Ladder Frame Design"
 date: 2026-02-20
 status: in-progress
-epic: chassis
+epic: design
 tags: [frame, cad, fabrication]
 ---
 

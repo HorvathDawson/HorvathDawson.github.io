@@ -2,7 +2,7 @@
 title: "Motor Selection"
 date: 2023-09-08
 status: complete
-epic: drivetrain
+epic: research
 tags: [motor, sr20det]
 ---
 

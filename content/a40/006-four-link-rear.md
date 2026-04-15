@@ -2,11 +2,13 @@
 title: "Four-Link Rear Suspension"
 date:
 status: planning
-epic: chassis
+epic: research
 tags: [suspension, rear, four-link]
 ---
 
 Going with a triangulated four-link setup for the rear. The kit is the Welder Series (WS) 318500 triangulated four-link. It's a weld-in kit designed for custom chassis work, which is exactly what this is.
+
+> The front suspension narrowing analysis, roll stiffness, and rear roll center interaction are covered in the 005 geometry design reference and suspension tuning reference posts.
 
 The kit gives you the brackets, rod ends, adjusters, and tube for the four bars. Two lower bars run parallel, two upper bars angle inward to provide lateral location. This means no Panhard bar or Watts link needed, the triangulated uppers handle it.
 
@@ -50,5 +52,15 @@ Key dimensions and setup from the instructions (all measurements at ride height)
 - Clearances inside the A40's body with the axle at full droop and full bump
 - Whether the uppers need to be reversed for the Ford 8" housing
 - How the offset differential affects the shorter-side mockup sequence
+
+## Anti-roll bar considerations
+
+A live axle four-link is already a beam connecting left and right wheels. When one wheel hits a bump, the other side is directly affected through the rigid axle housing. This means a live axle already behaves the way an ARB makes independent suspension behave in roll -- the wheels are fully coupled.
+
+Many kit cars with live axle four-links run no rear ARB. The front ARB alone handles LLTD tuning: stiffer front bar pushes LLTD toward the front axle (more understeer), softer front bar lets it shift rearward (less understeer). With no rear bar, the rear's rough-road compliance depends only on the springs, which is an advantage -- the rear stays planted over bumps.
+
+A rear ARB may still be needed if the LLTD target requires more rear roll stiffness than the springs alone provide. With the A40's high CG, a lot of total roll stiffness is required. If all of it comes from the front bar, the front becomes very stiff relative to the rear, biasing the car strongly toward understeer. If a more neutral balance is wanted, some rear roll stiffness beyond the springs is needed.
+
+**Plan:** Weld the mounting provisions (pivot bushing tabs, end link brackets on the axle housing) during fabrication. A rear bar is trivial to add during the build and nearly impossible to retrofit cleanly onto a finished car. The bar itself can be left off initially and installed later if testing shows it's needed.
 
 Will update this post once the geometry work starts. For now it's figuring out the kit requirements and how they fit into the frame design.

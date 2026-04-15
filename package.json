@@ -11,7 +11,9 @@
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
+    "katex": "^0.16.44",
     "marked": "^17.0.5",
+    "marked-katex-extension": "^5.1.7",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.2"

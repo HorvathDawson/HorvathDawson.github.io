@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { allPosts, postsByEpic, type BlogPost, type Epic } from './blogData';
 import { useBreakpoint } from '../utils/useBreakpoint';
 import './blogStyles.css';
+import 'katex/dist/katex.min.css';
 
 // Prevent double scrollbar: the portfolio sets html { overflow-y: scroll }
 // but the blog manages its own scroll internally.
@@ -158,8 +159,8 @@ export const A40Blog: React.FC = () => {
   const prev = activeIndex > 0 ? allPosts[activeIndex - 1] : null;
   const next = activeIndex < allPosts.length - 1 ? allPosts[activeIndex + 1] : null;
 
-  const selectPost = (s: string) => navigate(`/a40/${s}`, { replace: true });
-  const goToList = () => navigate('/a40', { replace: true });
+  const selectPost = (s: string) => navigate(`/a40/${s}`);
+  const goToList = () => navigate('/a40');
 
   // Mobile: show list OR post
   if (isMobile) {

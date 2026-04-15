@@ -2,7 +2,7 @@
 title: "Build Log"
 date: 2026-01-15
 status: in-progress
-epic: planning
+epic: project
 tags: [overview, planning]
 ---
 

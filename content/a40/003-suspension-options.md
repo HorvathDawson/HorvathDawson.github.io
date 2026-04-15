@@ -2,11 +2,11 @@
 title: "Front Suspension Options"
 date: 2024-02-10
 status: complete
-epic: chassis
+epic: research
 tags: [suspension, planning]
 ---
 
-Originally I was going to do a Mustang II front end swap. There's a guy on one of the Austin forums — [Vern Scholz's build on Driving.ca](https://driving.ca/column/its-mine/its-mine-vern-scholzs-1950-austin-a40) — who did exactly this and posted a pretty detailed writeup. My plan wasn't to splice the OEM MII crossmember into the original frame though, it was to fabricate a custom front clip and then splice that into the A40 frame to mount the MII suspension. The second A40 I bought actually already had a Mustang II swap done on its frame, but that one used the OEM MII crossmember spliced in, so it was a head start but not the approach I'd originally planned.
+Originally I was going to do a Mustang II front end swap. One of the original reasons for going MII was that the Mustang II uses a 4x100 bolt pattern, same as the original A40 OEM wheels. There's a guy on one of the Austin forums — [Vern Scholz's build on Driving.ca](https://driving.ca/column/its-mine/its-mine-vern-scholzs-1950-austin-a40) — who did exactly this and posted a pretty detailed writeup. My plan wasn't to splice the OEM MII crossmember into the original frame though, it was to fabricate a custom front clip and then splice that into the A40 frame to mount the MII suspension. The second A40 I bought actually already had a Mustang II swap done on its frame, but that one used the OEM MII crossmember spliced in, so it was a head start but not the approach I'd originally planned.
 
 But after measuring that spliced frame and looking at it more carefully I wasn't happy with it. A spliced frame with grafted-in crossmembers is a compromise. The welds are in structural locations, the geometry is dictated by where you can fit the MII parts, and you're working around the limitations of the original frame rails. I decided I'd rather build a completely new frame from scratch and do it right.
 

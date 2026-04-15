@@ -1,4 +1,7 @@
 import { marked } from 'marked';
+import markedKatex from 'marked-katex-extension';
+
+marked.use(markedKatex({ throwOnError: false, nonStandard: true }));
 
 export type Status = 'planning' | 'in-progress' | 'complete';
 
@@ -24,10 +27,11 @@ export interface Epic {
 
 /** Epics define the top-level threads of the build. */
 export const epics: Epic[] = [
-  { id: 'planning',    title: 'Planning & Teardown',       status: 'complete',    order: 0 },
-  { id: 'chassis',     title: 'Chassis, Frame & Suspension', status: 'in-progress', order: 1 },
-  { id: 'drivetrain',  title: 'Drivetrain',                status: 'planning',    order: 2 },
-  { id: 'body',        title: 'Body',                      status: 'planning',    order: 3 },
+  { id: 'project',      title: 'Project Overview',              status: 'complete',     order: 0 },
+  { id: 'research',     title: 'Research & Initial Decisions',  status: 'complete',     order: 1 },
+  { id: 'narrowing',    title: 'Narrowing & Geometry Analysis', status: 'in-progress',  order: 2 },
+  { id: 'design',       title: 'Pre-Build Design',              status: 'in-progress',  order: 3 },
+  { id: 'fabrication',  title: 'Fabrication',                   status: 'planning',     order: 4 },
 ];
 
 /** Parse YAML-ish frontmatter from a Markdown string. */

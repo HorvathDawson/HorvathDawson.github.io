@@ -2,7 +2,7 @@
 title: "Teardown"
 date: 2022-06-15
 status: complete
-epic: planning
+epic: project
 tags: [teardown]
 ---
 

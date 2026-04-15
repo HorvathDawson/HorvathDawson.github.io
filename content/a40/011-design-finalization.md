@@ -1,8 +1,8 @@
 ---
 title: "Design Finalization & Materials"
-date:
-status: planning
-epic: chassis
+date: 2026-03-05
+status: in-progress
+epic: design
 tags: [frame, planning, materials]
 ---
 
