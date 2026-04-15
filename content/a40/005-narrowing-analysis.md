@@ -82,6 +82,7 @@ Keeps the Miata suspension geometry closer to factory. The control arm angles re
 | 185/60R15 | 185mm | 603mm | +25mm | Common |
 | 195/55R16 | 195mm | 621mm | +43mm | Moderate |
 | 185/65R15 | 185mm | 621mm | +43mm | Common |
+| 205/55R15 | 205mm | 607mm | +29mm | Common |
 
 **Match original A40 diameter (~646mm)**
 The car sits at the correct ride height with period-correct proportions. The tall sidewall looks right on a vintage car. But the hub center moves up ~34mm compared to Miata stock, which changes the suspension geometry. Here's what happens if you keep the same control arm pickup point locations but increase the tire diameter:
@@ -106,7 +107,7 @@ The car sits at the correct ride height with period-correct proportions. The tal
 
 Going with a tire close to the original A40 diameter. The car should look right and sit at the right height. Since this is a custom frame, every pickup point and mount (suspension, steering rack, subframe) gets placed to match the chosen tire diameter and ride height. The Miata geometry carries over without compromise. All of this gets verified in the SA V2 analysis with the actual dimensions as inputs.
 
-A 185-195mm width keeps the proportions reasonable on a car that originally wore 133mm tires. 205mm starts to look wide.
+A 205/65R15 at 648mm is almost a dead match for the original A40 diameter. The 205mm width is wider than stock, but on 15" wheels the sidewall profile still looks period-appropriate. It also gives more contact patch than a 185 or 195, which helps put the SR20DET's power down.
 
 ### Tire width vs fender space
 
@@ -118,6 +119,7 @@ Wider tires only cost the width difference in fender space. With ~90mm total sto
 | 175/80R16 | 175mm | 42mm | ~24mm |
 | 185/70R15 | 185mm | 52mm | ~19mm |
 | 195/65R15 | 195mm | 62mm | ~14mm |
+| 205/65R15 | 205mm | 72mm | ~9mm |
 
 A Devon owner running 175mm tires noted "plenty of space" on stock fenders. A NZ build ([kilroy.co.nz](http://www.kilroy.co.nz/cars/car02.html)) fitted 178mm rims with only subtle flares. The fender is not the hard constraint. The constraint is how much the Miata suspension needs to narrow.
 
@@ -164,7 +166,7 @@ Fender tape measurements and the cross-check showing they underread are in the s
 
 ### Tire width
 
-A 185mm tire is 52mm wider than the stock 133mm. Forum evidence and external builds confirm 175mm tires fit with "plenty of space" inside the A40 Devon fenders; 185mm is 10mm wider than that. Every 10mm of extra tire width costs 5mm more narrowing per side at a fixed outer-to-outer.
+A 205mm tire is 72mm wider than the stock 133mm. Forum evidence and external builds confirm 175mm tires fit with "plenty of space" inside the A40 Devon fenders; 205mm is 30mm wider than that. Every 10mm of extra tire width costs 5mm more narrowing per side at a fixed outer-to-outer.
 
 ### Wheel offset
 
@@ -174,17 +176,18 @@ ET sets how far the wheel centerline sits outboard of the hub flange. For a fixe
 
 ### Fender scenarios
 
-The fender sets a hard limit on where the tire's outer edge can sit. Track is just outer-to-outer minus tire width. The stock A40 outer-to-outer (1365mm) is the conservative baseline. Photos suggest the fenders allow more room, so here are three scenarios with 185mm tires:
+The fender sets a hard limit on where the tire's outer edge can sit. Track is just outer-to-outer minus tire width. The stock A40 outer-to-outer (1365mm) is the conservative baseline. Photos suggest the fenders allow more room, so here are four scenarios with 205mm tires:
 
 | Outer-to-outer | Track |
 |----------------|-------|
-| 1365mm (stock envelope) | 1180mm |
-| 1390mm (+25mm) | 1205mm |
-| 1415mm (+50mm) | 1230mm |
+| 1365mm (stock envelope) | 1160mm |
+| 1395mm (+30mm) | 1190mm |
+| 1415mm (+50mm) | 1210mm |
+| 1435mm (+70mm) | 1230mm |
 
-The +50mm row (1230mm track) nearly matches the stock A40 front track of 1232mm.
+The +70mm row (1230mm track) nearly matches the stock A40 front track of 1232mm.
 
-Photos suggest the usable envelope is somewhere around 1380-1400mm, but external references confirm 175mm tires (42mm wider than stock A40) fit with "plenty of space," so 1415mm (+50mm) is the working baseline.
+Photos suggest the usable envelope is somewhere around 1380-1400mm, but external references confirm 175mm tires (42mm wider than stock A40) fit with "plenty of space." The fender clearance table above shows 205mm tires still fit with ~9mm per side, so 1435mm (+70mm) is the working baseline.
 
 ### Estimated narrowing
 
@@ -192,13 +195,14 @@ At ET45, the Miata hub sits at 747.5mm from centerline. The build's hub position
 
 | Outer-to-outer | Track | Hub from CL | Narrow/side | Hub-to-hub |
 |----------------|-------|-------------|-------------|------------|
-| 1365mm (stock envelope) | 1180mm | 635mm | 112.5mm | 1270mm |
-| 1390mm (+25mm) | 1205mm | 647.5mm | 100mm | 1295mm |
-| 1415mm (+50mm) | 1230mm | 660mm | 87.5mm | 1320mm |
+| 1365mm (stock envelope) | 1160mm | 625mm | 122.5mm | 1250mm |
+| 1395mm (+30mm) | 1190mm | 640mm | 107.5mm | 1280mm |
+| 1415mm (+50mm) | 1210mm | 650mm | 97.5mm | 1300mm |
+| 1435mm (+70mm) | 1230mm | 660mm | 87.5mm | 1320mm |
 
 ### Working assumptions
 
-Baseline: 185mm tire, ET45, 1415mm outer-to-outer. Track = 1230mm, narrowing = 87.5mm per side. This nearly matches the stock A40 front track of 1232mm. Re-measure the A40 fender with a straight edge before committing to pickup locations.
+Baseline: 205mm tire, ET45, 1435mm outer-to-outer. Track = 1230mm, narrowing = 87.5mm per side. This nearly matches the stock A40 front track of 1232mm. Re-measure the A40 fender with a straight edge before committing to pickup locations.
 
 ### Formulas
 
@@ -218,10 +222,10 @@ Baseline: 185mm tire, ET45, 1415mm outer-to-outer. Track = 1230mm, narrowing = 8
 >
 > $$\Delta = \frac{T_{Miata} - T}{2} = \frac{1405 - T}{2}$$
 
-> **Worked example (185mm tire, ET45, +50mm envelope 1415mm):**
+> **Worked example (205mm tire, ET45, +70mm envelope 1435mm):**
 >
-> 1. $W_{outer} = 1415 \text{ mm}$ (+50mm tire envelope)
-> 2. $T = 1415 - 185 = 1230 \text{ mm}$
+> 1. $W_{outer} = 1435 \text{ mm}$ (+70mm tire envelope)
+> 2. $T = 1435 - 205 = 1230 \text{ mm}$
 > 3. $d_{hub} = 1230 / 2 = 615 \text{ mm from CL}$
 > 4. $\Delta = (1405 - 1230) / 2 = 87.5 \text{ mm per side}$
 
