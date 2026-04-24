@@ -16,4 +16,12 @@ The SR20DET wins because:
 
 The plan is to run it on a standalone ECU from the start. Clean wiring, no splicing into a Nissan body harness, tunable from day one.
 
+### Planned work before install
+
+- Basic rebuild: new gaskets throughout, check cylinder bores and hone or bore as needed, new head bolts and main bolts
+- Dual guide valve mod (oil squirters to the exhaust valve guides for longevity under boost)
+- Wideband O2 sensor bung welded into the downpipe
+- Silicone coolant hoses replacing all rubber lines
+- Standalone ECU and custom engine harness (no stock Nissan ECU or body harness)
+
 Cooling will be a custom aluminum radiator in the stock location. The A40's grille opening is small so airflow might need a slim electric fan behind the rad.
