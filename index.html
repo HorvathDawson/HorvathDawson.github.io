@@ -28,14 +28,17 @@
     </script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
-    <!-- Preload key images -->
-    <link rel="preload" as="image" href="/assets/header/foreground-tile.png">
-    <link rel="preload" as="image" href="/assets/header/layer-0.png">
-    <link rel="preload" as="image" href="/assets/header/layer-1.png">
-    <link rel="preload" as="image" href="/assets/header/layer-2.png">
-    <link rel="preload" as="image" href="/assets/header/layer-3.png">
-    <link rel="preload" as="image" href="/assets/header/layer-4.png">
-    <link rel="preload" as="image" href="/assets/header/layer-5.png">
+    <!-- Prefetch parallax header images. They're only used on the home page,
+         so `prefetch` (low-priority, idle-time) is correct here rather than
+         `preload` — preload warns on every other route because the resources
+         aren't consumed within the load window. -->
+    <link rel="prefetch" as="image" href="/assets/header/foreground-tile.png">
+    <link rel="prefetch" as="image" href="/assets/header/layer-0.png">
+    <link rel="prefetch" as="image" href="/assets/header/layer-1.png">
+    <link rel="prefetch" as="image" href="/assets/header/layer-2.png">
+    <link rel="prefetch" as="image" href="/assets/header/layer-3.png">
+    <link rel="prefetch" as="image" href="/assets/header/layer-4.png">
+    <link rel="prefetch" as="image" href="/assets/header/layer-5.png">
   </head>
   <body>
     <noscript>You need JavaScript enabled to view this portfolio.</noscript>

@@ -175,6 +175,12 @@
   animation: gc-star-spin 3s linear infinite;
 }
 .sb-dot--complete    { background: var(--icg); color: var(--icg); }
+.sb-dot--decided {
+  background: #b07cff;
+  color: #b07cff;
+  border-radius: 50%;
+  box-shadow: 0 0 4px currentColor, inset 0 0 0 2px rgba(0, 0, 0, 0.45);
+}
 
 /* ══════════════════════════════════════════════════
    DESKTOP — Sidebar
@@ -349,6 +355,7 @@
 .sb-badge--planning    { border-color: var(--gold); color: var(--gold); }
 .sb-badge--in-progress { border-color: #3898ec; color: #3898ec; }
 .sb-badge--complete    { border-color: var(--icg); color: var(--icg); }
+.sb-badge--decided     { border-color: #b07cff; color: #b07cff; }
 
 .sb-epic-chevron {
   font-size: 10px;
@@ -732,4 +739,948 @@
   .blog-article-body {
     font-size: 15px;
   }
+}
+
+/* ==========================================================
+   Roadmap / dependency view
+   ========================================================== */
+
+.rm-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* ── Top bar ─────────────────────────────────────── */
+
+.rm-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--dark-blue);
+  flex-shrink: 0;
+}
+
+.rm-topbar-title {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+.rm-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--warm-white);
+  opacity: 0.8;
+}
+.rm-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.rm-legend-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.rm-legend-swatch--up   { background: rgba(56, 152, 236, 0.85); }
+.rm-legend-swatch--down { background: rgba(255, 140, 90, 0.85); }
+
+.rm-filters {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+.rm-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--warm-white);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+.rm-filter--on {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.rm-filter:hover {
+  opacity: 1;
+}
+
+/* Zoom controls (topbar). */
+.rm-zoom-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 2px;
+}
+.rm-zoom-btn {
+  min-width: 28px;
+  height: 24px;
+  padding: 0 8px;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  color: var(--warm-white);
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.rm-zoom-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.rm-zoom-btn--reset { font-size: 11px; min-width: 44px; font-weight: 500; }
+
+/* Sizer wrapper around the transformed inner so the scroll container knows
+   the post-scale visual extent and scrollbars track the zoom level. */
+.rm-zoom-sizer {
+  position: relative;
+}
+
+/* \u2500\u2500 Scrollable canvas \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rm-scroll {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  cursor: grab;
+  background:
+    linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)),
+    var(--dark-blue);
+}
+.rm-scroll--dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+.rm-scroll--dragging * {
+  pointer-events: none;
+}
+
+/* Reserve space for the desktop drawer so the canvas remains scrollable
+   and nothing important hides under it. */
+.rm-page--drawer-open .rm-scroll {
+  padding-right: min(420px, 92vw);
+}
+
+/* Floating exit-isolation pill — pinned to the top-left of the canvas
+   in both scroll axes, like the sticky lane headers. */
+.rm-isolate-controls {
+  position: sticky;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: max-content;
+  margin: 12px 0 0 0;
+}
+.rm-exit-isolate {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: var(--gold);
+  color: var(--dark-blue);
+  border: none;
+  border-radius: 999px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  transition: background 0.15s, transform 0.1s;
+}
+.rm-exit-isolate:hover { background: #fff; }
+.rm-exit-isolate:active { transform: translateY(1px); }
+
+/* Compact toggle button (always visible while isolated) — lets the user
+   collapse the chip(s) out of the way without exiting isolation. */
+.rm-isolate-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--gold);
+  border: 1px solid rgba(243, 222, 64, 0.5);
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  transition: background 0.15s, transform 0.1s;
+}
+.rm-isolate-toggle:hover { background: rgba(0, 0, 0, 0.8); }
+.rm-isolate-toggle:active { transform: translateY(1px); }
+.rm-isolate-controls--collapsed { gap: 0; }
+
+/* Mobile variant: lives inside the header bar, not floating over the canvas.
+   Removes the sticky positioning and tightens chip padding so all three
+   controls fit alongside the legend / filters / zoom row. */
+.rm-isolate-controls--header {
+  position: static;
+  margin: 0;
+  gap: 6px;
+}
+.rm-isolate-controls--header .rm-exit-isolate,
+.rm-isolate-controls--header .rm-toggle-downstream {
+  padding: 5px 10px;
+  font-size: 11px;
+  letter-spacing: 0.3px;
+}
+.rm-isolate-controls--header .rm-isolate-toggle {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+.rm-toggle-downstream {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: rgba(56, 152, 236, 0.18);
+  color: #cfe6ff;
+  border: 1px solid rgba(56, 152, 236, 0.55);
+  border-radius: 999px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+.rm-toggle-downstream:hover {
+  background: rgba(56, 152, 236, 0.32);
+  color: #fff;
+}
+.rm-toggle-downstream:active { transform: translateY(1px); }
+
+/* Inline +N stub for collapsed downstream cone — sits in the graph,
+   reached by a synthetic arrow from the focused card. */
+.rm-downstream-stub {
+  position: absolute;
+  transform: translate(0, -50%);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  height: 36px;
+  padding: 0 14px;
+  background: rgba(176, 124, 255, 0.18);
+  color: #d9c2ff;
+  border: 2px dashed rgba(176, 124, 255, 0.7);
+  border-radius: 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(176, 124, 255, 0.25);
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+}
+.rm-downstream-stub:hover {
+  background: rgba(176, 124, 255, 0.32);
+  color: #fff;
+  border-color: #d9b8ff;
+}
+.rm-downstream-stub:active { transform: translate(0, -50%) scale(0.97); }
+
+.rm-inner {
+  /* grid styles applied inline so col count is dynamic */
+}
+
+/* ── Lane headers + stripes ──────────────────────── */
+
+.rm-lane-header {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 12px;
+  background: var(--dark-blue);
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gold);
+  align-self: stretch;
+  width: 160px;
+  box-sizing: border-box;
+}
+
+.rm-lane-title {
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.25;
+  flex: 1;
+  min-width: 0;
+}
+
+.rm-lane-stripe {
+  /* sit behind cards/edges */
+  z-index: 0;
+  border-radius: 4px;
+  margin: -4px -12px;
+  pointer-events: none;
+}
+.rm-lane-stripe--0 { background: rgba(255, 255, 255, 0.015); }
+.rm-lane-stripe--1 { background: rgba(255, 255, 255, 0.04); }
+
+/* ── Task cells / cards ──────────────────────────── */
+
+.rm-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 2;
+  position: relative;
+}
+
+.rm-card {
+  text-align: left;
+  background: #15324a;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 3px solid rgba(255, 255, 255, 0.18);
+  color: var(--warm-white);
+  padding: 10px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  /* No transform-based hover effect: it moves the card under the cursor and
+     causes mouseenter/leave flicker, especially on dense graphs.
+     IMPORTANT: opacity is intentionally NOT transitioned here. When a hover
+     cone activates, ~50 non-cone cards would otherwise cross-fade opacity
+     simultaneously, which stutters the compositor on the no-hover → hover
+     transition (hover → hover is fine because most cards stay in state).
+     The dim snaps instantly; the cone members still animate
+     border-color/box-shadow smoothly. */
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  /* GPU compositing prewarm: each card gets its own compositor layer up
+     front (translateZ(0) is a guaranteed layer trigger). Once layered,
+     opacity and box-shadow changes are GPU composite operations rather
+     than CPU repaints, so the no-hover → hover dim of ~50 cards is
+     essentially free regardless of cone size. Memory cost: a few MB. */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.rm-card:hover:not(.rm-card--upstream):not(.rm-card--downstream):not(.rm-card--focused) {
+  border-color: var(--gold);
+}
+.rm-card--active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 0 8px rgba(243, 222, 64, 0.35);
+}
+/* Specificity bump (.rm-card.rm-card--*) so highlight cone always wins over
+   bottleneck-tier glows defined later in the file. */
+.rm-card.rm-card--focused {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold), 0 0 8px rgba(243, 222, 64, 0.45);
+  z-index: 4;
+}
+.rm-card.rm-card--upstream {
+  border-color: rgba(56, 152, 236, 0.85);
+  box-shadow: 0 0 0 1px rgba(56, 152, 236, 0.6), 0 0 6px rgba(56, 152, 236, 0.3);
+}
+.rm-card.rm-card--downstream {
+  border-color: rgba(255, 140, 90, 0.85);
+  box-shadow: 0 0 0 1px rgba(255, 140, 90, 0.6), 0 0 6px rgba(255, 140, 90, 0.3);
+}
+/* When any card is focused, fade the rest. Faded state is now a direct
+   per-card class (set by React when focusedId is set and the card isn't a
+   cone member). Avoids `.rm-inner--focused .rm-card:not(...)` descendant
+   selectors which force style invalidation on every descendant whenever
+   the parent class flips. */
+.rm-card--faded {
+  opacity: 0.32;
+}
+.rm-card--dimmed {
+  opacity: 0.25;
+}
+.rm-card--planning    { border-left-color: var(--gold); }
+.rm-card--in-progress { border-left-color: #3898ec; }
+.rm-card--decided     {
+  border-left-color: #b07cff;
+  background: linear-gradient(180deg, #15324a 0%, #221a3a 100%);
+  border-color: rgba(176, 124, 255, 0.5);
+}
+.rm-card--complete    {
+  border-left-color: var(--icg, #6bd968);
+  background: linear-gradient(180deg, #15324a 0%, #133525 100%);
+  border-color: rgba(107, 217, 104, 0.45);
+}
+.rm-card--complete .rm-card-title {
+  text-decoration: line-through;
+  text-decoration-color: rgba(107, 217, 104, 0.6);
+  color: rgba(255, 255, 255, 0.62);
+}
+.rm-card--complete .rm-card-meta { opacity: 0.6; }
+.rm-card--decided .rm-card-title {
+  text-decoration: line-through;
+  text-decoration-color: rgba(176, 124, 255, 0.65);
+  color: rgba(255, 255, 255, 0.62);
+}
+.rm-card--decided .rm-card-check {
+  background: #b07cff;
+  color: #1a0f2e;
+}
+.rm-card-decision {
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-left: 2px solid #b07cff;
+  background: rgba(176, 124, 255, 0.08);
+  color: #d6c3ff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  border-radius: 0 4px 4px 0;
+  white-space: normal;
+  text-decoration: none;
+}
+.rm-card--complete .rm-card-decision {
+  border-left-color: var(--icg, #6bd968);
+  background: rgba(107, 217, 104, 0.08);
+  color: #c5f0c0;
+}
+.rm-card-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--icg, #6bd968);
+  color: #0e2118;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+/* Kind: purchase — warm hatched tint */
+.rm-card--kind-purchase {
+  background:
+    repeating-linear-gradient(
+      135deg,
+      rgba(243, 222, 64, 0.08) 0 8px,
+      rgba(0, 0, 0, 0) 8px 16px
+    ),
+    #1a3a2a;
+  border-color: rgba(243, 222, 64, 0.45);
+}
+/* Kind: decision — distinct cool-blue tint with dashed border */
+.rm-card--kind-decision {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(56, 152, 236, 0.07) 0 8px,
+      rgba(0, 0, 0, 0) 8px 16px
+    ),
+    #1a2a3a;
+  border-style: dashed;
+  border-color: rgba(56, 152, 236, 0.55);
+}
+/* Completed decisions/purchases keep their kind tint but get the green stripe */
+.rm-card--complete.rm-card--kind-decision,
+.rm-card--complete.rm-card--kind-purchase {
+  background: linear-gradient(180deg, rgba(107, 217, 104, 0.12) 0%, #133525 100%);
+}
+
+.rm-card-kind {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.rm-card-kind--purchase {
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.rm-card-kind--decision {
+  border: 1px solid #3898ec;
+  color: #3898ec;
+  border-radius: 50%;
+}
+.rm-drawer-kind {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.rm-drawer-kind--purchase { border: 1px solid var(--gold); color: var(--gold); }
+.rm-drawer-kind--decision { border: 1px solid #3898ec; color: #3898ec; }
+
+/* Isolate-this-path button in the drawer */
+.rm-isolate-btn {
+  display: block;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid rgba(243, 222, 64, 0.5);
+  border-radius: 4px;
+  color: var(--warm-white);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.rm-isolate-btn:hover {
+  background: rgba(243, 222, 64, 0.12);
+  border-color: var(--gold);
+}
+.rm-isolate-btn--on {
+  background: var(--gold);
+  color: var(--dark-blue);
+  border-color: var(--gold);
+}
+
+/* Isolate mode: hide non-path cards (preserves grid layout). */
+.rm-card--hidden { visibility: hidden; pointer-events: none; }
+
+.rm-card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rm-card-title {
+  flex: 1;
+  font-weight: bold;
+  line-height: 1.25;
+  word-break: break-word;
+}
+.rm-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  flex-wrap: wrap;
+}
+.rm-card-posts,
+.rm-card-soft {
+  font-size: 10px;
+  color: var(--warm-white);
+  opacity: 0.7;
+}
+.rm-card-soft {
+  border: 1px dashed rgba(255, 255, 255, 0.45);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+.rm-card-defer {
+  font-size: 10px;
+  color: #ffd28a;
+  background: rgba(255, 180, 90, 0.1);
+  border: 1px solid rgba(255, 180, 90, 0.4);
+  border-radius: 3px;
+  padding: 1px 5px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Bottleneck-purchase chips: tier 1 (low) → tier 3 (critical).
+   Tier reflects how many downstream tasks the purchase gates via hard deps. */
+.rm-card-blocks {
+  font-size: 10px;
+  border-radius: 3px;
+  padding: 1px 5px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  font-weight: 600;
+}
+.rm-card-blocks--t1 {
+  color: #cfe6ff;
+  background: rgba(56, 152, 236, 0.12);
+  border: 1px solid rgba(56, 152, 236, 0.45);
+}
+.rm-card-blocks--t2 {
+  color: #ffe1a8;
+  background: rgba(255, 180, 90, 0.16);
+  border: 1px solid rgba(255, 180, 90, 0.55);
+}
+.rm-card-blocks--t3 {
+  color: #ffd1d1;
+  background: rgba(255, 90, 90, 0.18);
+  border: 1px solid rgba(255, 90, 90, 0.7);
+  box-shadow: 0 0 0 1px rgba(255, 90, 90, 0.25) inset;
+}
+
+/* Subtle outer glow on the card for top-tier bottleneck purchases so they
+   pop visually in the graph without needing the user to read every chip.
+   Kept low-radius so they don't add to per-frame paint cost during the
+   highlight-cone cross-fade. */
+.rm-card--bottleneck-2 {
+  box-shadow: 0 0 0 1px rgba(255, 180, 90, 0.35), 0 1px 6px rgba(255, 180, 90, 0.18);
+}
+.rm-card--bottleneck-3 {
+  box-shadow: 0 0 0 1px rgba(255, 90, 90, 0.55), 0 1px 8px rgba(255, 90, 90, 0.28);
+}
+
+.rm-drawer-blocks {
+  font-size: 11px;
+  border-radius: 3px;
+  padding: 2px 6px;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.rm-drawer-blocks--t1 {
+  color: #cfe6ff;
+  background: rgba(56, 152, 236, 0.18);
+  border: 1px solid rgba(56, 152, 236, 0.55);
+}
+.rm-drawer-blocks--t2 {
+  color: #ffe1a8;
+  background: rgba(255, 180, 90, 0.2);
+  border: 1px solid rgba(255, 180, 90, 0.65);
+}
+.rm-drawer-blocks--t3 {
+  color: #ffd1d1;
+  background: rgba(255, 90, 90, 0.24);
+  border: 1px solid rgba(255, 90, 90, 0.8);
+}
+
+/* ── SVG edge overlay ────────────────────────────── */
+
+.rm-edges {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rm-edge {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.32;
+  /* No transition. With ~80 edges flipping opacity simultaneously on first
+     hover, the cross-fade was the dominant cause of the perceived
+     "multiple opacities" stutter. Snapping is instant and visually
+     unambiguous. Cone cards still animate box-shadow (only a handful). */
+}
+.rm-edge--hard {
+  stroke-width: 1.5;
+}
+.rm-edge--soft {
+  stroke-dasharray: 5 4;
+}
+.rm-edge--dimmed {
+  opacity: 0.06;
+}
+
+/* When something is focused, push everything else further back, */
+/* and bring the highlighted edges forward. */
+.rm-edges--focused .rm-edge--background {
+  opacity: 0.06;
+}
+/* No SVG drop-shadow filter — too expensive on large cones and causes
+   visible per-frame stutter. Brighter stroke + thicker width carries the
+   "highlighted" signal cheaply. */
+.rm-edge--highlighted {
+  opacity: 1 !important;
+  stroke-width: 2.5;
+}
+
+/* ── Drawer ──────────────────────────────────────── */
+
+.rm-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 50;
+}
+
+.rm-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(420px, 92vw);
+  background: var(--dark-blue);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: -4px 0 18px rgba(0, 0, 0, 0.45);
+  z-index: 51;
+  overflow-y: auto;
+  padding: 18px 20px 28px;
+  font-family: 'Space Mono', monospace;
+  color: var(--warm-white);
+}
+.rm-drawer--mobile {
+  top: auto;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: 100vw;
+  height: 78vh;
+  border-left: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.45);
+}
+
+.rm-drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.rm-drawer-title {
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
+  color: var(--gold);
+  word-break: break-word;
+}
+.rm-drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--warm-white);
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  padding: 0;
+  border-radius: 4px;
+  font-size: 22px;
+  line-height: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  cursor: pointer;
+}
+.rm-drawer-close:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.rm-drawer-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.rm-drawer-epic {
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rm-drawer-summary {
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0 0 16px;
+}
+
+.rm-drawer-decision {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+  border-left: 3px solid #b07cff;
+  background: rgba(176, 124, 255, 0.08);
+  border-radius: 0 4px 4px 0;
+}
+.rm-drawer-decision-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #b07cff;
+  font-weight: 700;
+}
+.rm-drawer-decision-value {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #e8dcff;
+}
+.rm-drawer-defer-note {
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 0 0 14px;
+  padding: 8px 10px;
+  border-left: 3px solid rgba(255, 180, 90, 0.6);
+  background: rgba(255, 180, 90, 0.08);
+  color: #ffd28a;
+  border-radius: 0 4px 4px 0;
+}
+.rm-drawer-defer-note strong {
+  color: #ffb45a;
+  margin-right: 4px;
+}
+
+.rm-drawer-h3 {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 14px 0 6px;
+}
+
+.rm-drawer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.rm-drawer-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.rm-drawer-link {
+  color: var(--warm-white);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.rm-drawer-link:hover { color: var(--gold); }
+
+.rm-drawer-tasklink {
+  background: transparent;
+  border: none;
+  color: var(--warm-white);
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.rm-drawer-tasklink:hover { color: var(--gold); }
+
+.rm-edge-pill {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  opacity: 0.85;
+}
+.rm-edge-pill--hard { border-style: solid;  }
+.rm-edge-pill--soft { border-style: dashed; }
+
+.rm-edge-note {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* ── Roadmap link in main blog UI ────────────────── */
+
+.blog-roadmap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--dark-blue);
+  background: var(--gold);
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 2px solid var(--gold);
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 0 12px rgba(243, 222, 64, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.blog-roadmap-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(243, 222, 64, 0.6);
+}
+/* Topbar: push to the right of title */
+.blog-topbar .blog-roadmap-link {
+  margin-left: auto;
+}
+/* Desktop sidebar: stack with breathing room */
+.blog-sidebar-header .blog-roadmap-link {
+  align-self: flex-start;
+  margin-top: 8px;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  padding: 8px 14px;
+}
+
+/* Mobile tweaks */
+@media (max-width: 991px) {
+  .rm-topbar {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .rm-topbar-title { font-size: 13px; letter-spacing: 0.5px; }
+  /* Show every legend chip but make them tiny so they fit one row alongside
+     the filters / zoom / isolate controls. */
+  .rm-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    font-size: 9px;
+    opacity: 0.85;
+  }
+  .rm-legend-item { gap: 3px; }
+  .rm-legend-swatch { width: 7px; height: 7px; }
+  /* Drop the longer hint labels on mobile to save row real estate. */
+  .rm-legend-hint { display: none; }
+  .rm-filters { width: auto; margin-left: 0; gap: 4px; }
+  .rm-filter { padding: 3px 7px; font-size: 10px; gap: 4px; }
+  .rm-filter .sb-status-dot { width: 6px; height: 6px; }
+  .rm-zoom-btn { padding: 3px 7px; font-size: 11px; min-width: 26px; }
+  .rm-lane-header { font-size: 10px; padding: 8px 10px; }
 }

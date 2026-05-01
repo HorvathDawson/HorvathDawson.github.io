@@ -14,6 +14,49 @@ All examples use 205mm tires, ET45, +70mm outer-to-outer (1435mm), giving 1230mm
 
 ---
 
+## Linkage geometry reference
+
+Every plot and equation in this post pulls from the same set of donor scan dimensions. They are collected here for reference. Source is a photogrammetric scan of the donor knuckle, LCA, and UCA, plus the published Miata pickup drawing. Anything tagged "est" must be verified against the donor car before frame welding.
+
+Coordinate convention: lat is lateral with outboard positive, fa is fore/aft with forward positive, z is vertical with up positive. Origins are noted per row.
+
+| Item | Value | Notes |
+|---|---|---|
+| Front track (Miata stock) | 1405 mm | published, ET45, 185 width |
+| Front track (A40 target) | 1230 mm | 87.5 mm narrowing per side |
+| Tire OD (Miata stock) | 577 mm | 185/60R14 |
+| Tire OD (A40 build) | 646 mm | 205/65R15 |
+| Hub centre above ground (Miata) | 265 mm | tire radius |
+| Hub centre above ground (A40) | 299.5 mm | tire radius |
+| LBJ from hub centre (lat, fa, z) | (74.9 in, 8.8 aft, 93.6 down) mm | scan |
+| UBJ from hub centre (lat, fa, z) | (124.7 in, 8.8 aft, 139.4 up) mm | scan |
+| Steering arm from hub (lat, fa, z) | (66.0 in, 97.2 fwd, 75.7 down) mm | scan |
+| KPI (front view) | 12.1 deg | from LBJ/UBJ scan: $\arctan(49.8/233.0)$ |
+| Caster (side view) | 0.0 deg | both BJs share fa offset of 8.8 mm |
+| LCA inner pivot from car CL | 328.0 mm | both front and rear pivot (shared lat) |
+| LCA fore/aft pivot span | 323.5 mm | front pivot to rear pivot, c to c |
+| LCA effective length, front view | 374.5 mm | hub centre to inner pivot line |
+| LCA inner pivot z, vs LBJ | +25 mm | est, LCA pivot above LBJ |
+| Coilover lower mount on LCA | 240 mm out, +25 mm fwd of BJ | gives MR lever 240/374.5 = 0.641 |
+| ARB end link on LCA | 185 mm out, +35 mm fwd of BJ | |
+| UCA inner pivot from car CL | 378.0 mm | 50 mm outboard of LCA pivot |
+| UCA effective length, front view | 199.8 mm | UBJ to UCA pivot line |
+| UCA front pivot fa from BJ | +113.5 mm fwd | |
+| UCA rear pivot fa from BJ | 143.5 mm aft | |
+| UCA front pivot z above LCA pivot | 192 mm | verify |
+| UCA rear pivot z above LCA pivot | 170 mm | verify |
+| UCA inner pivot z, vs UBJ | 15 mm below | est |
+| LCA front pivot bushing length | 73 mm | |
+| LCA rear pivot bushing length | 60 mm | |
+| UCA pivot bushing length | 56 mm | both pivots |
+| Shock stroke (5 in) | 127 mm | $44/47$ comp, $54/57$ ext at MR 0.63 |
+| Motion ratio at 80 deg | 0.631 | $(240/374.5)\sin 80°$ |
+| Wheel travel | 141 mm bump, 60 mm droop | shock stroke divided by MR |
+
+The four bar that drives the front view kinematics is set by four numbers: the LCA inner pivot, the UCA inner pivot, the LBJ, and the UBJ. The knuckle length and KPI follow directly from LBJ and UBJ. Everything downstream (RC, IC, FVSA, camber gain, scrub, motion ratio) is a function of these four points and the tire radius.
+
+---
+
 ## What does NOT change
 
 When the entire assembly translates as a unit on a custom frame, the following are preserved — but only if the inner pivot locations are correctly positioned at exactly 87.5mm inboard of their stock positions. The +/-1mm pickup tolerance in the fabrication section applies here:
@@ -113,11 +156,70 @@ The current geometry puts the static RC at roughly 130mm for the A40 build. That
 
 ### Roll center migration
 
-**In cornering.** The local linkage geometry is preserved, so the FVIC moves identically for the same wheel travel. Absolute RC migration per degree of roll is slightly less on the narrower track. But the car rolls more (higher CG, less spring stiffness), so total RC displacement during cornering is larger.
+Static RC height is only one number. What the car actually feels mid corner is how the RC moves as the body heaves and rolls. The plots below sweep body heave and body roll across the full shock stroke (kinematic solver, body pose DOF, tires pinned to the ground) and plot the cloud of resulting RC positions for the donor and the A40.
+
+<figure class="wide">
+  <img src="/assets/projects/a40-austin/blog/plots/rc_migration_miata.png" alt="Front view RC migration cloud for the donor Miata across the full body heave and roll envelope" />
+  <figcaption>Donor Miata RC migration: 1405 mm track, 577 mm tire. Each dot is one valid (heave, roll) body pose. The shaded blob is the density. Overlay markers show the five extreme cases.</figcaption>
+</figure>
+
+<figure class="wide">
+  <img src="/assets/projects/a40-austin/blog/plots/rc_migration_a40.png" alt="Front view RC migration cloud for the A40 build across the full body heave and roll envelope" />
+  <figcaption>A40 RC migration: 1230 mm track, 646 mm tire. Same envelope and same kinematic solver. The cloud is much tighter, especially in the lateral direction.</figcaption>
+</figure>
+
+#### Numbers
+
+| | Donor Miata | A40 build | Ratio |
+|---|---:|---:|---:|
+| Track | 1405 mm | 1230 mm | 0.875 |
+| Hub above ground | 265 mm | 299.5 mm | +35 mm |
+| Static RC | (0, 132.6) | (0, 129.6) | nearly identical |
+| Static IC | (866 in, 296 up) | (953 in, 331 up) | IC up 35, in 87 |
+| FVSA half length | 1596 mm | 1603 mm | preserved |
+| FVSA / half track | 2.23 | 2.55 | +14 % |
+| RC.x sweep, full envelope | $\pm 355$ mm | $\pm 117$ mm | 0.33 |
+| RC.y sweep, full envelope | 283 mm | 185 mm | 0.65 |
+
+#### Why static RC barely moved
+
+The geometric identity is
+
+$$RC_y = \frac{IC_y \cdot CP_x}{CP_x - IC_x} = \frac{IC_y \cdot CP_x}{\text{FVSA}_h}$$
+
+Plugging in the donor gives 132.6 mm, the A40 gives 129.8 mm. This is a coincidence of fractional cancellation, not a structural property of the linkage. IC.y rose about 12 % from the taller tire raising the hub. CP.x dropped about 12.5 % from narrowing. FVSA stayed essentially constant because the linkage translates as a unit. The numerator change cancels the contact patch change. Narrowing without growing the tire would have dropped the RC about 12 %. Growing the tire without narrowing would have raised it about 12 %. We did both, and they cancelled.
+
+#### Why the lateral migration shrinks 3x and the vertical only 1.5x
+
+The dominant lever for migration is not track width itself, it is the ratio FVSA half length to half track. Donor sits at 2.23 and A40 sits at 2.55, a 14 % move. RC.x migration is highly nonlinear in this ratio: as it grows toward infinity you approach a parallel swing axle (zero lateral RC migration), as it shrinks toward 1 you approach a short swing axle (very large migration). At our operating point a 14 % move along that curve gives a 3x reduction in the lateral migration envelope. RC.y migration is closer to linear in the geometry, which is why the vertical envelope only drops by about a factor of 1.5 (185/283 = 0.65, close to the 0.875 track ratio).
+
+We did not shrink migration by narrowing per se. We shrank it because narrowing combined with raising IC.y stretched the FVSA / half track ratio, pushing the geometry further toward the parallel swing axle end of the curve.
+
+#### What this means for the car
+
+The RC.y and RC.x components do different things, so it pays to split them.
+
+| Quantity | Effect | Change on A40 |
+|---|---|---|
+| RC.y migration | jacking force and geometric vs elastic load transfer split | smaller envelope, steadier load transfer through curbs and combined inputs |
+| RC.x migration | mid corner balance shift and yaw disturbance under asymmetric inputs (one wheel curb, asymmetric trail brake) | much smaller envelope, less wandering balance |
+
+Roll gradient (degrees per g) goes the wrong way. The kinematic ceiling, the (heave, roll) corner where one wheel is at full bump and the other at full droop, does rise from 8.21 deg to 9.39 deg. That is a constraint, not a benefit. For the same shocks and springs, the chassis now rolls more degrees per g on a narrower track, since the same delta travel between left and right corresponds to a larger angle on a shorter half track. This is why the package needs an ARB rebalance: to put the operating roll gradient back where it was. Note also that ARB arm length scales with track, so a 12.5 % narrower track at the same torsion section is itself stiffer at the wheel, which the ARB sizing must account for.
+
+Camber and scrub vs wheel travel are unchanged under a rigid translation of the inner pivots. The static operating point on those curves is preserved only if ride height is set so the linkage sits in the same pose. The plot script does exactly that, which is why the operating points match.
+
+#### Caveats
+
+- Front only. Steady state balance is set by the front to rear roll axis tilt, and only the front axle is analyzed here. The rear is a triangulated four link, covered in Post 006.
+- Side view (anti dive, anti squat) is unchanged in geometry but should be re checked at the new ride.
+- Static RC is sensitive to the pivot z assumptions (LCA pivot 25 mm above LBJ, UCA pivot 15 mm below UBJ). A 5 mm error there moves static RC about 10 mm and rescales the migration envelopes roughly proportionally. Verify on the donor before frame welding.
+- The full envelope numbers above are worst case across the whole shock stroke. For normal driving inputs, the relevant quantity is the migration rate at the operating point, $dRC/d\phi$ and $dRC/dh$ near static, where the improvement is more modest.
+
+#### Other operating cases
 
 **Under braking.** Anti-dive percentage (set by the side-view IC) is unchanged. Narrowing doesn't affect side-view geometry.
 
-**Under combined braking and cornering.** Dive compresses the front suspension, shifting FVICs and moving the front RC mid-corner. Most noticeable on trail-braking corner entry: the front RC drops below static, increasing body roll and shifting WT toward the elastic path. SA V2 can check the magnitude at expected dive displacements.
+**Under combined braking and cornering.** Dive compresses the front suspension, shifting FVICs and moving the front RC mid corner. Most noticeable on trail braking corner entry: the front RC drops below static, increasing body roll and shifting WT toward the elastic path. SA V2 can check the magnitude at expected dive displacements.
 
 ### Geometric vs elastic weight transfer
 
@@ -234,33 +336,33 @@ The denominator includes a destabilizing gravity term that reduces the effective
 >
 > - $m_s \approx 820\text{kg}$ (sprung mass), $h_{CG} = 460\text{mm}$, $h_{RC} = 45\text{mm}$
 > - Roll arm: $h_{CG} - h_{RC} = 415\text{mm}$
-> - Front wheel rate: $K_w = 25{,}000 \times 0.9^2 = 20{,}250 \text{ N/m}$ (NA8 Sport/SE spring rate ~25 N/mm; base NA6 is closer to 14-16 N/mm)
-> - Front roll stiffness: $K_{\phi,f} = \frac{20{,}250 \times 1.405^2}{2} = 19{,}987 \text{ N}\!\cdot\!\text{m/rad}$
-> - Rear ($K_s = 17\text{ N/mm}$, MR 0.9, T 1.42m): $K_{\phi,r} = 13{,}880 \text{ N}\!\cdot\!\text{m/rad}$
-> - Total spring roll stiffness: $K_\phi = 33{,}870 \text{ N}\!\cdot\!\text{m/rad}$
+> - Front wheel rate: $K_w = 25{,}000 \times 0.63^2 = 9{,}920 \text{ N/m}$ (NA8 Sport/SE spring rate ~25 N/mm, MR = 0.63 from the [motion ratio calculation below](#motion-ratio); base NA6 spring is closer to 14-16 N/mm)
+> - Front roll stiffness: $K_{\phi,f} = \frac{9{,}920 \times 1.405^2}{2} = 9{,}792 \text{ N}\!\cdot\!\text{m/rad}$
+> - Rear ($K_s = 17\text{ N/mm}$, same MR = 0.63 assumed, T 1.42m): $K_{\phi,r} = \frac{17{,}000 \times 0.63^2 \times 1.42^2}{2} = 6{,}800 \text{ N}\!\cdot\!\text{m/rad}$
+> - Total spring roll stiffness: $K_\phi = 16{,}592 \text{ N}\!\cdot\!\text{m/rad}$
 > - Gravity term: $m_s g (h_{CG} - h_{RC}) = 820 \times 9.81 \times 0.415 = 3{,}340 \text{ N}\!\cdot\!\text{m/rad}$
 > - Roll moment: $M = 820 \times 7.85 \times 0.415 = 2{,}671 \text{ N}\!\cdot\!\text{m}$
-> - Roll angle: $\phi = \frac{2{,}671}{33{,}870 - 3{,}340} = 0.087 \text{ rad} = 5.0°$
+> - Roll angle: $\phi = \frac{2{,}671}{16{,}592 - 3{,}340} = 0.202 \text{ rad} = 11.5°$
 >
-> The stock Miata with factory ARBs rolls about 3-4 degrees at 0.8G, implying the ARBs add roughly 23-60% roll stiffness (~39% at the typical 3.5° observed roll angle; lower percentages correspond to higher roll angles).
+> The stock Miata with factory ARBs rolls about 5° at 0.8G, so the ARBs are roughly doubling the total roll stiffness on top of the springs — they are not a trim, they are doing structural work.
 >
-> **A40 build (0.8G, same springs, no ARB, 1230mm front track):**
+> **A40 build (0.8G, same wheel rate, no ARB, 1230mm front track):**
 >
 > - $m_s \approx 850\text{kg}$, $h_{CG} = 575\text{mm}$ (estimated: Miata 460mm + ~115mm for the taller body and higher passenger position, +/-50mm uncertainty), $h_{RC} = 39\text{mm}$ (from 0.875 scaling)
 > - Roll arm: $h_{CG} - h_{RC} = 536\text{mm}$
-> - Front roll stiffness: $K_{\phi,f} = \frac{20{,}250 \times 1.230^2}{2} = 15{,}318 \text{ N}\!\cdot\!\text{m/rad}$
+> - Front roll stiffness (same $K_w = 9{,}920$ N/m): $K_{\phi,f} = \frac{9{,}920 \times 1.230^2}{2} = 7{,}506 \text{ N}\!\cdot\!\text{m/rad}$
 > - Rear (live axle, 20 N/mm spring, MR ~1.0, spring base ~950mm): $K_{\phi,r} = \frac{20{,}000 \times 0.950^2}{2} = 9{,}025 \text{ N}\!\cdot\!\text{m/rad}$
-> - Total: $K_\phi = 24{,}343 \text{ N}\!\cdot\!\text{m/rad}$
+> - Total: $K_\phi = 16{,}531 \text{ N}\!\cdot\!\text{m/rad}$
 > - Gravity term: $850 \times 9.81 \times 0.536 = 4{,}469 \text{ N}\!\cdot\!\text{m/rad}$
 > - Roll moment: $850 \times 7.85 \times 0.536 = 3{,}576 \text{ N}\!\cdot\!\text{m}$
-> - Roll angle: $\phi = \frac{3{,}576}{24{,}343 - 4{,}469} = 0.180 \text{ rad} = 10.3°$
+> - Roll angle: $\phi = \frac{3{,}576}{16{,}531 - 4{,}469} = 0.296 \text{ rad} = 17.0°$
 >
 <figure>
   <img src="/assets/projects/a40-austin/blog/plots/roll_vs_cg.png" alt="Body roll vs CG height parameterized by front ARB diameter" />
   <figcaption>Roll angle vs CG height, parameterized by front ARB diameter (bar torsional stiffness and total roll stiffness shown in legend). Rear ARB assumed at 70% of front as a placeholder. Springs-only values annotated on the dashed line show the CG sensitivity: 500-600 mm spans roughly 8.5-11 degrees, a ~25% spread. 25mm reliably meets the 3-4 degree target across the plausible CG range; 22mm is marginal at the upper CG bound (~4.5 degrees at CG=625mm).</figcaption>
 </figure>
 
-> At 10+ degrees of body roll, the body tilt imposes about 10 degrees of positive camber on the outside tire. The corrective camber gain per degree of roll drops proportionally ($\times 1230/1405$): roughly 0.25-0.42 degrees per degree, giving about 2.5-4.2 degrees of correction. The outside tire ends up at 6-7.5 degrees of positive camber, which devastates lateral grip. ARBs are not optional on this build.
+> At ~17 degrees of body roll, the body tilt imposes about 17 degrees of positive camber on the outside tire. The corrective camber gain per degree of roll drops proportionally ($\times 1230/1405$): roughly 0.25-0.42 degrees per degree, giving about 4-7 degrees of correction. The outside tire ends up at roughly 10-13 degrees of positive camber, which destroys lateral grip. ARBs are not optional on this build.
 
 Note: the roll formula uses sprung mass ($m_s$, excluding wheels/hubs/brakes). The sprung CG is slightly higher than the total-vehicle value used here, so roll arm is slightly underestimated. The A40 CG of 575mm has +/-50mm uncertainty.
 
@@ -276,33 +378,31 @@ The frame must include ARB mounting provisions (pivot bushing locations, end-lin
 
 ### Motion ratio
 
-The motion ratio (MR) is the ratio of spring/damper displacement to wheel displacement. For a coilover on the lower control arm:
+The motion ratio (MR) is the ratio of spring/damper displacement to wheel displacement. For a coilover on the lower control arm (see [ISMA Tech-01 *Motion Ratios*, p. 5](/assets/projects/a40-austin/blog/Tech-01-Motion-ratios-4.pdf#page=5) ([source](https://ismasupers.com/wp-content/uploads/2021/11/Tech-01-Motion-ratios-4.pdf)) for the geometric construction):
 
 $$MR = \frac{D_{spring}}{D_{arm}} \cdot \sin(\alpha)$$
 
-where $D_{spring}$ is the distance from the arm inner pivot to the spring mount point, $D_{arm}$ is the full arm length (inner pivot to ball joint), and $\alpha$ is the angle between the coilover centerline and the lower control arm at the lower mount.
+All three quantities are taken in the plane perpendicular to the LCA hinge axis: $D_{spring}$ is the distance from that axis to the coilover lower mount, $D_{arm}$ is the distance from the same axis to the wheel centerline (at half-track), and $\alpha$ is the angle between the coilover centerline and the LCA at the lower mount. Wheel rate and effective damping scale with $MR^2$, so small changes in $\alpha$ matter.
 
-Three points define the geometry:
-- **A** = lower arm inner pivot (on the frame)
-- **B** = lower coilover mount (on the arm, distance $D_{spring}$ from A)
-- **C** = upper coilover mount (on the shock tower)
-
-> **Stock Miata front:** Lower arm ~360mm. Coilover mounts ~290mm from inner pivot (lever ratio $290/360 \approx 0.81$). Coilover angle ~80 degrees ($\sin 80° = 0.985$). Combined: $MR \approx 0.81 \times 0.985 \approx 0.80$. Published values range from 0.80-0.90 depending on source and whether the measurement is at ride height or averaged through travel. The exact number moves through the stroke because $\alpha$ changes as the arm rotates. The body roll calculations in this post use MR = 0.9 (upper end of published range) for the Miata baseline.
+> **Stock Miata front:** Lower arm ~360 mm to the LBJ, coilover lower mount ~290 mm out (BJ-referenced lever 290/360 ≈ 0.81). Coilover angle ~80°. The often-cited "Miata MR ≈ 0.80" comes from this BJ-referenced calculation, but for the $K_\phi = K_w \, T^2/2$ formula used elsewhere in the post, MR must be referenced to the same point as $T$ — the wheel centerline. Using the wheel-centerline lever from the donor scan ($240/374.5 = 0.641$) and $\sin 80° = 0.985$ gives $MR = 0.63$. This is the value used everywhere else in this post for Miata roll/spring math.
 >
-> **A40 build (current design):** LCA arm length from inner pivot to BJ is 374.5 mm. Coilover lower mount is 240 mm outboard from the pivot line (lever ratio $240/374.5 = 0.641$). Combined with the coilover angle, the resulting MR will be lower than stock Miata unless the shock tower is positioned to steepen the coilover. This is a packaging trade-off set during frame design.
+> **A40 build (donor LCA reused):** Same arm on a custom frame, so the lever ratio is fixed by the donor dimensions. With both legs measured perpendicular to the pivot axis, $D_{arm} = 702.5 - 328 = 374.5$ mm (half-track minus the LCA pivot's distance from car centreline) and $D_{spring} = 240$ mm (donor scan), giving a lever ratio of $240/374.5 = 0.641$. Only $\alpha$ — set by the shock-tower position on the custom frame — is still free.
 
-Since the same arms mount at the same relative positions, the lever ratio ($D_{spring}/D_{arm}$) is preserved. The only variable is the coilover angle $\alpha$: if the shock tower (upper mount) moves inboard with the frame, $\alpha$ decreases and MR drops. If the tower extends outboard to hold the stock lateral position, $\alpha$ and MR are preserved. Target MR at or near 0.9. Wheel rate and effective damping scale with $MR^2$, so small changes matter.
+<figure>
+  <img src="/assets/projects/a40-austin/blog/plots/motion_ratio_vs_angle.png" alt="Motion ratio as a function of shock angle for the A40 build" />
+  <figcaption><strong>How $D_{arm}$ is set.</strong> $D_{arm}$ runs to the wheel centerline — the vertical plane through hub centre at half-track. That is the point that moves vertically with the wheel as the LCA rotates, and it is where wheel-rate is defined. The contact patch sits at the same lateral coordinate (directly under hub centre), so the lever is identical whether referenced to the patch or the hub. On the donor Miata $D_{arm} = T_{Miata}/2 - \text{(LCA pivot offset)} = 702.5 - 328 = 374.5$ mm. Wheel offset and rotor width are already inside the published 1405 mm track number — track is measured wheel-centerline-to-wheel-centerline with the stock hub face, rotor, and ET45 wheel installed — so they don't enter again. The 205/ET45 spec lands on the A40's 1230 mm target track by design, which preserves $D_{arm}$; the shaded band shows how a ±15 mm offset change would re-scale the curve.<br><br><strong>Reading the plot.</strong> The dotted ceiling at MR = 0.641 is what the geometry reaches with a perfectly vertical shock ($\alpha = 90°$). Across the practical 65–85° shock-tower band, geometric MR runs 0.58–0.64. The dashed MR = 0.63 line is the donor-Miata reference at $\alpha = 80°$ used elsewhere in this post for spring/roll math. Because the assembly translates as a unit on the custom frame, the A40's MR matches the Miata's at the same shock angle — the only knob the A40 build adds is the shock-tower placement, which can move MR a few percent in either direction within the practical band.</figcaption>
+</figure>
 
 <figure>
   <img src="/assets/projects/a40-austin/blog/plots/motion_ratio.png" alt="Motion ratio scaling: wheel rate factor and spring compensation needed" />
-  <figcaption>Wheel rate and spring compensation vs motion ratio. At the stock Miata MR (~0.9) wheel rate is the baseline. If packaging forces MR down to 0.7, wheel rate drops to 60% and the spring rate must increase by 65% to compensate.</figcaption>
+  <figcaption>Wheel rate and spring compensation vs motion ratio. The Miata-and-A40 reference at MR = 0.63 ($\alpha = 80°$) is the baseline; if shock-tower placement drops MR to 0.58 (lower edge of the practical band), wheel rate falls to 85% of baseline and spring rate must increase by 18% to compensate. Pushing $\alpha$ toward vertical recovers the rest, up to the geometric ceiling at 0.641.</figcaption>
 </figure>
 
-The shock tower must fit between the frame rails, clear the engine, and carry ~5,000N in bump. This is a packaging constraint set during frame design, not an afterthought.
+The shock tower must fit between the frame rails, clear the engine, and carry ~5,000 N in bump. This is a packaging constraint set during frame design, not an afterthought.
 
 ### Coilover stroke
 
-The shock moves less than the wheel by the motion ratio. With 70-75mm bump and 85-90mm droop at the wheel, the required shock stroke is wheel travel times MR. At MR 0.9: ~63-68mm compression stroke and ~77-81mm extension stroke, roughly 140-149mm total shock stroke. Units like the Koni 8610 series and Bilstein SPS are motorsport/custom-order dampers and must be specified with the required stroke at time of order \u2014 they do not ship in a single standard length. Confirm the chosen unit's stroke accommodates the actual travel at the final MR before committing to a shock tower position.
+The shock moves less than the wheel by the motion ratio. With 70-75mm bump and 85-90mm droop at the wheel, the required shock stroke is wheel travel times MR. At MR = 0.63: ~44-47mm compression stroke and ~54-57mm extension stroke, roughly 98-104mm total shock stroke. Units like the Koni 8610 series and Bilstein SPS are motorsport/custom-order dampers and must be specified with the required stroke at time of order — they do not ship in a single standard length. Confirm the chosen unit's stroke accommodates the actual travel at the final MR before committing to a shock tower position.
 
 Spring rate selection, ride frequency targets, and damper valving are covered in the tuning reference post.
 

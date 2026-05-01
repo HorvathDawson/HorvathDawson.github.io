@@ -3,7 +3,7 @@ import markedKatex from 'marked-katex-extension';
 
 marked.use(markedKatex({ throwOnError: false, nonStandard: true }));
 
-export type Status = 'planning' | 'in-progress' | 'complete';
+export type Status = 'planning' | 'in-progress' | 'complete' | 'decided';
 
 export interface BlogPostMeta {
   slug: string;
@@ -32,6 +32,7 @@ export const epics: Epic[] = [
   { id: 'narrowing',    title: 'Narrowing & Geometry Analysis', status: 'in-progress',  order: 2 },
   { id: 'design',       title: 'Pre-Build Design',              status: 'in-progress',  order: 3 },
   { id: 'fabrication',  title: 'Fabrication',                   status: 'planning',     order: 4 },
+  { id: 'finishing',    title: 'Finishing & Interior',          status: 'planning',     order: 5 },
 ];
 
 /** Parse YAML-ish frontmatter from a Markdown string. */

@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { A40Blog } from './blog/A40Blog.tsx'
+import { A40Roadmap } from './blog/A40Roadmap.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -11,6 +12,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/a40" element={<A40Blog />} />
+        <Route path="/a40/roadmap" element={<A40Roadmap />} />
         <Route path="/a40/:slug" element={<A40Blog />} />
       </Routes>
     </BrowserRouter>

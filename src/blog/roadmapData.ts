@@ -1,0 +1,2484 @@
+/* ============================================================
+   A40 Build — Roadmap data
+   ------------------------------------------------------------
+   Pure DAG of build tasks with hard/soft dependencies. The
+   shape is layout-agnostic: the current swim-lane view is one
+   way to render it; an auto-DAG view (e.g. dagre) can consume
+   the same `tasks` + `edges` later with no data migration.
+
+   Conventions:
+   - `id`        stable kebab-case key, prefixed `t-`
+   - `epic`      must match an `Epic.id` from blogData.ts
+   - `posts`     blog post slugs (post slug = filename minus
+                 leading `\d+-` prefix). 0..N per task.
+   - `order`     optional manual depth override (otherwise
+                 depth is computed from the dependency graph).
+
+   Glossary (acronyms & shorthand used in titles / notes):
+     A40            Austin A40 Farina Mk1 — the donor body
+     SR20DET        Nissan 2.0 L turbo I4 — the swap engine
+     CD009          Nissan 350Z 6-speed manual transmission
+     S13/S14/S15    Nissan Silvia chassis generations
+     NA / Mk1 NA    First-gen Mazda Miata (NA6/NA8)
+     EPAS           Electric Power-Assist Steering
+     DBW            Drive-by-wire (electronic throttle)
+     ECU            Engine Control Unit
+     CAN            Controller-Area-Network bus
+     LSD            Limited-slip differential
+     ARB            Anti-roll bar (sway bar)
+     RC             Roll Centre
+     IC             Instant Centre (suspension)
+                    NB: in cooling context "IC" = intercooler
+     FMIC           Front-Mount Intercooler
+     MR             Motion Ratio (spring/damper to wheel)
+     H-point        Driver hip joint reference point
+     bump-steer     Toe change with suspension travel
+     pinion angle   Diff pinion shaft angle vs driveshaft
+     coilover       Combined coil spring + damper unit
+     narrowing      Shortening a rear axle housing
+     tubbing        Enlarging wheel-wells for wider tyres
+     T3 / T4        Garrett turbo flange sizes
+     AHP            Anti-dive / Anti-squat percentage
+   ============================================================ */
+
+import { allPosts, epics, type Epic, type Status } from './blogData';
+
+export type TaskId = string;
+
+/** Distinguishes hands-on work from things that need to be ordered or decided. */
+export type TaskKind = 'task' | 'purchase' | 'decision';
+
+export interface RoadmapTask {
+  id: TaskId;
+  title: string;
+  summary?: string;
+  status: Status;
+  epic: Epic['id'];
+  /** Defaults to 'task'. Use 'purchase' for items to buy. */
+  kind?: TaskKind;
+  /** Blog post slugs (any number, may be empty for future work). */
+  posts?: string[];
+  /** Manual horizontal-position hint within a lane. */
+  order?: number;
+  /** Bullet-list of sub-items / what's involved. */
+  notes?: string[];
+  /** For decision tasks: the chosen outcome (shown when status is 'decided' or 'complete'). */
+  decision?: string;
+  /** When set, this task can be figured out during the build — doesn't need
+   *  to block other work. Value is the rationale shown in the tooltip. */
+  deferrable?: string;
+}
+
+export interface RoadmapEdge {
+  from: TaskId;
+  to: TaskId;
+  /** `hard` = must complete first. `soft` = needed eventually but
+   *  the dependent task can make meaningful progress without it. */
+  kind: 'hard' | 'soft';
+  /** Optional tooltip text, e.g. "needed for finalization". */
+  label?: string;
+}
+
+export interface Roadmap {
+  tasks: RoadmapTask[];
+  edges: RoadmapEdge[];
+}
+
+/* ── Seed roadmap ─────────────────────────────────── */
+
+export const roadmap: Roadmap = {
+  tasks: [
+    /* ─────────── Epic: project ─────────── */
+    {
+      id: 't-overview',
+      title: 'Project Overview',
+      epic: 'project',
+      status: 'in-progress',
+      posts: ['overview'],
+      summary: 'High-level vision, goals, and constraints for the build.',
+    },
+    {
+      id: 't-teardown',
+      title: 'Teardown',
+      epic: 'project',
+      status: 'complete',
+      posts: ['teardown'],
+      summary: 'Strip body, document chassis, capture as-built measurements.',
+      notes: ['Body off frame', 'Catalog hardware', 'Reference photos'],
+    },
+
+    /* ─────────── Epic: research ─────────── */
+    {
+      id: 't-susp-research',
+      title: 'Suspension Research',
+      epic: 'research',
+      status: 'complete',
+      posts: ['suspension-options', 'four-link-rear'],
+      summary: 'Survey of front and rear suspension architectures; donor selection (Miata).',
+    },
+    {
+      id: 't-steering-research',
+      title: 'Decide: Steering Donors (Rack + EPAS Column)',
+      epic: 'research',
+      kind: 'decision',
+      status: 'decided',
+      decision: 'Miata NA rack (depowered, 175 mm narrowed) + junkyard column-mount EPAS (Prius / Kia Soul) in failsafe mode.',
+      posts: ['steering', 'steering-upgrade'],
+      summary: 'Lock the rack donor and the EPAS column donor. Output: parts list and a one-pager noting failsafe wiring approach.',
+      notes: [
+        'Rack: Miata NA, depowered (Flyin\' Miata method), narrowed by the front-track delta',
+        'Column: junkyard column-mount EPAS — baseline is failsafe mode, but plan B is ECU control over CAN with a separate speed-reading board',
+        'Reject: hydraulic, electro-hydraulic pump, $1500+ kits',
+        'Collapsible column is non-negotiable',
+      ],
+    },
+    {
+      id: 't-motor-research',
+      title: 'Motor Selection',
+      epic: 'research',
+      status: 'complete',
+      posts: ['motor-selection'],
+      summary: 'Powertrain choice — SR20DET — mounting and clearance constraints.',
+    },
+    {
+      id: 't-decide-trans',
+      title: 'Decide: Transmission',
+      epic: 'research',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick the gearbox. The decision stays open: the trans tunnel is sized to the larger CD009 envelope so either gearbox fits, and the trans crossmember is removable so it does not gate frame welding. Only impacts: shifter location and floor pan.',
+      notes: [
+        'Shortlist: SR20DET OEM 5-spd (S13/S14) vs Nissan CD009 6-spd',
+        'Currently 50/50 — main blocker is cost',
+        'CD009 adapter plan: Driftworks Superfly S15 flywheel (may avoid grinding/milling CD009 flange)',
+        'Tunnel is sized for CD009; OEM 5-spd will fit with extra clearance — no rework either way',
+        'Trans crossmember is bolt-in / removable: not a frame-weld dependency',
+        'Open downstream impacts of the choice: shifter location (t-decide-shifter), floor pan cutout, clutch hydraulics (t-buy-clutch-hyd), driveshaft length (t-buy-driveshaft), final-drive ratio target (t-decide-final-drive)',
+      ],
+    },
+    {
+      id: 't-axle-research',
+      title: 'Decide: Rear Axle Build Spec',
+      epic: 'research',
+      status: 'in-progress',
+      kind: 'decision',
+      posts: ['rear-axle'],
+      summary: 'Single-page spec sheet for the narrowed Ford 9": housing width, axles, U-joint series, bolt pattern. Goes to Moser (axles) + the housing-narrowing shop. Ratio + LSD split out into t-decide-final-drive.',
+      notes: [
+        'Target rear track: 1340 mm (rounded from 1339.747)',
+        'Account for +38 mm wheel offset and rotor thickness when sizing flange-to-flange',
+        'Current housing measured ~60.5" flange-to-flange (~1537 mm) — needs ~200 mm narrowing',
+        'Spline: 31-spline locked',
+        'U-joint: 1310 vs 1330 — defer to driveshaft shop',
+        'Custom axles + custom flanges, 4×100 bolt pattern',
+        'Axle shop: Moser (likely)',
+      ],
+    },
+    {
+      id: 't-scan-rear',
+      title: '3D Scan: Rear',
+      epic: 'research',
+      status: 'complete',
+      summary: 'Rear bodywork scanned to validate clearances and rear track width budget.',
+    },
+    {
+      id: 't-scan-front',
+      title: '3D Scan: Front',
+      epic: 'research',
+      status: 'planning',
+      summary: 'Scan front bodywork — needed before locking front tire / track width.',
+    },
+    {
+      id: 't-miata-measurements',
+      title: 'Donor Miata Measurements (Online + Reference)',
+      epic: 'research',
+      status: 'complete',
+      summary: 'LCA/UCA inner pivots, ball-joint centers, steering-rack mounts, hub face dimensions pulled from online references and service data. Used as SA V2 inputs.',
+      notes: [
+        'Source: aggregated online references for NA Miata front geometry',
+        'Outputs: pivot coords, BJ centers, rack mounts, hub face',
+        'Confidence: good enough to drive SA V2 and frame design; physical verification deferred to t-scan-donor-miata',
+      ],
+    },
+    {
+      id: 't-scan-donor-miata',
+      title: '3D Scan: Donor Miata (Validation)',
+      epic: 'research',
+      status: 'planning',
+      deferrable: 'Soft validation only — SA V2 already runs on online measurements. Scan can happen any time before frame welds to confirm.',
+      summary: 'Einstar 2 scan of the donor in the shop. Purpose: cross-check the online measurements (t-miata-measurements). Triggers a redo of any downstream geometry only if a delta is found.',
+      notes: [
+        'Donor is in the shop, not yet scanned',
+        'Tool: Einstar 2',
+        'Pass criterion: scan within ±2 mm of online numbers → no rework',
+        'Fail criterion: scan reveals real delta → update t-miata-measurements + re-run t-sa-v2',
+      ],
+    },
+
+    /* ─────────── Epic: narrowing (geometry, tires, shocks) ─────────── */
+    {
+      id: 't-decide-tire-front',
+      title: 'Decide: Front Tire Size',
+      epic: 'narrowing',
+      kind: 'decision',
+      status: 'decided',
+      decision: '205/65 R15. Final widening of the front track may revisit at scan-time, but the tire size itself is locked.',
+      summary: '205/65 R15 locked. Final track-width widening (if any) is a separate decision (t-decide-track-front).',
+    },
+    {
+      id: 't-decide-tire-rear',
+      title: 'Decide: Rear Tire Size',
+      epic: 'narrowing',
+      kind: 'decision',
+      status: 'decided',
+      decision: '205/65 R15. Tubbing call may add fitment headroom, but tire size itself is locked.',
+      summary: '205/65 R15 locked. Tubbing/fender choice (t-decide-tubbing) only affects fitment headroom, not tire size.',
+    },
+    {
+      id: 't-decide-track-front',
+      title: 'Decide: Front Track Width',
+      epic: 'narrowing',
+      kind: 'decision',
+      status: 'in-progress',
+      summary: 'Working number is ~1230 mm. Could widen later if t-scan-front shows headroom — will not narrow further.',
+      notes: [
+        '1230 mm baseline holds for downstream design',
+        'Final widening (if any) gates on t-scan-front for verified fender clearances',
+        'Front scan is not blocked by anything except scheduling — just needs to be done',
+        'Hand re-measurement skipped — scan will be the source of truth',
+      ],
+    },
+    {
+      id: 't-decide-track-rear',
+      title: 'Decide: Rear Track Width',
+      epic: 'narrowing',
+      kind: 'decision',
+      status: 'in-progress',
+      summary: 'Rear track width — drives rear axle width spec and tubbing/fender plan.',
+    },
+    {
+      id: 't-narrowing-analysis',
+      title: 'Narrowing & Geometry Analysis',
+      epic: 'narrowing',
+      status: 'in-progress',
+      posts: ['narrowing-analysis', '005b-geometry-design-reference'],
+      summary: 'Track width, tire choice, and how much to narrow the donor subframe.',
+    },
+    {
+      id: 't-sa-v2',
+      title: 'SA V2 Output Pack: RC, Camber, Ackermann, MR',
+      epic: 'narrowing',
+      status: 'in-progress',
+      posts: ['005c-sa-v2-workflow'],
+      summary: 'Run SA V2 with donor-verified pickup coords. Done = numbers in hand for: front RC height + migration cloud, camber curve, anti-dive/squat, Ackermann error vs lock, motion ratio, ARB stiffness split.',
+      notes: [
+        'Tool runs but inputs are mix of real + placeholder estimates',
+        'Main blocker: time',
+        'Inputs from t-miata-measurements (online refs); t-scan-donor-miata is a soft validation that may trigger a re-run',
+        'CG strategy: CAD-aggregate from per-component mass + CoG (body, SR20, trans, etc.) — accept higher error band',
+        'Done = each row of the "Expected outputs" table in 005c has a number',
+        'Blocks frame finalization and ARB sizing',
+      ],
+    },
+    {
+      id: 't-susp-tuning',
+      title: 'Suspension Tuning Reference',
+      epic: 'narrowing',
+      status: 'in-progress',
+      posts: ['005d-suspension-tuning'],
+      summary: 'Spring/damper targets, anti-dive, motion ratio.',
+    },
+    {
+      id: 't-decide-shocks-front',
+      title: 'Decide: Front Coilover Build (Length, Stroke, Valving)',
+      epic: 'narrowing',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick approach: Bilstein/QA1 inserts in Miata-geometry sleeves vs. full-custom build vs. Miata kit + custom rears. Output: vendor + part numbers + ordered length and stroke.',
+      notes: [
+        'Frame CAD currently uses placeholder shock dims — must reconcile before frame finalization',
+        'Working idea: Bilstein Miata-fit coilover front (~5" stroke target)',
+        'Stroke ≥ 98–104 mm at MR ≈ 0.63',
+        'Constraint: front clearance with UCA horseshoe',
+        'Front + rear dynamics should match (ideally double-eyelet ends both ends)',
+        'Vendors: Bilstein / Ridetech / Fox — monotube preferred, steel body OK',
+        'Single-adjustable (rebound)',
+        'Budget: ~$700 CAD per corner max',
+      ],
+    },
+    {
+      id: 't-decide-shocks-rear',
+      title: 'Decide: Rear Coilover Build (Length, Stroke, Valving)',
+      epic: 'narrowing',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick rear shocks. Output: vendor + part numbers, ordered length + stroke, mount-end specs.',
+      notes: [
+        'Live-axle rear is a Ford 9" — valving must suit unsprung mass + leaf-free four-link',
+        'Working idea: universal coilover, e.g. Bilstein SNS-2 — 5″ or 7″ stroke',
+        'Bilstein 5/3 valving target (compression / rebound) for Ford 9" unsprung',
+        'Double-eyelet ends both ends (axle + frame)',
+        'Match front damping character so F/R dynamics align',
+        'Vendors: Bilstein / Ridetech / Fox — monotube preferred',
+        'Single-adjustable (rebound)',
+        'Budget: ~$700 CAD per corner max',
+      ],
+    },
+
+    /* ─────────── Epic: design (CAD, decisions, subsystem layout) ─────────── */
+    {
+      id: 't-design-overview',
+      title: 'Basic CAD Mockup',
+      epic: 'design',
+      status: 'complete',
+      posts: ['design-overview'],
+      summary: 'Rough CAD assembly tying body, frame, drivetrain, and suspension together. Placeholder for refinement as decisions land.',
+    },
+    {
+      id: 't-decide-tubbing',
+      title: 'Decide: Tub vs Widen Fenders',
+      epic: 'design',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick stock fenders, inner tubs, or flares. Decision is aesthetic-first: model fender options in Blender from the rear scan, pick the look, then derive rear track + tire margin.',
+      notes: [
+        'Method: 3D-model fender options in Blender from the scan',
+        'Stock-fender 9 mm/side margin number from the narrowing analysis is unreliable — use the scan instead',
+        'Constraint: rear-passenger leg/shoulder room with inner tubs',
+        'Visual call leads — track width and tire width follow the chosen body shape',
+      ],
+    },
+    {
+      id: 't-decide-engine-placement',
+      title: 'Engine Placement CAD',
+      epic: 'design',
+      kind: 'task',
+      status: 'complete',
+      summary: 'Engine position locked in CAD with mount geometry. Engine itself does not move regardless of trans choice — only the trans tunnel and crossmember location move with t-decide-trans.',
+      notes: [
+        'Engine in shop; CAD-mocked but not yet physically test-fit (frame not built)',
+        'Engine sits as low as possible with radiator clearance and pedal-box room',
+        'Trans mount NOT finalized — moves with t-decide-trans',
+        'If CD009 wins: bigger tunnel + crossmember mount nodes shift back',
+      ],
+    },
+    {
+      id: 't-exhaust-routing',
+      title: 'Exhaust / Downpipe Routing',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Output: 3D path for 3″ downpipe → mid → single rear exit, clearing rack, frame crossmembers, and floor. Notch list for any crossmember needing relief.',
+      notes: [
+        '3″ committed (single exit out the back)',
+        'No CAD path yet — only visualized rough route',
+        'Must verify clearance to steering rack (low-mount, near downpipe entry zone)',
+        'Crossmembers may need relief notches — list output of this task',
+      ],
+    },
+    {
+      id: 't-decide-steering-route',
+      title: 'Steering Column Routing CAD',
+      epic: 'design',
+      kind: 'task',
+      status: 'planning',
+      summary: 'Path from column to rack around exhaust/downpipe; clearance and U-joint angles.',
+    },
+    {
+      id: 't-decide-firewall',
+      title: 'Firewall Setback Study',
+      epic: 'design',
+      kind: 'task',
+      status: 'planning',
+      summary: 'CAD study output: chosen firewall plane location (mm aft of front axle CL), with verified clearance to bellhousing/CD009, pedal-box envelope, steering passthrough, and HVAC core.',
+      notes: [
+        'Anchor: derived from multiple constraints (engine + pedals + steering + dash)',
+        'Passthroughs to plan: steering shaft, wiring grommets',
+        'Master cylinders mount cabin-side; reservoirs pass through to engine bay',
+        'Heater: planning electric (no heater-core passthrough needed)',
+        'Throttle: DBW — no cable passthrough (see t-buy-dbw-pedal)',
+        'Nothing actually blocks starting this — just needs the time',
+      ],
+    },
+    {
+      id: 't-firewall-design',
+      title: 'Firewall CAD',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Detailed firewall geometry: pedal box passthrough, steering passthrough, heat shielding allowances.',
+    },
+    {
+      id: 't-decide-pedal',
+      title: 'Decide: Pedal-Box Placement',
+      epic: 'design',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick one: engine-bay-side hanging, underfloor, or dash-recessed bulkhead-mount. CAD study against engine + exhaust intrusion picks the winner.',
+      deferrable: 'Final pedal-box detailing (t-pedal-box-design) can land after frame is built; envelope must be reserved upfront.',
+    },
+    {
+      id: 't-pedal-box-design',
+      title: 'Pedal Box CAD',
+      epic: 'design',
+      status: 'planning',
+      deferrable: 'Detailed pedal-box CAD can be done after frame is built; only the envelope needs to be reserved early.',
+      summary: 'Hanging vs floor-mount; clutch + brake master geometry.',
+    },
+    {
+      id: 't-decide-seat-position',
+      title: 'Driver H-Point CAD Layout',
+      epic: 'design',
+      kind: 'task',
+      status: 'planning',
+      summary: 'Output: driver H-point coordinates in CAD. Strategy: push H-point as far rearward as possible without killing rear-seat usability — buys room to push firewall forward. Validated physically with blocking before locking seat-mount node positions.',
+      notes: [
+        'Driver target: just me + helmet (with headrest for safety)',
+        'Seat: between OEM and racing — not yet sourced (must accommodate helmet)',
+        'Push H-point rearward → enables firewall-forward → more pedal-box / engine room (constrained by rear-seat usability)',
+        'Mounting: sub-floor on frame seat-mount tubes; body may be welded to frame (unibody-style) — undecided',
+        'Sightline: tall A40 dash not expected to be a problem',
+        'Hard prereq for firewall-setback finalization (t-decide-firewall) and frame seat-mount nodes',
+        '— Procedure (SAE J826 / J1100 derived) —',
+        'Step 1: Measure own femur (greater trochanter → lateral knee) and shin (knee → lateral malleolus); use these instead of percentile tables',
+        'Step 2: Target angles — torso 22–25° from vertical, hip 95–100°, knee 120–135°, ankle 87–95°',
+        'Step 3: In CAD on vehicle CL plane, anchor at AHP (Accelerator Heel Point); build shin → knee → thigh → H-point → torso → eye point chain',
+        'Step 4: Slide manikin rearward until rear-seat H-point clearance ≈ 600 mm (rearmost feasible)',
+        'Step 5: Check four hard walls — pedal envelope (front), firewall/bellhousing (torso front), rear-seat usability (rear), roof + helmet stack (top)',
+        'Step 6: Vision check — down-vision line over A40 dash bezel must hit road ≤ 4 m ahead of bumper; up-vision ≥ 7° above horizontal',
+        'Step 7: Free-outputs from locked H-point — steering wheel center ~400 mm fwd / ~180 mm above H-point at 20–30° tilt; shifter knob within 300 mm arc of shoulder',
+        'Step 8: Physical blocking — tape AHP on floor, stack foam/2×4s to H-point height, plywood seatback at torso angle, sit 10 min, adjust ±25 mm',
+        'Step 9: Feed physical deltas back into CAD and lock H-point (x, z) coords',
+      ],
+    },
+    {
+      id: 't-decide-shifter',
+      title: 'Decide: Native vs Remote Shifter',
+      epic: 'design',
+      kind: 'decision',
+      status: 'planning',
+      deferrable: 'Can be settled once the trans is physically mocked up; reserve tunnel space upfront.',
+      summary: 'Native shifter vs remote linkage. Driven by engine placement and transmission choice.',
+    },
+    {
+      id: 't-shifter-design',
+      title: 'Shifter Linkage CAD',
+      epic: 'design',
+      status: 'planning',
+      summary: 'If remote, design the linkage / cable run to the chosen shifter location.',
+    },
+    {
+      id: 't-cooling-design',
+      title: 'Radiator + IC + Fan Layout CAD',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Output: rad + IC core sized to grille opening (from scan), fan + shroud spec, frame mount nodes, hose / IC-pipe routing envelope, separate oil-cooler location.',
+      notes: [
+        'Power target: ~250 hp sustainable / low-stress (boost TBD)',
+        'Rad: Mishimoto X-Line for 1992–2000 Civic (likely half-core variant)',
+        'IC: FMIC, lower half in front of rad',
+        'Separate oil cooler — location TBD',
+        'Grille opening dims come from t-scan-front (not yet measured)',
+        'Slim electric fan required for small A40 grille',
+      ],
+    },
+    {
+      id: 't-intake-piping-design',
+      title: 'Intake / IC Piping CAD',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Charge pipe routing from turbo → IC → throttle body.',
+    },
+    {
+      id: 't-epas-design',
+      title: 'EPAS Integration CAD',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Donor EPAS unit packaging, mounting, and harness plan.',
+    },
+    {
+      id: 't-decide-brake-system',
+      title: 'Brake Hydraulic Spec (Master, Pedal Ratio, Bias)',
+      epic: 'design',
+      kind: 'task',
+      status: 'planning',
+      summary: 'Output: confirmed master bore + pedal ratio (calc), diagonal split plumbing layout, prop-valve PN, F/R bias target. Manual-brake decision already locked.',
+      notes: [
+        'Sized to ~950 kg with non-50/50 bias',
+        'Master bore: leaning ~7/8" (small) — needs F=PA + line-pressure calc to confirm',
+        'Pedal ratio: TBD — pedal box should allow adjustability (multi-hole pivot)',
+        'Split: diagonal (X-pattern)',
+        'Prop valve: leaning Tilton — exact PN TBD',
+        'Calipers: 4-corner Miata baseline (front + rear); Miata rears bracketed onto Ford 9" housing',
+        'Rotor: 231 mm solid baseline',
+        'Prop valve required — Miata rears are sized for ~1000 kg car',
+      ],
+    },
+    {
+      id: 't-frame-design',
+      title: 'Ladder Frame Design',
+      epic: 'design',
+      status: 'in-progress',
+      posts: ['frame-design'],
+      summary: 'Tube sizing, node layout, motor mounts, suspension pickups. Done = design is build-ready, all major clearances and gotchas checked.',
+      notes: [
+        'Current state: mostly real geometry with a few open numbers',
+        'Initial design lock first, then a separate finalization pass (t-design-finalization)',
+        'Trigger to flip complete: build-ready — all major clearances + gotchas checked',
+        'No formal BOM — cut list will be the authoritative output',
+        'Cut list waits on: trans choice, tub/fender choice, body interaction',
+        'Engine mounts: frame includes pads for stock SR20 mounts (no custom-mount fab task)',
+      ],
+    },
+    {
+      id: 't-steering-rack-design',
+      title: 'Steering Rack Narrowing CAD',
+      epic: 'design',
+      status: 'planning',
+      posts: ['steering-rack'],
+      summary: 'Cut and re-weld the donor rack to match the narrowed track.',
+    },
+    {
+      id: 't-design-finalization',
+      title: 'Design Finalization & Cut List',
+      epic: 'design',
+      status: 'planning',
+      posts: ['design-finalization'],
+      summary: 'Final pass after SA V2 + donor scan + trans + tub/fender choice land. Output: cut list ready to order metal from. No separate BOM.',
+      notes: [
+        'Done = cut list signed off, ready for t-buy-metal',
+        'Inputs that must be locked first: SA V2 outputs, donor scan, trans choice, tub/fender choice',
+      ],
+    },
+    {
+      id: 't-digital-dash-design',
+      title: 'Digital Dash — Overview',
+      epic: 'design',
+      status: 'in-progress',
+      posts: ['digital-dash'],
+      summary: 'Pi 5 + PiCAN3 + Waveshare 12.3" portrait-DSI dash, mounted behind the original A40 bezel. Umbrella node — actual work is split across hardware, software, CAN integration, and physical install.',
+    },
+    {
+      id: 't-dash-hardware',
+      title: 'Dash Hardware Assembly',
+      epic: 'fabrication',
+      status: 'in-progress',
+      summary: 'Phase 1 bench stack (Pi 5 + Freenove NVMe + Waveshare DSI on the 27W USB-C PSU) verified, then Phase 2 swap to PiCAN3 HAT + Mini-Box DCDC-USB for the automotive 12V / ignition-shutdown chain.',
+      notes: [
+        'Phase 1: Pi 5 / NVMe / DSI screen running off bench PSU — proves OS + screen + boot',
+        'Phase 2: drop USB-C, add PiCAN3 HAT (powers Pi via GPIO), Mini-Box DCDC-USB for clean 12V + ~45 s graceful shutdown on ign-off',
+        'Hardware must be done before any UI testing on real CAN frames',
+      ],
+    },
+    {
+      id: 't-dash-software',
+      title: 'Dash UI / Software',
+      epic: 'design',
+      status: 'in-progress',
+      summary: 'React-based dashboard app on the Pi 5: layout (survival data peripheral, driving data center, admin right), CAN frame parsing, render loop. Can be developed against synthetic / replayed CAN data before a real ECU is on hand.',
+      notes: [
+        'Priority order: coolant temp, oil pressure, AFR, MAP, tach, speed, oil temp, fuel level, battery V, IAT',
+        'Bench-testable with PiCAN3 in loopback or pre-recorded Haltech logs',
+      ],
+    },
+    {
+      id: 't-dash-haltech-integration',
+      title: 'Dash ↔ Haltech CAN Integration',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Wire PiCAN3 to the Haltech CAN bus, decode the live broadcast, and validate every gauge against a running ECU. Friend\'s Haltech can be used as a temporary signal source while the A40\'s own ECU is still in a box.',
+      deferrable: 'Initial decode/validation can happen against a friend\'s Haltech bench-side; final integration waits on the car\'s own ECU + harness.',
+      notes: [
+        'Requires hardware (PiCAN3 + Pi) and dash UI both functional',
+        'Goal: every priority signal verified end-to-end on a live ECU before this is called done',
+        'Hard prereq on ECU choice (locks CAN broadcast spec)',
+      ],
+    },
+    {
+      id: 't-dash-bezel-scan',
+      title: 'Scan A40 Dash Bezel',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Einstar 2 scan of the A40 dash bezel opening + surrounding mount surfaces so the shroud and screen mounts can be modeled to fit it directly.',
+    },
+    {
+      id: 't-dash-shroud',
+      title: '3D-Print Dash Shroud',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Design and 3D-print the shroud that connects the Waveshare 12.3" screen + Pi stack to the original A40 dash bezel opening. Includes screen-mount features and clearance for the DSI ribbon and PiCAN3 stack.',
+      notes: [
+        'Active area target ≥ 10.5" × 3.5" to fill the bezel cleanly',
+        'Mount geometry pulled directly from the bezel scan',
+      ],
+    },
+
+    /* ─────────── Epic: fabrication (purchases + builds) ─────────── */
+    {
+      id: 't-frame-jig',
+      title: 'Frame Jig Build',
+      epic: 'fabrication',
+      status: 'complete',
+      posts: ['frame-jig'],
+      summary: 'Welding fixture / surface plate to build the frame on.',
+    },
+    {
+      id: 't-jig-reference-points',
+      title: 'Transfer Pickup Points to Jig',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Transfer CAD pickup-point coordinates onto the physical jig using plumb bob + tape from datum, then verify with Einstar 2 laser scan before tacking.',
+      notes: [
+        'Datum: vehicle centerline + front lower-LCA pivot point (subject to change)',
+        'Method: plumb bob + tape for layout, scan-verify before tack',
+        'Realistic tolerance with these tools: ±2 mm on suspension pickups, ±5 mm on body / non-critical nodes',
+        'Re-scan after final weld to capture distortion; compare deltas to CAD',
+        'Hard nodes to hit: 4 LCA pivots, upper shock mounts, rack mounts, rear housing brackets',
+      ],
+    },
+
+    /* Purchases — frame */
+    {
+      id: 't-buy-metal',
+      title: 'Buy: Frame Steel',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Order the tubing, plate, and bar stock from the design BOM.',
+    },
+    {
+      id: 't-buy-mandrel-tubes',
+      title: 'Buy: Mandrel-Bent Tubes',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Send bend specs to the mandrel shop for the curved chassis sections.',
+    },
+
+    /* Purchases — engine systems */
+    {
+      id: 't-buy-exhaust-manifold',
+      title: 'Buy: Exhaust Manifold',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Tubular T3-flange manifold matched to the chosen turbo and downpipe routing.',
+    },
+    {
+      id: 't-buy-radiator',
+      title: 'Buy: Radiator',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'All-aluminum crossflow radiator sized for ~250–300 hp SR20, sized to the A40 grille opening.',
+    },
+    {
+      id: 't-buy-intercooler',
+      title: 'Buy: Intercooler',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Front-mount intercooler core sized to SR20DET airflow at target boost. Final size pinned by the cooling-stack physical fit.',
+    },
+    {
+      id: 't-buy-intake-piping',
+      title: 'Buy: Charge Piping',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Aluminum elbows, couplers, clamps from the IC piping layout.',
+    },
+    {
+      id: 't-buy-exhaust-system',
+      title: 'Buy: Exhaust System',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Downpipe, mid-pipe, muffler — sized to the routed path.',
+    },
+    {
+      id: 't-buy-ecu',
+      title: 'Buy: ECU',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Standalone ECU (Haltech) and engine-side connectors.',
+    },
+
+    /* Purchases — driveline */
+    {
+      id: 't-buy-driveshaft',
+      title: 'Buy: Driveshaft',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Custom driveshaft cut/balanced to final length.',
+    },
+    {
+      id: 't-buy-rear-housing',
+      title: 'Buy: Ford 9" Housing',
+      epic: 'fabrication',
+      status: 'complete',
+      kind: 'purchase',
+      summary: 'Ford 9" rear-end housing — needs narrowing to spec.',
+    },
+    {
+      id: 't-buy-axles',
+      title: 'Buy: Rear Axles',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Cut-to-spec axles sized for the narrowed Ford 9" housing. Length set by rear track.',
+    },
+    {
+      id: 't-narrow-rear-housing',
+      title: 'Narrow Rear Housing',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Cut the Ford 9" housing to width, re-weld the tubes, true to spec.',
+    },
+    {
+      id: 't-rear-brake-brackets',
+      title: 'Rear Brake Bracket Fab',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Brackets so Miata calipers/rotors mount to the Ford 9" axle flanges.',
+    },
+
+    /* Purchases — chassis interior */
+    {
+      id: 't-buy-shocks-front',
+      title: 'Buy: Front Shocks',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Coilovers / shocks sized to front spring rate + motion ratio output by the suspension tuning pass.',
+    },
+    {
+      id: 't-buy-shocks-rear',
+      title: 'Buy: Rear Shocks',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Coilovers / shocks sized to rear spring rate + motion ratio output by the suspension tuning pass.',
+    },
+    {
+      id: 't-buy-epas',
+      title: 'Buy: EPAS Unit',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Column-style EPAS assembly (donor-vehicle pull) sized to A40 column geometry and target assist curve.',
+    },
+    {
+      id: 't-buy-steering-column',
+      title: 'Buy: Steering Column',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Replacement column + U-joints + collapsible shaft sized to the EPAS-to-rack path. Length depends on quick-release decision.',
+    },
+    {
+      id: 't-buy-seats',
+      title: 'Buy: Seats',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Lightweight buckets compatible with belt anchor geometry and intended H-point.',
+    },
+
+    /* Purchases — brakes */
+    {
+      id: 't-buy-brake-master',
+      title: 'Buy: Brake Master Cylinder',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Master cylinder bore sized by the pedal-ratio + bore calc against caliper piston area and pedal travel target.',
+    },
+    {
+      id: 't-buy-brake-lines',
+      title: 'Buy: Brake Lines & Fittings',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Hard line, AN flex hoses, fittings, P-clips. Routing follows frame rails away from heat sources.',
+    },
+    {
+      id: 't-buy-calipers',
+      title: 'Buy: Calipers & Rotors',
+      epic: 'fabrication',
+      status: 'complete',
+      kind: 'purchase',
+      summary: 'Purchased: Miata calipers and rotors (4-corner baseline).',
+    },
+    {
+      id: 't-buy-prop-valve',
+      title: 'Buy: Adjustable Proportioning Valve',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Inline adjustable proportioning valve (Wilwood/Tilton) for the rear circuit. Required: Miata rears are oversized for the A40\u2019s weight.',
+    },
+
+    /* Builds */
+    {
+      id: 't-frame-build',
+      title: 'Frame Fabrication',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Cut, fit, and weld the ladder frame on the jig.',
+    },
+    {
+      id: 't-firewall-build',
+      title: 'Firewall Fabrication',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Form and weld the custom firewall to the frame.',
+    },
+    {
+      id: 't-floor-panels',
+      title: 'Floor Panels',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Cabin floor pans, transmission tunnel.',
+    },
+    {
+      id: 't-wheelwell-fab',
+      title: 'Tubs / Fender Widening',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Inner wheel tubs (if tubbing) or widened fenders (if not).',
+    },
+    {
+      id: 't-body-mount',
+      title: 'Body Mounting',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Body mounts, panel gaps, hood/door alignment on the new frame.',
+    },
+    {
+      id: 't-bodywork',
+      title: 'Panel Fit & Gap Prep',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Final panel fitment, gap setting, prep for paint. Includes the rocker rust patch identified at teardown.',
+    },
+    {
+      id: 't-engine-install',
+      title: 'Engine & Driveline Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Drop SR20 in, fit driveshaft, exhaust routing.',
+    },
+    {
+      id: 't-cooling-install',
+      title: 'Cooling Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount radiator + intercooler, run hoses.',
+    },
+    {
+      id: 't-intake-install',
+      title: 'Intake / IC Piping Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Install intercooler, charge pipes, intake, and BOV — bracket and clamp the routed path from the IC fit task.',
+    },
+    {
+      id: 't-exhaust-install',
+      title: 'Exhaust Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Hang downpipe, mid-pipe, muffler on the routed path. Wideband O2 bung already welded at engine prep.',
+    },
+    {
+      id: 't-driveline-install',
+      title: 'Driveline Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Driveshaft, narrowed rear end, axles.',
+    },
+    {
+      id: 't-brake-install',
+      title: 'Brake System Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Master cylinder, hard lines, flex hoses, calipers, bleed.',
+    },
+    {
+      id: 't-wiring',
+      title: 'Engine Wiring Harness',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Engine + chassis harness, power distribution, grounds.',
+    },
+    {
+      id: 't-engine-startup',
+      title: 'Engine First-Start',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'All systems-go check-list: fuel, cooling, intake, exhaust, wiring, brakes, ECU map.',
+      notes: [
+        'Fuel pressure ≥ spec',
+        'Coolant filled + bled',
+        'Oil priming',
+        'ECU base map loaded',
+        'Brakes bled, e-brake holds',
+        'All grounds verified',
+        'First crank no-spark sanity check',
+      ],
+    },
+
+    /* ─────────── Epic: finishing (post-running) ─────────── */
+    {
+      id: 't-non-engine-wiring',
+      title: 'Body Wiring',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Lights, switches, electric windows, accessories.',
+    },
+    {
+      id: 't-door-panels',
+      title: 'Custom Door Panels',
+      epic: 'finishing',
+      status: 'planning',
+      deferrable: 'Cosmetic; runs in parallel with reupholstery after first drive.',
+      summary: 'Custom interior door cards — material, mounting, integration with electric window switches.',
+    },
+    {
+      id: 't-reupholstery',
+      title: 'Reupholstery',
+      epic: 'finishing',
+      status: 'planning',
+      deferrable: 'Pure cosmetic finishing — happens after the car drives.',
+      summary: 'Seat covers, headliner, carpet.',
+    },
+    {
+      id: 't-sound-dampening',
+      title: 'Sound Dampening',
+      epic: 'finishing',
+      status: 'planning',
+      deferrable: 'Adds NVH polish; can be applied any time after bodywork.',
+      summary: 'Butyl mat + closed-cell foam on floors, firewall, doors, roof, trunk for cabin NVH.',
+    },
+    {
+      id: 't-heat-shielding',
+      title: 'Heat Shielding',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Firewall, floor, transmission tunnel heat barriers.',
+    },
+
+    /* ─────────── Fuel system ─────────── */
+    {
+      id: 't-fuel-design',
+      title: 'Fuel System Design',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Reuse stock A40 tank under boot floor. Pump architecture (in-tank vs surge+external) TBD — Aeromotive 340 already on hand. Output: line routing, filter, regulator, vent.',
+      notes: [
+        'Tank: stock A40, stock location (under boot floor)',
+        'Pump: Aeromotive 340 in hand — surge-tank vs in-tank conversion still being researched',
+        'Surge tank likely if stock tank lacks baffling for cornering',
+        'Hard-line routing along frame, away from exhaust',
+        'Safety bias: high-quality fittings, fire sleeve, no rubber in cabin, vent routed away from cockpit',
+      ],
+    },
+    {
+      id: 't-prep-fuel-tank',
+      title: 'Prep Stock A40 Fuel Tank',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'task',
+      summary: 'Reusing stock A40 tank — inspect, clean, seal, pressure-test before reinstall.',
+      notes: ['Internal cleaning + seal coating', 'Sender / pickup compatibility with EFI fuel pressure', 'Add bulkhead fittings for return + vent if surge-tank route chosen'],
+    },
+    {
+      id: 't-buy-fuel-pump',
+      title: 'Buy: Fuel Pump',
+      epic: 'fabrication',
+      status: 'complete',
+      kind: 'purchase',
+      summary: 'Aeromotive 340 already on hand. Surge tank (if external route) still TBD.',
+    },
+    {
+      id: 't-buy-fuel-lines',
+      title: 'Buy: Fuel Lines & Fittings',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'AN line, hard line, filter, regulator, fittings.',
+    },
+    {
+      id: 't-fuel-install',
+      title: 'Fuel System Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount tank/pump, run hard + flex lines, plumb regulator and filter.',
+    },
+
+    /* ─────────── Charging / battery / kill switch ─────────── */
+    {
+      id: 't-charging-design',
+      title: 'Charging & Battery Plan',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Battery location, alternator wiring, fuse/relay panel, kill switch.',
+    },
+    {
+      id: 't-buy-battery',
+      title: 'Buy: Battery & Mount',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Lightweight AGM/Li battery + tray sized to the chosen battery location (engine bay vs trunk).',
+    },
+    {
+      id: 't-buy-kill-switch',
+      title: 'Buy: Kill Switch',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Master cut-off (battery + alt-disconnect lug) — required for safe storage and inspection.',
+    },
+
+    /* ─────────── Dash install ─────────── */
+    {
+      id: 't-dash-install',
+      title: 'Digital Dash Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount the printed shroud + screen + Pi stack into the A40 dash, splice into the harness 12V / ignition / CAN feed.',
+    },
+
+    /* ─────────── Paint ─────────── */
+    {
+      id: 't-paint',
+      title: 'Paint',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Strip → bodywork → high-build primer → block sand → sealer → base → clear. Body fully fitted and tagged-off before strip.',
+    },
+    {
+      id: 't-final-reassembly',
+      title: 'Final Reassembly',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Refit body, glass, trim, lights after paint.',
+    },
+
+    /* ─────────── HVAC ─────────── */
+    {
+      id: 't-hvac-design',
+      title: 'HVAC / Heater Design',
+      epic: 'design',
+      status: 'planning',
+      deferrable: 'Can land mid-build as long as the firewall reserves space for the heater core passthrough (or none, if electric).',
+      summary: 'Heater core (and optional A/C) packaging, defrost ducting. Required for any street use.',
+      notes: [
+        'Current consideration: electric heater + AC system for packaging / firewall simplicity (no coolant tap)',
+        'If electric wins: no heater-core passthrough needed, simplifies firewall study',
+      ],
+    },
+    {
+      id: 't-buy-hvac',
+      title: 'Buy: HVAC Components',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Heater core, blower, ducts, controls.',
+    },
+    {
+      id: 't-hvac-install',
+      title: 'HVAC Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount heater/blower box behind dash, run ducts, wire controls. Defrost ducting required for street use.',
+    },
+
+    /* ─────────── Shakedown ─────────── */
+    {
+      id: 't-alignment',
+      title: 'Alignment & Corner Balance',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Set toe/camber/caster to spec; corner-balance with driver weight.',
+    },
+
+    /* ─────────── Steering rack chain ─────────── */
+    {
+      id: 't-buy-steering-rack',
+      title: 'Buy: Steering Rack',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Donor rack-and-pinion (Miata or similar) before narrowing.',
+    },
+    {
+      id: 't-narrow-steering-rack',
+      title: 'Narrow Steering Rack',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Cut, shorten, and re-weld the donor rack to match narrowed track.',
+    },
+    {
+      id: 't-steering-wheel-adapt',
+      title: 'Adapt OEM Steering Wheel to Column',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Reuse the OEM A40 steering wheel; fabricate/source a hub adapter to mate it to whatever column shaft is chosen. Possibly add a quick-release.',
+      notes: [
+        'Keeps OEM look; wheel is already on the car',
+        'Hub adapter spec depends on column shaft (spline / DD / taper) — hard prereq on column purchase',
+        'Quick-release optional: helps ingress/egress and steals room for a fixed-back seat / harness; adds a tolerance stack-up',
+        'If quick-release: confirm clocking + horn-wire slip ring before locking column length',
+      ],
+    },
+    {
+      id: 't-steering-install',
+      title: 'Steering Rack Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount the rack, column, U-joints, and wheel; bump-steer check.',
+    },
+
+    /* ─────────── Front suspension hardware ─────────── */
+    {
+      id: 't-buy-control-arms',
+      title: 'Buy: Control Arms / A-Arms',
+      epic: 'fabrication',
+      status: 'complete',
+      kind: 'purchase',
+      summary: 'Purchased: OEM Miata control arms. May upgrade to aftermarket later if geometry analysis calls for it, but not required for v1.',
+    },
+    {
+      id: 't-buy-hubs-spindles',
+      title: 'Buy: Hubs & Spindles',
+      epic: 'fabrication',
+      status: 'complete',
+      kind: 'purchase',
+      summary: 'Purchased: OEM Miata knuckles (with hubs/bearings) and front subframe.',
+    },
+    {
+      id: 't-suspension-install-front',
+      title: 'Front Suspension Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Bolt up control arms, uprights, hubs, and front shocks to the frame.',
+    },
+    {
+      id: 't-suspension-install-rear',
+      title: 'Rear Suspension Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Bolt up the four-link, narrowed rear, and rear shocks to the frame.',
+    },
+
+    /* ─────────── Engine + clutch hardware ─────────── */
+    {
+      id: 't-buy-engine',
+      title: 'Buy: Engine (SR20DET)',
+      epic: 'fabrication',
+      status: 'complete',
+      kind: 'purchase',
+      summary: 'The SR20DET itself. Sourced from JDM importer.',
+    },
+    {
+      id: 't-buy-clutch',
+      title: 'Buy: Clutch Kit',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Disc, pressure plate, throwout bearing, pilot bearing.',
+    },
+    {
+      id: 't-buy-clutch-hyd',
+      title: 'Buy: Clutch Hydraulics',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Clutch master + slave + line.',
+    },
+    {
+      id: 't-clutch-install',
+      title: 'Clutch & Hydraulics Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Pre-engine clutch assembly + bleed clutch hydraulic line after pedal box install.',
+    },
+
+    /* ─────────── Brake decisions + parking brake ─────────── */
+    {
+      id: 't-decide-power-brakes',
+      title: 'Decide: Manual vs Power Brakes',
+      epic: 'design',
+      kind: 'decision',
+      status: 'decided',
+      decision: 'Manual — cleaner engine bay, more linear pedal response.',
+      summary: 'Run a brake booster or stay manual? Drives master sizing and pedal ratio.',
+    },
+    {
+      id: 't-decide-ebrake',
+      title: 'Decide: E-Brake Style',
+      epic: 'design',
+      kind: 'decision',
+      status: 'planning',
+      deferrable: 'Hand-brake choice can wait until the rear caliper choice is made; doesn’t block frame.',
+      summary: 'Cable handbrake vs hydraulic handle. Drives caliper choice and routing.',
+    },
+    {
+      id: 't-buy-ebrake',
+      title: 'Buy: Parking Brake',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Handle, cable or hydraulic line, and any second caliper.',
+    },
+    {
+      id: 't-ebrake-install',
+      title: 'Parking Brake Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount handle, route cable / hydraulic line to rear calipers, set holding adjustment.',
+    },
+
+    /* ─────────── Seat hardware ─────────── */
+    {
+      id: 't-buy-harnesses',
+      title: 'Buy: Seat Belts / Harnesses',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: '3- or 4-point belts compatible with the chosen seats and the frame anchor geometry.',
+    },
+    {
+      id: 't-seats-install',
+      title: 'Seats & Harnesses Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount seats, sliders, and belt anchors to the frame.',
+    },
+
+    /* ─────────── Shock + EPAS install ─────────── */
+    {
+      id: 't-epas-install',
+      title: 'EPAS Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Fit the EPAS unit and column, integrate harness.',
+    },
+
+    /* ─────────── Transmission mount ─────────── */
+    {
+      id: 't-trans-crossmember',
+      title: 'Transmission Crossmember Fab',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Crossmember and trans mount tied into the frame at the right node.',
+    },
+
+    /* ─────────── Cooling extras ─────────── */
+    {
+      id: 't-buy-cooling-fans',
+      title: 'Buy: Cooling Fans & Shroud',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Electric fan(s) + shroud sized to the chosen radiator core. Fan size pinned by the cooling-stack fit task.',
+    },
+    {
+      id: 't-buy-coolant-hoses',
+      title: 'Buy: Coolant Hoses',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Silicone coolant hose set sized to the radiator + engine coolant outlets and routed clearance from exhaust.',
+    },
+    {
+      id: 't-buy-oil-cooler',
+      title: 'Buy: Oil Cooler & Lines',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Oil cooler core + sandwich plate adapter + AN lines. Sized to sustained-load temps for the SR20.',
+    },
+
+    /* ─────────── Engine ancillaries ─────────── */
+    {
+      id: 't-buy-catch-can',
+      title: 'Buy: PCV / Catch Can',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Crankcase ventilation and oil-air separator with breather lines.',
+    },
+    {
+      id: 't-buy-dbw-pedal',
+      title: 'Buy: DBW Throttle Pedal + Sensor',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Drive-by-wire pedal + APS (Bosch-style) and Haltech wiring — SR20DET converted to DBW.',
+    },
+
+    /* ─────────── Wheels & tires ─────────── */
+    {
+      id: 't-buy-wheels',
+      title: 'Buy: Wheels',
+      epic: 'fabrication',
+      status: 'complete',
+      kind: 'purchase',
+      summary: 'Purchased: 15" wheels at +38 offset (for 205/65 R15). Room to move to ~+45 in or ~+30 out once track is final.',
+    },
+    {
+      id: 't-buy-tires',
+      title: 'Buy: Tires',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: '205/65 R15 starting point.',
+    },
+
+    /* ─────────── Anti-roll bars ─────────── */
+    {
+      id: 't-decide-arb',
+      title: 'Decide: ARB Diameters & Mount Provisions',
+      epic: 'design',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick front bar diameter (22–25 mm starting range), arm length, end-link attachment on the LCA. Weld mount provisions on both front and rear; rear bar itself deferred until rolling-chassis roll-balance test.',
+      notes: [
+        'Front bar mandatory (without it the car rolls 17° at 0.8 G)',
+        'D⁴ stiffness sets size',
+        'Rear: provisions only, bar later',
+      ],
+    },
+    {
+      id: 't-buy-arb',
+      title: 'Buy: Anti-Roll Bars',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Front bar (mandatory, ~22 mm DOM working number) + end-link hardware. Rear deferred until rolling-chassis roll-balance test.',
+    },
+
+    /* ─────────── Exterior lighting ─────────── */
+    {
+      id: 't-buy-lighting',
+      title: 'Buy: Exterior Lighting',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Headlights, tail lights, signals, side markers.',
+    },
+    {
+      id: 't-lighting-install',
+      title: 'Exterior Lighting Install',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Mount lights, route harness, aim headlights.',
+    },
+
+    /* ─────────── Glass & weatherstripping ─────────── */
+    {
+      id: 't-buy-glass-seals',
+      title: 'Buy: Glass & Weatherstripping',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Window seals, door seals, replacement glass as needed.',
+    },
+
+    /* ─────────── Wipers / washers / mirrors ─────────── */
+    {
+      id: 't-buy-wipers',
+      title: 'Buy: Wipers, Washers, Mirrors',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'purchase',
+      summary: 'Street-legal wiper assembly, washer pump/jets, mirrors.',
+    },
+    {
+      id: 't-wipers-install',
+      title: 'Wipers / Mirrors Install',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Mount wiper assembly + washer pump/jets, fit mirrors. Required for inspection.',
+    },
+
+    /* ─────────── Audit additions: prep, validation, paperwork ─────────── */
+    {
+      id: 't-engine-prep',
+      title: 'SR20 Pre-Install Refresh',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Pre-install bench work on the SR20DET: gasket refresh, bore inspection, head/main bolts, dual-guide valve oil-squirter mod, wideband O2 bung in the downpipe, silicone coolant hose set.',
+      notes: [
+        'Compression + leakdown',
+        'Gaskets + valve cover refresh',
+        'Wideband O2 bung welded in downpipe',
+        'Silicone coolant hose set',
+      ],
+    },
+    {
+      id: 't-decide-final-drive',
+      title: 'Decide: Ring & Pinion Ratio + LSD',
+      epic: 'research',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick the Ford 9\u2033 ratio (3.55 / 3.73 / 4.10) and LSD model. Driven by transmission gearing + final tune target.',
+      deferrable: '3rd-member can be ordered late; doesn\u2019t block axle housing or shafts.',
+      notes: [
+        'Ratio: 3.55 / 3.73 / 4.10',
+        'LSD: Truetrac/Torsen gear-type baseline',
+        'Revisit if inside-rear lift is observed at shakedown',
+      ],
+    },
+    {
+      id: 't-pinion-angle-setup',
+      title: 'Pinion Angle Setup on Jig',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'On the jig at ride height, set upper four-link bar lengths to give equal 2\u20133\u00b0 U-joint operating angles. Done before driveshaft is measured.',
+    },
+    {
+      id: 't-bump-steer-check',
+      title: 'Bump-Steer Validation',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'On the rolling chassis at ride height, sweep wheel through full bump/droop and measure toe change. Adjust rack height (slotted mount, \u00b115 mm) until bump-steer is within target.',
+    },
+    {
+      id: 't-driveshaft-loop',
+      title: 'Driveshaft Safety Loop Fab',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Hoop welded to a frame crossmember surrounding the driveshaft to retain it if a U-joint fails. Standard practice for solid-axle RWD; common inspection requirement.',
+    },
+    {
+      id: 't-engine-tune',
+      title: 'Initial ECU Tune / Dyno',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Base map \u2192 idle \u2192 part-throttle \u2192 boost ramp on a dyno. Output: drivable map and a logged WOT pull at the chosen turbo target.',
+    },
+    {
+      id: 't-registration',
+      title: 'Inspection / Registration',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'VIN inspection, weight slip, emissions/safety inspection per local jurisdiction; plates.',
+    },
+
+    /* ─────────── Added decisions (architectural) ─────────── */
+    {
+      id: 't-decide-turbo',
+      title: 'Decide: Turbo + Manifold Architecture',
+      epic: 'design',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Pick turbo (likely re-using one on hand), manifold flange (T3/T4), scroll arch, wastegate style, mount position. Strategy: work from envelope down — manifold geometry should minimize firewall hack-out, then exhaust + IC piping fall out of that.',
+      notes: [
+        'Turbo: probably one I already have — inspect/spec soon',
+        'Goal: minimize firewall removal via manifold geometry',
+        'Drives: t-buy-exhaust-manifold, t-exhaust-routing, t-decide-firewall (passthroughs), t-cooling-design (charge-air load)',
+      ],
+    },
+    {
+      id: 't-decide-cage',
+      title: 'Decide: Roll-Cage / Harness Bar',
+      epic: 'design',
+      kind: 'decision',
+      status: 'decided',
+      decision: 'No cage initially. Body welded to frame for stiffness (unibody-style). Frame to include provisions so a cage can be added later.',
+      summary: 'Full cage vs harness bar vs none. Affects frame nodes, seat H-point, and harness mounting.',
+    },
+    {
+      id: 't-decide-body-mounting',
+      title: 'Decide: Body-to-Frame Attachment',
+      epic: 'design',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Welded (unibody-style) vs traditional rubber body mounts vs hybrid. Drives NVH, frame stiffness, paint sequencing, and t-body-mount scope.',
+      notes: [
+        'Leaning welded for stiffness (consistent with t-decide-cage = no cage initially)',
+        'NVH trade-off: welded = more vibration into cabin',
+      ],
+    },
+    {
+      id: 't-decide-harness-strategy',
+      title: 'Decide: Wiring Harness Strategy',
+      epic: 'design',
+      kind: 'decision',
+      status: 'decided',
+      decision: 'Build from scratch — Wiring Specialties connectors, self-terminated and self-loomed.',
+      summary: 'Scratch-built vs chassis-specific harness vs PDM. Drives engine + body wiring scope and timeline.',
+    },
+    {
+      id: 't-decide-ac-scope',
+      title: 'Decide: AC Scope',
+      epic: 'design',
+      kind: 'decision',
+      status: 'decided',
+      decision: 'Full AC system in scope — compressor, condenser, evaporator.',
+      summary: 'In or out, and how much packaging real-estate it takes from the front-end / dash.',
+      notes: ['Condenser fights for grille airflow with rad + IC — input to t-cooling-design'],
+    },
+    {
+      id: 't-decide-battery-location',
+      title: 'Decide: Battery Location',
+      epic: 'design',
+      kind: 'decision',
+      status: 'in-progress',
+      summary: 'Out of engine bay for the shaved look. Boot vs under-floor / passenger footwell still TBD.',
+      notes: [
+        'Drives: kill-switch routing, cable spec/length, frame mount tab location',
+        'Boot mount: longer cables, more voltage drop, easier access',
+      ],
+    },
+    {
+      id: 't-decide-ecu',
+      title: 'Decide: ECU',
+      epic: 'design',
+      kind: 'decision',
+      status: 'decided',
+      decision: 'Haltech Elite / Nexus.',
+      summary: 'ECU platform — drives wiring strategy, dash CAN integration, and tuning workflow.',
+    },
+
+    /* ─────────── Added fabrication tasks ─────────── */
+    {
+      id: 't-fab-four-link',
+      title: 'Fab Four-Link Rear (Welder Series Kit + Custom Mounts)',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Welder Series Horton Hot Rod four-link kit modified to A40 frame. Custom frame + housing brackets to allow IC (instant center) and RC (roll center) adjustment.',
+      notes: [
+        'Base kit: Welder Series Horton Hot Rod',
+        'Custom multi-hole brackets at frame and housing for IC / RC tuning at shakedown',
+      ],
+    },
+    {
+      id: 't-pedal-box-install',
+      title: 'Pedal Box Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount fabricated pedal box assembly to firewall. Required before brake / clutch hydraulic install.',
+    },
+    {
+      id: 't-shifter-install',
+      title: 'Shifter Install',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mount shifter to floor / tunnel; route linkage or cable to trans.',
+    },
+    {
+      id: 't-fuel-leak-test',
+      title: 'Fuel System Leak / Pressure Test',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Pressurize fuel system to spec and hold; check every fitting before first crank.',
+    },
+    {
+      id: 't-horn-install',
+      title: 'Horn Install',
+      epic: 'fabrication',
+      status: 'planning',
+      kind: 'task',
+      summary: 'Horn + relay + wiring. Required for inspection.',
+    },
+
+    /* ─── Body / rust prep (added after audit) ─── */
+    {
+      id: 't-media-blast-body',
+      title: 'Media-Blast Body Shell',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Strip the bare body shell down to clean metal so rust extent is visible and patch panels weld to sound steel.',
+      notes: [
+        'Soda or fine-media blast to avoid heat distortion of thin panels',
+        'Mask or remove glass/seals/trim before',
+        'Immediate epoxy primer over bare metal to avoid flash rust',
+      ],
+    },
+    {
+      id: 't-rust-repair-body',
+      title: 'Rust Repair (Floors, Sills, A-Pillars)',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Cut and patch rust through-holes everywhere a Mk1 typically rots — floors, sills, A-pillar bases, dogleg, boot floor, inner fenders. Beyond the single rocker patch noted at teardown.',
+      notes: [
+        'Floors (driver + passenger)',
+        'Sills (rocker assemblies)',
+        'A-pillar bases',
+        'Dogleg behind rear wheel',
+        'Boot/trunk floor',
+        'Inner fender / wheelhouse seams',
+      ],
+    },
+    {
+      id: 't-frame-coatings',
+      title: 'Frame Coatings (Inside + Out)',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Coat the welded frame BEFORE the engine drops in. Once components are mounted you cannot reach the rails or suspension pickups.',
+      notes: [
+        'Outside: epoxy primer + 2K urethane or powder coat',
+        'Inside: cavity wax / Eastwood Internal Frame Coating sprayed through drilled drain holes',
+        'Drain holes drilled at the frame jig stage so they can be sealed cleanly later',
+        'Suspension pickups masked at threads only',
+      ],
+    },
+    {
+      id: 't-seam-sealer-undercoat',
+      title: 'Seam Sealer + Underbody Coat',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Brushable seam sealer in floor pans / wheel wells / trunk seams, then chip-guard / underbody coat after paint, before final reassembly.',
+    },
+    {
+      id: 't-cavity-wax',
+      title: 'Body Cavity Wax (Post-Paint)',
+      epic: 'finishing',
+      status: 'planning',
+      summary: 'Spray wax (Waxoyl / Wurth HHS) into all enclosed body cavities — sills, A-pillars, rear quarters — through factory drain holes. Done after paint cures, before final reassembly.',
+    },
+
+    /* ─── Integration / fitment-check nodes (added after audit) ─── */
+    {
+      id: 't-engine-mockup-on-frame',
+      title: 'Engine + Trans Physical Mockup on Frame',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Drop the SR20 + trans onto the welded frame on mock mounts BEFORE coatings or harness work. Verify CAD predictions: tunnel fit, steering shaft path, exhaust envelope, motor mount geometry.',
+      notes: [
+        'Mock motor mounts (cardboard / scrap) acceptable; production mounts come later',
+        'Catches the things t-decide-engine-placement could not, since that task is CAD-only',
+        'Outputs: any frame deltas to address, locked motor-mount-pad spec',
+      ],
+    },
+    {
+      id: 't-frame-postweld-scan',
+      title: 'Frame Post-Weld Scan vs CAD',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Re-scan the frame after final welds to capture distortion vs CAD. Feeds suspension install and any pickup-point shimming.',
+      notes: [
+        'Tool: Einstar 2',
+        'Output: delta map of pickup points',
+        'If deltas are within ±2 mm tolerance, no rework',
+      ],
+    },
+    {
+      id: 't-body-trial-fit',
+      title: 'Body Shell Trial-Fit on Frame',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Bolt the bare shell to the welded frame BEFORE bodywork begins. Reveals real fit issues (panel gaps, mount alignment, firewall clearance) while metal is still easy to modify.',
+    },
+    {
+      id: 't-harness-routing-review',
+      title: 'Harness Routing Review',
+      epic: 'design',
+      status: 'planning',
+      summary: 'Single review pass reconciling engine harness, body harness, dash CAN tap, DBW, ECU, charging, kill switch — all the things that converge on the cabin front. Outputs the master routing plan + grommet/passthrough list before final wiring.',
+    },
+    {
+      id: 't-cooling-stack-fit',
+      title: 'Cooling Stack Physical Fit',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Mock the radiator + intercooler + (optional) AC condenser into the actual A40 grille opening with the body on the frame. Validates the CAD packaging in t-cooling-design before final hose / fan / shroud purchases.',
+    },
+
+    /* ─── Promoted from notes (added after audit) ─── */
+    {
+      id: 't-decide-fuel-architecture',
+      title: 'Decide: Fuel System Architecture',
+      epic: 'design',
+      kind: 'decision',
+      status: 'in-progress',
+      decision: 'External Aeromotive 340 + surge tank — the pump is already on hand and drives the choice.',
+      summary: 'In-tank conversion vs external pump + surge tank. Locked to external + surge because the Aeromotive 340 is already purchased. Gates fuel-line + tank-prep scope.',
+    },
+    {
+      id: 't-decide-epas-control',
+      title: 'Decide: EPAS Control Strategy',
+      epic: 'research',
+      kind: 'decision',
+      status: 'planning',
+      summary: 'Failsafe-mode column EPAS (default, simple) vs ECU-controlled assist over CAN with a separate speed-reading board (more tunable, more software). Recommend: ship failsafe; promote CAN control only if assist character is unacceptable.',
+      notes: [
+        'Failsafe baseline: column unit on its own with internal logic',
+        'CAN-control plan: speed signal source (GPS / wheel-speed / VSS), small board mediating CAN-to-column-bus',
+        'Drives ECU pinout, harness CAN node count, and any custom-board work',
+      ],
+    },
+    {
+      id: 't-decide-quick-release',
+      title: 'Decide: Steering Wheel Quick-Release',
+      epic: 'research',
+      kind: 'decision',
+      status: 'planning',
+      deferrable: 'Affects only column length + horn-wire strategy. Decide before t-buy-steering-column finalizes.',
+      summary: 'Whether to add a quick-release between the steering column and the OEM wheel. Affects column length, horn slip-ring strategy, and ingress/egress geometry.',
+    },
+    {
+      id: 't-decide-arb-front',
+      title: 'Decide: Front Anti-Roll Bar Spec',
+      epic: 'narrowing',
+      kind: 'decision',
+      status: 'in-progress',
+      summary: 'Front ARB is effectively mandatory (without it the car rolls ~17° at 0.8 G per t-decide-arb). Lock diameter + mount geometry now so frame ships with usable provisions. Rear ARB stays deferred (see t-decide-arb).',
+      notes: [
+        'Working number: 22 mm DOM tube',
+        'Mount provisions: bracket tabs welded to frame at front cross-tube',
+      ],
+    },
+    {
+      id: 't-calc-pedal-ratio-bore',
+      title: 'Pedal Ratio + Master Bore Calc',
+      epic: 'design',
+      status: 'planning',
+      summary: 'F=PA worksheet picking pedal ratio (typically 5.5:1 for manual brake) and the master cylinder bore. Output gates the master purchase and the pedal box geometry.',
+      notes: [
+        'Inputs: caliper piston area F+R, line pressure target, driver foot force',
+        'Output: pedal ratio, master bore diameter, pedal travel at peak braking',
+      ],
+    },
+  ],
+
+  edges: [
+    /* ── Scans feed track / tire / tubbing decisions ── */
+    { from: 't-scan-rear',          to: 't-decide-tire-rear',     kind: 'hard' },
+    { from: 't-scan-rear',          to: 't-decide-track-rear',    kind: 'hard' },
+    { from: 't-scan-rear',          to: 't-decide-tubbing',       kind: 'hard' },
+    { from: 't-decide-tubbing',     to: 't-decide-tire-rear',     kind: 'hard', label: 'Fender choice sets max rear tire width.' },
+    { from: 't-scan-front',         to: 't-decide-tire-front',    kind: 'hard' },
+    { from: 't-scan-front',         to: 't-decide-track-front',   kind: 'hard' },
+    { from: 't-decide-tire-rear',   to: 't-decide-track-rear',    kind: 'hard' },
+    { from: 't-decide-tire-front',  to: 't-decide-track-front',   kind: 'hard' },
+    { from: 't-decide-tubbing',     to: 't-decide-track-rear',    kind: 'hard', label: 'Aesthetic body call sets rear track envelope.' },
+
+    /* Track widths + research feed geometry analysis */
+    { from: 't-susp-research',      to: 't-narrowing-analysis',   kind: 'hard' },
+    { from: 't-decide-track-front', to: 't-narrowing-analysis',   kind: 'hard' },
+    { from: 't-decide-track-rear',  to: 't-narrowing-analysis',   kind: 'hard' },
+    { from: 't-narrowing-analysis', to: 't-sa-v2',                kind: 'hard' },
+    { from: 't-miata-measurements', to: 't-sa-v2',                kind: 'hard', label: 'Pivot/BJ/rack coords.' },
+    { from: 't-scan-donor-miata',   to: 't-sa-v2',                kind: 'soft', label: 'Validation — may trigger re-run.' },
+    { from: 't-scan-donor-miata',   to: 't-narrowing-analysis',   kind: 'soft' },
+    { from: 't-sa-v2',              to: 't-susp-tuning',          kind: 'hard' },
+
+    /* Track-rear → axle width spec → narrow housing + axles */
+    { from: 't-decide-track-rear',  to: 't-axle-research',        kind: 'hard' },
+    { from: 't-susp-research',      to: 't-axle-research',        kind: 'soft' },
+    { from: 't-axle-research',      to: 't-buy-axles',            kind: 'hard' },
+    { from: 't-buy-rear-housing',   to: 't-buy-axles',            kind: 'hard', label: 'Housing flange/bearing bores constrain axle spec.' },
+    { from: 't-buy-rear-housing',   to: 't-narrow-rear-housing',  kind: 'hard' },
+    { from: 't-narrow-rear-housing', to: 't-frame-build',         kind: 'hard', label: 'Narrowed housing is mocked into the jig for four-link install.' },
+    { from: 't-buy-wheels',         to: 't-frame-build',           kind: 'hard', label: 'Wheels needed for chassis mockup at ride height.' },
+    { from: 't-buy-tires',          to: 't-frame-build',           kind: 'hard', label: 'Tires needed for chassis mockup at ride height.' },
+    { from: 't-axle-research',      to: 't-narrow-rear-housing',  kind: 'hard', label: 'Cut width set by axle length.' },
+    { from: 't-narrow-rear-housing', to: 't-rear-brake-brackets', kind: 'hard' },
+    { from: 't-decide-brake-system', to: 't-rear-brake-brackets', kind: 'hard', label: 'Caliper choice sets bracket geometry.' },
+    { from: 't-buy-calipers',       to: 't-rear-brake-brackets',  kind: 'soft' },
+
+    /* Shocks must land before frame design finalizes */
+    { from: 't-susp-tuning',        to: 't-decide-shocks-front',  kind: 'hard' },
+    { from: 't-susp-tuning',        to: 't-decide-shocks-rear',   kind: 'hard' },
+    { from: 't-decide-shocks-front', to: 't-frame-design',        kind: 'hard', label: 'Shock body length sets pickup geometry.' },
+    { from: 't-decide-shocks-rear',  to: 't-frame-design',        kind: 'hard', label: 'Shock body length sets pickup geometry.' },
+    { from: 't-decide-shocks-front', to: 't-buy-shocks-front',    kind: 'hard' },
+    { from: 't-decide-shocks-rear',  to: 't-buy-shocks-rear',     kind: 'hard' },
+
+    /* Engine placement — feeds nearly the whole cabin */
+    { from: 't-motor-research',     to: 't-decide-engine-placement', kind: 'hard' },
+    { from: 't-design-overview',    to: 't-decide-engine-placement', kind: 'soft' },
+    { from: 't-decide-engine-placement', to: 't-exhaust-routing',  kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-decide-firewall',  kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-decide-pedal',     kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-decide-shifter',   kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-cooling-design',   kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-intake-piping-design', kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-frame-design',     kind: 'hard', label: 'Motor mount geometry.' },
+    { from: 't-decide-trans',       to: 't-decide-firewall',       kind: 'hard', label: 'Bellhousing length sets firewall plane.' },
+    { from: 't-decide-firewall',    to: 't-decide-pedal',          kind: 'soft', label: 'Firewall plane bounds pedal-box envelope.' },
+
+    /* Exhaust routing into other constraints */
+    { from: 't-exhaust-routing',    to: 't-decide-pedal',          kind: 'hard' },
+    { from: 't-exhaust-routing',    to: 't-decide-steering-route', kind: 'hard' },
+    { from: 't-exhaust-routing',    to: 't-decide-seat-position',  kind: 'hard' },
+    { from: 't-exhaust-routing',    to: 't-buy-exhaust-system',    kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-buy-exhaust-manifold', kind: 'hard' },
+
+    /* Firewall + pedals + seat chain */
+    { from: 't-decide-firewall',    to: 't-firewall-design',       kind: 'hard' },
+    { from: 't-decide-pedal',       to: 't-pedal-box-design',      kind: 'hard' },
+    { from: 't-decide-pedal',       to: 't-decide-seat-position',  kind: 'hard' },
+    { from: 't-decide-firewall',    to: 't-decide-seat-position',  kind: 'hard' },
+    { from: 't-firewall-design',    to: 't-frame-design',          kind: 'soft' },
+    { from: 't-pedal-box-design',   to: 't-frame-design',          kind: 'soft' },
+    { from: 't-decide-seat-position', to: 't-buy-seats',           kind: 'hard' },
+    { from: 't-decide-seat-position', to: 't-frame-design',        kind: 'soft', label: 'Seat mounts on the frame.' },
+    { from: 't-buy-seats',          to: 't-design-finalization',   kind: 'hard', label: 'Seats needed for mockup before frame design is locked.' },
+    { from: 't-buy-steering-column', to: 't-design-finalization',  kind: 'soft', label: 'Column dimensions inform packaging; hard requirement is steering install after frame-build.' },
+
+    /* Steering routing + EPAS + column purchase */
+    { from: 't-steering-research',  to: 't-decide-steering-route', kind: 'hard' },
+    { from: 't-decide-firewall',    to: 't-decide-steering-route', kind: 'soft' },
+    { from: 't-decide-steering-route', to: 't-steering-rack-design', kind: 'hard' },
+    { from: 't-steering-research',  to: 't-epas-design',           kind: 'hard' },
+    { from: 't-steering-research',  to: 't-buy-epas',              kind: 'hard' },
+    { from: 't-epas-design',        to: 't-buy-steering-column',   kind: 'hard' },
+    { from: 't-decide-steering-route', to: 't-buy-steering-column', kind: 'hard' },
+    { from: 't-steering-rack-design', to: 't-frame-design',        kind: 'soft' },
+
+    /* Transmission + shifter */
+    { from: 't-motor-research',     to: 't-decide-trans',          kind: 'hard' },
+    { from: 't-decide-trans',       to: 't-decide-shifter',        kind: 'hard' },
+    { from: 't-decide-shifter',     to: 't-shifter-design',        kind: 'hard' },
+    { from: 't-decide-trans',       to: 't-buy-driveshaft',        kind: 'hard' },
+    { from: 't-axle-research',      to: 't-buy-driveshaft',        kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-buy-driveshaft',   kind: 'hard' },
+
+    /* Cooling / intake purchases follow their designs */
+    { from: 't-cooling-design',     to: 't-buy-radiator',          kind: 'hard' },
+    { from: 't-cooling-design',     to: 't-buy-intercooler',       kind: 'hard' },
+    { from: 't-cooling-design',     to: 't-intake-piping-design',  kind: 'hard', label: 'IC and rad fight for airflow.' },
+    { from: 't-intake-piping-design', to: 't-buy-intake-piping',   kind: 'hard' },
+    { from: 't-cooling-design',     to: 't-frame-design',          kind: 'soft', label: 'Rad mounting points.' },
+
+    /* Brake system */
+    { from: 't-decide-brake-system', to: 't-buy-brake-master',     kind: 'hard' },
+    { from: 't-decide-brake-system', to: 't-buy-brake-lines',      kind: 'hard' },
+    { from: 't-decide-brake-system', to: 't-buy-calipers',         kind: 'hard' },
+    { from: 't-decide-brake-system', to: 't-pedal-box-design',     kind: 'soft', label: 'Pedal ratio matches master sizing.' },
+
+    /* ECU + dash → wiring */
+    { from: 't-motor-research',     to: 't-buy-ecu',               kind: 'hard' },
+    { from: 't-buy-ecu',            to: 't-wiring',                kind: 'hard' },
+    { from: 't-digital-dash-design', to: 't-wiring',               kind: 'soft', label: 'Dash CAN tap + 12V/ign feed in harness plan.' },
+
+    /* Teardown feeds CAD */
+    { from: 't-teardown',           to: 't-design-overview',       kind: 'hard' },
+    { from: 't-teardown',           to: 't-frame-design',          kind: 'soft', label: 'As-built measurements feed the CAD.' },
+
+    /* Frame design → finalization → build */
+    { from: 't-frame-design',       to: 't-design-finalization',   kind: 'hard' },
+    { from: 't-susp-tuning',        to: 't-design-finalization',   kind: 'hard' },
+    { from: 't-decide-tubbing',     to: 't-frame-design',          kind: 'soft', label: 'Tub width informs rear rail spacing.' },
+    { from: 't-design-finalization', to: 't-buy-metal',            kind: 'hard' },
+    { from: 't-frame-design',       to: 't-buy-mandrel-tubes',     kind: 'hard' },
+    { from: 't-frame-design',       to: 't-jig-reference-points',  kind: 'hard' },
+    { from: 't-frame-jig',          to: 't-jig-reference-points',  kind: 'hard' },
+    { from: 't-jig-reference-points', to: 't-frame-build',         kind: 'hard' },
+    { from: 't-buy-metal',          to: 't-frame-build',           kind: 'hard' },
+    { from: 't-buy-mandrel-tubes',  to: 't-frame-build',           kind: 'hard' },
+    { from: 't-design-finalization', to: 't-frame-build',          kind: 'hard' },
+
+    /* Frame → bodywork chain */
+    { from: 't-frame-build',        to: 't-firewall-build',        kind: 'hard' },
+    { from: 't-firewall-design',    to: 't-firewall-build',        kind: 'hard' },
+    { from: 't-frame-build',        to: 't-floor-panels',          kind: 'hard' },
+    { from: 't-firewall-build',     to: 't-floor-panels',          kind: 'hard' },
+    { from: 't-decide-seat-position', to: 't-floor-panels',        kind: 'soft' },
+    { from: 't-decide-tubbing',     to: 't-wheelwell-fab',         kind: 'hard' },
+    { from: 't-frame-build',        to: 't-wheelwell-fab',         kind: 'hard' },
+    { from: 't-frame-build',        to: 't-body-mount',            kind: 'hard' },
+    { from: 't-wheelwell-fab',      to: 't-bodywork',              kind: 'hard' },
+    { from: 't-body-mount',         to: 't-bodywork',              kind: 'hard' },
+
+    /* Frame → drivetrain / engine install chain */
+    { from: 't-frame-build',        to: 't-engine-install',        kind: 'hard' },
+    { from: 't-firewall-build',     to: 't-engine-install',        kind: 'soft' },
+    { from: 't-narrow-rear-housing', to: 't-driveline-install',    kind: 'hard' },
+    { from: 't-buy-axles',          to: 't-driveline-install',     kind: 'hard' },
+    { from: 't-rear-brake-brackets', to: 't-driveline-install',    kind: 'soft' },
+    { from: 't-buy-driveshaft',     to: 't-driveline-install',     kind: 'hard' },
+    { from: 't-engine-install',     to: 't-driveline-install',     kind: 'hard' },
+
+    /* Engine systems install */
+    { from: 't-engine-install',     to: 't-cooling-install',       kind: 'hard' },
+    { from: 't-buy-radiator',       to: 't-cooling-install',       kind: 'hard' },
+    { from: 't-buy-intercooler',    to: 't-cooling-install',       kind: 'hard' },
+    { from: 't-engine-install',     to: 't-intake-install',        kind: 'hard' },
+    { from: 't-buy-intake-piping',  to: 't-intake-install',        kind: 'hard' },
+    { from: 't-engine-install',     to: 't-exhaust-install',       kind: 'hard' },
+    { from: 't-buy-exhaust-manifold', to: 't-exhaust-install',     kind: 'hard' },
+    { from: 't-buy-exhaust-system', to: 't-exhaust-install',       kind: 'hard' },
+    { from: 't-engine-install',     to: 't-wiring',                kind: 'hard' },
+    { from: 't-engine-install',     to: 't-fuel-install',          kind: 'soft', label: 'Rail flex-line connection.' },
+
+    /* Brake install */
+    { from: 't-frame-build',        to: 't-brake-install',         kind: 'hard' },
+    { from: 't-firewall-build',     to: 't-brake-install',         kind: 'hard', label: 'Masters mount on firewall.' },
+    { from: 't-buy-brake-master',   to: 't-brake-install',         kind: 'hard' },
+    { from: 't-buy-brake-lines',    to: 't-brake-install',         kind: 'hard' },
+    { from: 't-buy-calipers',       to: 't-brake-install',         kind: 'hard' },
+    { from: 't-pedal-box-design',   to: 't-brake-install',         kind: 'soft' },
+
+    /* First-start gating */
+    { from: 't-cooling-install',    to: 't-engine-startup',        kind: 'hard' },
+    { from: 't-intake-install',     to: 't-engine-startup',        kind: 'hard' },
+    { from: 't-exhaust-install',    to: 't-engine-startup',        kind: 'hard' },
+    { from: 't-wiring',             to: 't-engine-startup',        kind: 'hard' },
+    { from: 't-brake-install',      to: 't-engine-startup',        kind: 'hard' },
+    { from: 't-driveline-install',  to: 't-engine-startup',        kind: 'hard' },
+
+    /* Finishing — strictly post-startup, runs in parallel */
+    { from: 't-engine-startup',     to: 't-non-engine-wiring',     kind: 'soft' },
+    { from: 't-bodywork',           to: 't-non-engine-wiring',     kind: 'soft' },
+    { from: 't-bodywork',           to: 't-door-panels',           kind: 'hard' },
+    { from: 't-bodywork',           to: 't-sound-dampening',       kind: 'soft' },
+    { from: 't-firewall-build',     to: 't-heat-shielding',        kind: 'hard' },
+    { from: 't-exhaust-install',    to: 't-heat-shielding',        kind: 'hard' },
+
+    /* Fuel system */
+    { from: 't-motor-research',     to: 't-fuel-design',           kind: 'hard' },
+    { from: 't-design-overview',    to: 't-fuel-design',           kind: 'soft' },
+    { from: 't-fuel-design',        to: 't-prep-fuel-tank',        kind: 'hard' },
+    { from: 't-fuel-design',        to: 't-buy-fuel-pump',         kind: 'soft' },
+    { from: 't-fuel-design',        to: 't-buy-fuel-lines',        kind: 'hard' },
+    { from: 't-fuel-design',        to: 't-frame-design',          kind: 'soft', label: 'Tank location may need frame mounts.' },
+    { from: 't-frame-build',        to: 't-fuel-install',          kind: 'hard' },
+    { from: 't-prep-fuel-tank',     to: 't-fuel-install',          kind: 'hard' },
+    { from: 't-buy-fuel-pump',      to: 't-fuel-install',          kind: 'hard' },
+    { from: 't-buy-fuel-lines',     to: 't-fuel-install',          kind: 'hard' },
+    { from: 't-fuel-install',       to: 't-engine-startup',        kind: 'hard' },
+
+    /* Charging / battery */
+    { from: 't-design-overview',    to: 't-charging-design',       kind: 'soft' },
+    { from: 't-charging-design',    to: 't-buy-battery',           kind: 'hard' },
+    { from: 't-charging-design',    to: 't-buy-kill-switch',       kind: 'hard' },
+    { from: 't-charging-design',    to: 't-wiring',                kind: 'hard' },
+    { from: 't-buy-battery',        to: 't-wiring',                kind: 'hard' },
+    { from: 't-buy-kill-switch',    to: 't-wiring',                kind: 'soft' },
+    { from: 't-buy-battery',        to: 't-engine-startup',        kind: 'hard' },
+    { from: 't-buy-kill-switch',    to: 't-engine-startup',        kind: 'hard' },
+
+    /* Dash chain: hardware + software → CAN integration → install */
+    { from: 't-digital-dash-design', to: 't-dash-hardware',         kind: 'soft' },
+    { from: 't-digital-dash-design', to: 't-dash-software',         kind: 'soft' },
+    { from: 't-dash-hardware',       to: 't-dash-haltech-integration', kind: 'hard' },
+    { from: 't-dash-software',       to: 't-dash-haltech-integration', kind: 'hard' },
+    { from: 't-decide-ecu',          to: 't-dash-haltech-integration', kind: 'hard', label: 'CAN broadcast spec set by ECU choice.' },
+    { from: 't-buy-ecu',             to: 't-dash-haltech-integration', kind: 'soft', label: 'Friend\'s Haltech can stand in temporarily.' },
+    { from: 't-dash-bezel-scan',     to: 't-dash-shroud',           kind: 'hard' },
+    { from: 't-dash-hardware',       to: 't-dash-shroud',           kind: 'soft', label: 'Shroud envelopes the real Pi/screen stack.' },
+    { from: 't-dash-haltech-integration', to: 't-dash-install',     kind: 'hard' },
+    { from: 't-dash-shroud',         to: 't-dash-install',          kind: 'hard' },
+    { from: 't-frame-build',        to: 't-dash-install',          kind: 'hard' },
+    { from: 't-firewall-build',     to: 't-dash-install',          kind: 'soft' },
+    { from: 't-wiring',             to: 't-dash-install',          kind: 'hard' },
+    { from: 't-dash-install',       to: 't-engine-startup',        kind: 'soft' },
+
+    /* Paint */
+    { from: 't-bodywork',           to: 't-paint',                 kind: 'hard' },
+    { from: 't-paint',              to: 't-final-reassembly',      kind: 'hard' },
+    { from: 't-final-reassembly',   to: 't-reupholstery',          kind: 'soft' },
+    { from: 't-final-reassembly',   to: 't-door-panels',           kind: 'soft' },
+
+    /* HVAC */
+    { from: 't-decide-firewall',    to: 't-hvac-design',           kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-hvac-design',      kind: 'soft' },
+    { from: 't-hvac-design',        to: 't-buy-hvac',              kind: 'hard' },
+    { from: 't-hvac-design',        to: 't-firewall-design',       kind: 'soft', label: 'Heater core passthrough.' },
+    { from: 't-firewall-build',     to: 't-hvac-install',          kind: 'hard' },
+    { from: 't-buy-hvac',           to: 't-hvac-install',          kind: 'hard' },
+    { from: 't-cooling-install',    to: 't-hvac-install',          kind: 'soft', label: 'Heater core taps cooling system.' },
+
+    /* Shakedown */
+    { from: 't-engine-startup',     to: 't-alignment',             kind: 'hard' },
+    { from: 't-driveline-install',  to: 't-alignment',             kind: 'hard' },
+
+    /* Steering rack chain */
+    { from: 't-steering-research',  to: 't-buy-steering-rack',     kind: 'hard' },
+    { from: 't-buy-steering-rack',  to: 't-narrow-steering-rack',  kind: 'hard' },
+    { from: 't-steering-rack-design', to: 't-narrow-steering-rack', kind: 'hard' },
+    { from: 't-decide-track-front', to: 't-narrow-steering-rack',  kind: 'hard', label: 'Front-track delta sets cut length.' },
+    { from: 't-narrow-steering-rack', to: 't-steering-install',    kind: 'hard' },
+    { from: 't-buy-steering-column', to: 't-steering-install',     kind: 'hard' },
+    { from: 't-buy-steering-column', to: 't-steering-wheel-adapt', kind: 'hard', label: 'Column shaft spec sets hub adapter.' },
+    { from: 't-steering-wheel-adapt', to: 't-steering-install',     kind: 'hard' },
+    { from: 't-decide-steering-route', to: 't-steering-install',   kind: 'hard' },
+    { from: 't-frame-build',        to: 't-steering-install',      kind: 'hard' },
+    { from: 't-steering-install',   to: 't-engine-startup',        kind: 'soft', label: 'Need to drive it.' },
+
+    /* EPAS install (when applicable) */
+    { from: 't-buy-epas',           to: 't-epas-install',          kind: 'hard' },
+    { from: 't-frame-build',        to: 't-epas-install',          kind: 'hard' },
+    { from: 't-wiring',             to: 't-epas-install',          kind: 'soft' },
+    { from: 't-epas-install',       to: 't-steering-install',      kind: 'soft' },
+
+    /* Front suspension hardware */
+    { from: 't-sa-v2',              to: 't-buy-control-arms',      kind: 'hard', label: 'Geometry locks arm length / pivot.' },
+    { from: 't-sa-v2',              to: 't-buy-hubs-spindles',     kind: 'hard', label: 'Geometry locks spindle/hub spec.' },
+    { from: 't-buy-control-arms',   to: 't-suspension-install-front', kind: 'hard' },
+    { from: 't-buy-hubs-spindles',  to: 't-suspension-install-front', kind: 'hard' },
+    { from: 't-buy-shocks-front',   to: 't-suspension-install-front', kind: 'hard' },
+    { from: 't-frame-build',        to: 't-suspension-install-front', kind: 'hard' },
+
+    /* Rear suspension hardware */
+    { from: 't-buy-shocks-rear',    to: 't-suspension-install-rear', kind: 'hard' },
+    { from: 't-narrow-rear-housing', to: 't-suspension-install-rear', kind: 'hard' },
+    { from: 't-buy-axles',          to: 't-suspension-install-rear', kind: 'hard' },
+    { from: 't-frame-build',        to: 't-suspension-install-rear', kind: 'hard' },
+
+    { from: 't-suspension-install-front', to: 't-alignment',       kind: 'hard' },
+    { from: 't-suspension-install-rear',  to: 't-alignment',       kind: 'hard' },
+    { from: 't-suspension-install-front', to: 't-engine-startup',  kind: 'soft', label: 'Has to roll.' },
+    { from: 't-suspension-install-rear',  to: 't-engine-startup',  kind: 'soft', label: 'Has to roll.' },
+
+    /* Engine + clutch hardware */
+    { from: 't-motor-research',     to: 't-buy-engine',            kind: 'hard' },
+    { from: 't-buy-engine',         to: 't-engine-install',        kind: 'hard' },
+    { from: 't-decide-trans',       to: 't-buy-clutch',            kind: 'hard' },
+    { from: 't-decide-trans',       to: 't-buy-clutch-hyd',        kind: 'hard' },
+    { from: 't-buy-clutch',         to: 't-engine-install',        kind: 'hard' },
+    { from: 't-buy-clutch-hyd',     to: 't-clutch-install',        kind: 'hard' },
+    { from: 't-pedal-box-design',   to: 't-clutch-install',        kind: 'soft' },
+    { from: 't-engine-install',     to: 't-clutch-install',        kind: 'hard' },
+    { from: 't-clutch-install',     to: 't-engine-startup',        kind: 'soft' },
+
+    /* Brake decisions feed brake design */
+    { from: 't-decide-power-brakes', to: 't-decide-brake-system',  kind: 'hard', label: 'Booster vs manual sizes the master.' },
+    { from: 't-decide-ebrake',      to: 't-decide-brake-system',   kind: 'soft', label: 'Caliper choice may include parking provision.' },
+    { from: 't-decide-power-brakes', to: 't-pedal-box-design',     kind: 'soft', label: 'Booster vs manual sets pedal ratio.' },
+
+    /* E-brake chain */
+    { from: 't-decide-ebrake',      to: 't-buy-ebrake',            kind: 'hard' },
+    { from: 't-buy-ebrake',         to: 't-ebrake-install',        kind: 'hard' },
+    { from: 't-frame-build',        to: 't-ebrake-install',        kind: 'hard' },
+    { from: 't-ebrake-install',     to: 't-alignment',             kind: 'soft' },
+
+    /* Seats install */
+    { from: 't-buy-seats',          to: 't-seats-install',         kind: 'hard' },
+    { from: 't-buy-harnesses',      to: 't-seats-install',         kind: 'hard' },
+    { from: 't-frame-build',        to: 't-seats-install',         kind: 'hard' },
+    { from: 't-seats-install',      to: 't-engine-startup',        kind: 'soft', label: 'Driver has to sit in it.' },
+
+    /* Transmission feeds frame + tunnel */
+    { from: 't-decide-trans',       to: 't-frame-design',          kind: 'soft', label: 'Tunnel sized for CD009 envelope; either trans fits without frame rework.' },
+    { from: 't-shifter-design',     to: 't-floor-panels',          kind: 'soft' },
+    { from: 't-buy-engine',         to: 't-decide-engine-placement', kind: 'soft', label: 'Physical mockup informs CAD.' },
+
+    /* Trans crossmember */
+    { from: 't-frame-build',        to: 't-trans-crossmember',     kind: 'hard' },
+    { from: 't-decide-trans',       to: 't-trans-crossmember',     kind: 'hard' },
+    { from: 't-decide-engine-placement', to: 't-trans-crossmember', kind: 'hard' },
+    { from: 't-trans-crossmember',  to: 't-engine-install',        kind: 'hard' },
+
+    /* Cooling extras */
+    { from: 't-cooling-design',     to: 't-buy-cooling-fans',      kind: 'hard' },
+    { from: 't-cooling-design',     to: 't-buy-coolant-hoses',     kind: 'hard' },
+    { from: 't-cooling-design',     to: 't-buy-oil-cooler',        kind: 'hard' },
+    { from: 't-buy-cooling-fans',   to: 't-cooling-install',       kind: 'hard' },
+    { from: 't-buy-coolant-hoses',  to: 't-cooling-install',       kind: 'hard' },
+    { from: 't-buy-oil-cooler',     to: 't-cooling-install',       kind: 'hard' },
+
+    /* Catch can + throttle */
+    { from: 't-decide-engine-placement', to: 't-buy-catch-can',    kind: 'hard' },
+    { from: 't-buy-catch-can',      to: 't-engine-install',        kind: 'soft' },
+    { from: 't-decide-pedal',       to: 't-buy-dbw-pedal',         kind: 'hard' },
+    { from: 't-buy-dbw-pedal',      to: 't-engine-install',        kind: 'soft' },
+
+    /* Wheels & tires */
+    { from: 't-decide-tire-front',  to: 't-buy-tires',             kind: 'hard' },
+    { from: 't-decide-tire-rear',   to: 't-buy-tires',             kind: 'hard' },
+    { from: 't-decide-track-front', to: 't-buy-wheels',            kind: 'hard' },
+    { from: 't-decide-track-rear',  to: 't-buy-wheels',            kind: 'hard' },
+    { from: 't-narrowing-analysis', to: 't-buy-wheels',            kind: 'hard', label: 'Offset/backspacing.' },
+    { from: 't-buy-wheels',         to: 't-suspension-install-front', kind: 'hard' },
+    { from: 't-buy-wheels',         to: 't-suspension-install-rear',  kind: 'hard' },
+    { from: 't-buy-tires',          to: 't-alignment',             kind: 'hard' },
+
+    /* Anti-roll bars */
+    { from: 't-susp-tuning',        to: 't-decide-arb',            kind: 'hard' },
+    { from: 't-decide-arb',         to: 't-frame-design',          kind: 'soft', label: 'ARB mount nodes.' },
+    { from: 't-decide-arb',         to: 't-buy-arb',               kind: 'hard' },
+    { from: 't-buy-arb',            to: 't-suspension-install-front', kind: 'hard' },
+    { from: 't-buy-arb',            to: 't-suspension-install-rear',  kind: 'hard' },
+
+    /* Exterior lighting */
+    { from: 't-charging-design',    to: 't-buy-lighting',          kind: 'soft' },
+    { from: 't-buy-lighting',       to: 't-lighting-install',      kind: 'hard' },
+    { from: 't-non-engine-wiring',  to: 't-lighting-install',      kind: 'hard' },
+    { from: 't-final-reassembly',   to: 't-lighting-install',      kind: 'soft' },
+
+    /* Glass & weatherstripping */
+    { from: 't-buy-glass-seals',    to: 't-final-reassembly',      kind: 'hard' },
+    { from: 't-bodywork',           to: 't-buy-glass-seals',       kind: 'soft' },
+
+    /* Wipers / mirrors */
+    { from: 't-buy-wipers',         to: 't-wipers-install',        kind: 'hard' },
+    { from: 't-non-engine-wiring',  to: 't-wipers-install',        kind: 'hard' },
+    { from: 't-final-reassembly',   to: 't-wipers-install',        kind: 'soft' },
+
+    /* Proportioning valve */
+    { from: 't-decide-brake-system', to: 't-buy-prop-valve',       kind: 'hard' },
+    { from: 't-buy-prop-valve',     to: 't-brake-install',         kind: 'hard' },
+
+    /* SR20 prep */
+    { from: 't-buy-engine',         to: 't-engine-prep',           kind: 'hard' },
+    { from: 't-engine-prep',        to: 't-engine-install',        kind: 'hard' },
+
+    /* Final drive (ratio + LSD) */
+    { from: 't-decide-trans',       to: 't-decide-final-drive',    kind: 'hard', label: 'Trans gearing sets ratio target.' },
+    { from: 't-axle-research',      to: 't-decide-final-drive',    kind: 'soft' },
+    { from: 't-decide-final-drive', to: 't-driveline-install',     kind: 'hard' },
+
+    /* Pinion angle setup → driveshaft measurement */
+    { from: 't-frame-build',        to: 't-pinion-angle-setup',    kind: 'hard' },
+    { from: 't-narrow-rear-housing', to: 't-pinion-angle-setup',   kind: 'hard' },
+    { from: 't-suspension-install-rear', to: 't-pinion-angle-setup', kind: 'hard' },
+    { from: 't-pinion-angle-setup', to: 't-buy-driveshaft',        kind: 'hard', label: 'Length measured after pinion is set.' },
+
+    /* Bump-steer validation */
+    { from: 't-steering-install',   to: 't-bump-steer-check',      kind: 'hard' },
+    { from: 't-suspension-install-front', to: 't-bump-steer-check', kind: 'hard' },
+    { from: 't-bump-steer-check',   to: 't-alignment',             kind: 'hard' },
+
+    /* Driveshaft safety loop */
+    { from: 't-frame-build',        to: 't-driveshaft-loop',       kind: 'hard' },
+    { from: 't-driveshaft-loop',    to: 't-driveline-install',     kind: 'hard' },
+
+    /* Initial tune */
+    { from: 't-engine-startup',     to: 't-engine-tune',           kind: 'hard' },
+    { from: 't-engine-tune',        to: 't-alignment',             kind: 'soft', label: 'Need running engine for corner-balance.' },
+
+    /* Registration */
+    { from: 't-final-reassembly',   to: 't-registration',          kind: 'hard' },
+    { from: 't-alignment',          to: 't-registration',          kind: 'hard' },
+    { from: 't-engine-tune',        to: 't-registration',          kind: 'hard' },
+    { from: 't-driveshaft-loop',    to: 't-registration',          kind: 'soft' },
+    { from: 't-lighting-install',   to: 't-registration',          kind: 'hard' },
+    { from: 't-wipers-install',     to: 't-registration',          kind: 'hard' },
+
+    /* Turbo decision → manifold + exhaust + cooling + firewall */
+    { from: 't-decide-engine-placement', to: 't-decide-turbo',     kind: 'soft' },
+    { from: 't-decide-turbo',       to: 't-buy-exhaust-manifold',  kind: 'hard' },
+    { from: 't-decide-turbo',       to: 't-exhaust-routing',       kind: 'hard', label: 'Turbo outlet sets DP path.' },
+    { from: 't-decide-turbo',       to: 't-cooling-design',        kind: 'soft', label: 'Charge-air heat load.' },
+    { from: 't-decide-turbo',       to: 't-decide-firewall',       kind: 'soft', label: 'Manifold reach informs firewall cuts.' },
+    { from: 't-decide-turbo',       to: 't-intake-piping-design',  kind: 'hard' },
+
+    /* Body / cage / NVH decisions */
+    { from: 't-decide-cage',        to: 't-frame-design',          kind: 'soft', label: 'Cage mount provisions.' },
+    { from: 't-decide-cage',        to: 't-buy-harnesses',         kind: 'soft' },
+    { from: 't-decide-body-mounting', to: 't-frame-design',        kind: 'hard', label: 'Welded vs rubber changes rail geometry.' },
+    { from: 't-decide-body-mounting', to: 't-body-mount',          kind: 'hard' },
+
+    /* Harness strategy */
+    { from: 't-decide-harness-strategy', to: 't-wiring',           kind: 'hard' },
+    { from: 't-decide-harness-strategy', to: 't-non-engine-wiring', kind: 'hard' },
+
+    /* AC scope */
+    { from: 't-decide-ac-scope',    to: 't-hvac-design',           kind: 'hard' },
+    { from: 't-decide-ac-scope',    to: 't-cooling-design',        kind: 'soft', label: 'Condenser fights for grille airflow.' },
+
+    /* Battery location */
+    { from: 't-decide-battery-location', to: 't-charging-design',  kind: 'hard' },
+    { from: 't-decide-battery-location', to: 't-buy-battery',      kind: 'soft', label: 'Location drives cable spec.' },
+    { from: 't-decide-battery-location', to: 't-frame-design',     kind: 'soft', label: 'Battery tray mount tabs.' },
+
+    /* ECU */
+    { from: 't-decide-ecu',         to: 't-buy-ecu',               kind: 'hard' },
+    { from: 't-decide-ecu',         to: 't-decide-harness-strategy', kind: 'soft' },
+
+    /* Four-link fabrication */
+    { from: 't-buy-rear-housing',   to: 't-fab-four-link',         kind: 'hard' },
+    { from: 't-narrow-rear-housing', to: 't-fab-four-link',        kind: 'hard', label: 'Bracket positions reference final housing width.' },
+    { from: 't-frame-build',        to: 't-fab-four-link',         kind: 'hard' },
+    { from: 't-susp-tuning',        to: 't-fab-four-link',         kind: 'soft', label: 'Bar lengths from kinematic tuning.' },
+    { from: 't-fab-four-link',      to: 't-suspension-install-rear', kind: 'hard' },
+
+    /* Pedal box install */
+    { from: 't-firewall-build',     to: 't-pedal-box-install',     kind: 'hard' },
+    { from: 't-pedal-box-design',   to: 't-pedal-box-install',     kind: 'hard' },
+    { from: 't-pedal-box-install',  to: 't-brake-install',         kind: 'hard' },
+    { from: 't-pedal-box-install',  to: 't-clutch-install',        kind: 'hard' },
+
+    /* Shifter install */
+    { from: 't-shifter-design',     to: 't-shifter-install',       kind: 'hard' },
+    { from: 't-trans-crossmember',  to: 't-shifter-install',       kind: 'hard' },
+    { from: 't-shifter-install',    to: 't-engine-startup',        kind: 'soft', label: 'Need to select gears.' },
+
+    /* Fuel leak test */
+    { from: 't-fuel-install',       to: 't-fuel-leak-test',        kind: 'hard' },
+    { from: 't-fuel-leak-test',     to: 't-engine-startup',        kind: 'hard', label: 'Pressure-hold before first crank.' },
+
+    /* Horn install */
+    { from: 't-non-engine-wiring',  to: 't-horn-install',          kind: 'hard' },
+    { from: 't-horn-install',       to: 't-registration',          kind: 'hard' },
+
+    /* ── Body / rust prep (added after audit) ── */
+    { from: 't-teardown',           to: 't-media-blast-body',      kind: 'hard' },
+    { from: 't-media-blast-body',   to: 't-rust-repair-body',      kind: 'hard' },
+    { from: 't-rust-repair-body',   to: 't-bodywork',              kind: 'hard' },
+
+    /* Frame coatings sit between frame-build and engine drop. */
+    { from: 't-frame-build',        to: 't-frame-coatings',        kind: 'hard' },
+    { from: 't-frame-coatings',     to: 't-engine-install',        kind: 'hard', label: 'Coat frame BEFORE engine drops in.' },
+
+    /* Post-paint corrosion protection feeds final reassembly. */
+    { from: 't-paint',              to: 't-seam-sealer-undercoat', kind: 'hard' },
+    { from: 't-paint',              to: 't-cavity-wax',            kind: 'hard' },
+    { from: 't-seam-sealer-undercoat', to: 't-final-reassembly',   kind: 'hard' },
+    { from: 't-cavity-wax',         to: 't-final-reassembly',      kind: 'hard' },
+
+    /* ── Integration / fitment-check nodes (added after audit) ── */
+    { from: 't-frame-build',        to: 't-engine-mockup-on-frame', kind: 'hard' },
+    { from: 't-buy-engine',         to: 't-engine-mockup-on-frame', kind: 'hard' },
+    { from: 't-engine-mockup-on-frame', to: 't-engine-install',     kind: 'hard' },
+    { from: 't-engine-mockup-on-frame', to: 't-trans-crossmember',  kind: 'hard', label: 'Crossmember welds against the trans in its real position.' },
+
+    { from: 't-frame-build',        to: 't-frame-postweld-scan',    kind: 'hard' },
+    { from: 't-frame-postweld-scan', to: 't-suspension-install-front', kind: 'soft' },
+    { from: 't-frame-postweld-scan', to: 't-suspension-install-rear',  kind: 'soft' },
+
+    { from: 't-body-mount',         to: 't-body-trial-fit',         kind: 'hard' },
+    { from: 't-body-trial-fit',     to: 't-bodywork',               kind: 'hard' },
+
+    { from: 't-decide-ecu',         to: 't-harness-routing-review', kind: 'soft' },
+    { from: 't-firewall-build',     to: 't-harness-routing-review', kind: 'hard' },
+    { from: 't-harness-routing-review', to: 't-wiring',             kind: 'hard' },
+
+    { from: 't-cooling-design',     to: 't-cooling-stack-fit',      kind: 'hard' },
+    { from: 't-body-trial-fit',     to: 't-cooling-stack-fit',      kind: 'soft', label: 'Real grille opening is the source of truth.' },
+    { from: 't-cooling-stack-fit',  to: 't-buy-cooling-fans',       kind: 'soft' },
+    { from: 't-cooling-stack-fit',  to: 't-cooling-install',        kind: 'hard' },
+
+    /* ── Promoted from notes (added after audit) ── */
+    /* Fuel architecture decision drives plumbing scope. */
+    { from: 't-decide-fuel-architecture', to: 't-fuel-design',      kind: 'hard' },
+    { from: 't-decide-fuel-architecture', to: 't-buy-fuel-lines',   kind: 'hard' },
+    { from: 't-decide-fuel-architecture', to: 't-prep-fuel-tank',   kind: 'hard' },
+
+    /* EPAS control strategy decision drives ECU/harness scope. */
+    { from: 't-steering-research',  to: 't-decide-epas-control',    kind: 'hard' },
+    { from: 't-decide-epas-control', to: 't-epas-design',           kind: 'hard' },
+    { from: 't-decide-epas-control', to: 't-decide-ecu',            kind: 'soft' },
+
+    /* Quick-release decision drives column length. */
+    { from: 't-steering-research',  to: 't-decide-quick-release',   kind: 'soft' },
+    { from: 't-decide-quick-release', to: 't-buy-steering-column',  kind: 'hard' },
+    { from: 't-decide-quick-release', to: 't-steering-wheel-adapt', kind: 'hard' },
+
+    /* Front ARB now its own decision (rear stays in t-decide-arb). */
+    { from: 't-susp-tuning',        to: 't-decide-arb-front',       kind: 'soft' },
+    { from: 't-decide-arb-front',   to: 't-frame-design',           kind: 'soft', label: 'Front ARB mount tabs welded to frame.' },
+    { from: 't-decide-arb-front',   to: 't-buy-arb',                kind: 'hard' },
+
+    /* Pedal-ratio + master-bore calc gates master purchase + pedal box. */
+    { from: 't-decide-brake-system', to: 't-calc-pedal-ratio-bore', kind: 'hard' },
+    { from: 't-calc-pedal-ratio-bore', to: 't-buy-brake-master',    kind: 'hard' },
+    { from: 't-calc-pedal-ratio-bore', to: 't-pedal-box-design',    kind: 'hard' },
+  ],
+};
+
+/* ── Helpers ──────────────────────────────────────── */
+
+const taskMap = new Map(roadmap.tasks.map((t) => [t.id, t]));
+
+export function getTask(id: TaskId): RoadmapTask | undefined {
+  return taskMap.get(id);
+}
+
+export function incomingEdges(id: TaskId): RoadmapEdge[] {
+  return roadmap.edges.filter((e) => e.to === id);
+}
+
+export function outgoingEdges(id: TaskId): RoadmapEdge[] {
+  return roadmap.edges.filter((e) => e.from === id);
+}
+
+/* ── Bottleneck ranking ───────────────────────────────
+   For each task, compute a score that combines:
+     • how many incomplete tasks it transitively gates via hard edges, and
+     • how soon those tasks land in the build (their topological depth).
+
+   A purchase that gates a near-term task (low depth) is more urgent than
+   one that only gates a far-future task, even if the count is similar.
+
+   score(t) = sum over incomplete hard descendants v of 100 / (1 + depth(v))
+
+   `bottleneckCount` is exposed separately for tooltips.
+   ──────────────────────────────────────────────────── */
+
+// Topological depth over the full graph (longest path from any root).
+const fullDepth: Map<TaskId, number> = (() => {
+  const depth = new Map<TaskId, number>();
+  const indeg = new Map<TaskId, number>();
+  const adj = new Map<TaskId, TaskId[]>();
+  for (const t of roadmap.tasks) {
+    indeg.set(t.id, 0);
+    adj.set(t.id, []);
+    depth.set(t.id, 0);
+  }
+  for (const e of roadmap.edges) {
+    if (!indeg.has(e.from) || !indeg.has(e.to)) continue;
+    adj.get(e.from)!.push(e.to);
+    indeg.set(e.to, (indeg.get(e.to) ?? 0) + 1);
+  }
+  const q: TaskId[] = [];
+  for (const [id, n] of indeg) if (n === 0) q.push(id);
+  while (q.length > 0) {
+    const u = q.shift()!;
+    const du = depth.get(u) ?? 0;
+    for (const v of adj.get(u) ?? []) {
+      depth.set(v, Math.max(depth.get(v) ?? 0, du + 1));
+      indeg.set(v, (indeg.get(v) ?? 0) - 1);
+      if ((indeg.get(v) ?? 0) === 0) q.push(v);
+    }
+  }
+  return depth;
+})();
+
+const hardSucc = new Map<TaskId, TaskId[]>();
+for (const t of roadmap.tasks) hardSucc.set(t.id, []);
+for (const e of roadmap.edges) {
+  if (e.kind === 'hard' && hardSucc.has(e.from) && taskMap.has(e.to)) {
+    hardSucc.get(e.from)!.push(e.to);
+  }
+}
+
+/** Raw count of hard incomplete descendants. */
+export const bottleneckCount: Map<TaskId, number> = new Map();
+/** Urgency-weighted score (see header). */
+export const bottleneckScores: Map<TaskId, number> = new Map();
+
+for (const t of roadmap.tasks) {
+  if (t.status === 'complete' || t.status === 'decided') {
+    bottleneckCount.set(t.id, 0);
+    bottleneckScores.set(t.id, 0);
+    continue;
+  }
+  const seen = new Set<TaskId>();
+  const queue: TaskId[] = [t.id];
+  let score = 0;
+  while (queue.length > 0) {
+    const u = queue.shift()!;
+    for (const v of hardSucc.get(u) ?? []) {
+      if (seen.has(v)) continue;
+      const vt = taskMap.get(v);
+      if (!vt) continue;
+      seen.add(v);
+      if (vt.status !== 'complete' && vt.status !== 'decided') {
+        const d = fullDepth.get(v) ?? 0;
+        // Weight: closer-to-the-root tasks are more urgent.
+        score += 100 / (1 + d);
+        queue.push(v);
+      }
+    }
+  }
+  bottleneckCount.set(t.id, seen.size);
+  bottleneckScores.set(t.id, Math.round(score));
+}
+
+/** Maximum bottleneck score across purchase tasks — used to scale UI tiers. */
+export const maxPurchaseBottleneck: number = (() => {
+  let m = 0;
+  for (const t of roadmap.tasks) {
+    const k = t.kind ?? (t.id.startsWith('t-decide-') ? 'decision' : 'task');
+    if (k !== 'purchase') continue;
+    const s = bottleneckScores.get(t.id) ?? 0;
+    if (s > m) m = s;
+  }
+  return m;
+})();
+
+/** Tier 0 = none, 1 = low, 2 = mid, 3 = high. Computed against purchase max. */
+export function bottleneckTier(id: TaskId): 0 | 1 | 2 | 3 {
+  const s = bottleneckScores.get(id) ?? 0;
+  if (s <= 0 || maxPurchaseBottleneck <= 0) return 0;
+  const r = s / maxPurchaseBottleneck;
+  if (r >= 0.66) return 3;
+  if (r >= 0.33) return 2;
+  return 1;
+}
+
+/* ── Validation (runs at import) ──────────────────── */
+
+function validateRoadmap(): void {
+  const errors: string[] = [];
+  const taskIds = new Set(roadmap.tasks.map((t) => t.id));
+  const epicIds = new Set(epics.map((e) => e.id));
+  const postSlugs = new Set(allPosts.map((p) => p.slug));
+
+  // Duplicate IDs
+  if (taskIds.size !== roadmap.tasks.length) {
+    const seen = new Set<string>();
+    for (const t of roadmap.tasks) {
+      if (seen.has(t.id)) errors.push(`Duplicate task id: ${t.id}`);
+      seen.add(t.id);
+    }
+  }
+
+  // Per-task validation
+  for (const t of roadmap.tasks) {
+    if (!epicIds.has(t.epic)) {
+      errors.push(`Task "${t.id}" references unknown epic "${t.epic}".`);
+    }
+    for (const slug of t.posts ?? []) {
+      if (!postSlugs.has(slug)) {
+        errors.push(`Task "${t.id}" references unknown post slug "${slug}".`);
+      }
+    }
+  }
+
+  // Edge endpoint validation
+  for (const e of roadmap.edges) {
+    if (!taskIds.has(e.from)) errors.push(`Edge from unknown task "${e.from}".`);
+    if (!taskIds.has(e.to)) errors.push(`Edge to unknown task "${e.to}".`);
+    if (e.from === e.to) errors.push(`Self-loop on task "${e.from}".`);
+  }
+
+  // Purchases must never be sinks: a purchase is only meaningful if some
+  // downstream install/use task consumes it.
+  const sources = new Set(roadmap.edges.map((e) => e.from));
+  for (const t of roadmap.tasks) {
+    if (t.kind === 'purchase' && !sources.has(t.id)) {
+      errors.push(`Purchase "${t.id}" is a leaf node (no downstream install/use task).`);
+    }
+  }
+
+  // Cycle detection (DFS)
+  const adj = new Map<TaskId, TaskId[]>();
+  for (const t of roadmap.tasks) adj.set(t.id, []);
+  for (const e of roadmap.edges) {
+    if (taskIds.has(e.from) && taskIds.has(e.to)) {
+      adj.get(e.from)!.push(e.to);
+    }
+  }
+  const WHITE = 0, GRAY = 1, BLACK = 2;
+  const color = new Map<TaskId, number>();
+  for (const id of taskIds) color.set(id, WHITE);
+  const cycle: TaskId[] = [];
+  function dfs(u: TaskId, path: TaskId[]): boolean {
+    color.set(u, GRAY);
+    path.push(u);
+    for (const v of adj.get(u) ?? []) {
+      if (color.get(v) === GRAY) {
+        const start = path.indexOf(v);
+        cycle.push(...path.slice(start), v);
+        return true;
+      }
+      if (color.get(v) === WHITE && dfs(v, path)) return true;
+    }
+    path.pop();
+    color.set(u, BLACK);
+    return false;
+  }
+  for (const id of taskIds) {
+    if (color.get(id) === WHITE && dfs(id, [])) {
+      errors.push(`Cycle detected: ${cycle.join(' -> ')}`);
+      break;
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(`[roadmapData] Validation failed:\n  - ${errors.join('\n  - ')}`);
+  }
+}
+
+validateRoadmap();

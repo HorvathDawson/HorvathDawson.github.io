@@ -10,7 +10,7 @@ Constants come from the 005b analysis:
   - RC: Miata 45 mm, A40 39 mm (0.875 scaling)
   - Sprung mass: Miata 820 kg, A40 850 kg
   - Total mass: 950 kg
-  - Front spring: 25 N/mm, MR 0.9 -> wheel rate 20,250 N/m
+  - Front spring: 25 N/mm, MR 0.63 -> wheel rate 9,920 N/m
 """
 
 import os
@@ -82,7 +82,7 @@ M_S_MIATA = 820
 M_S_A40 = 850
 G_ACC = 9.81
 AY = 0.8
-KW_FRONT = 20_250
+KW_FRONT = 9_920  # N/m (25 N/mm spring, MR 0.63 from motion-ratio calc, wheel-centerline convention)
 G_SHEAR = 80e9
 L_EFF = 400  # mm ARB effective torsional length
 # Installation ratio back-calculated from the post's stated value:
@@ -363,8 +363,8 @@ def plot_rc_construction():
     Both configurations use the stock Miata tire (185/60R14, 577 mm OD)
     and the same hub height.  Only the track width changes.
     """
-    fig, ax = styled_fig(figsize=(10, 8))
-    ax.set_aspect(2)
+    fig, ax = styled_fig(figsize=(8, 8))
+    ax.set_aspect("equal")
 
     stock_od = 577.0
     stock_hz = SUSP["hub_z_ground"]
@@ -489,29 +489,36 @@ def plot_rc_construction():
         rc_y = draw_rc_lines(ic_r, cp_r, ic_l, cp_l, col, alp)
         rc_results.append((label, rc_y, col, alp))
 
+        ax_dx = 120 if idx == 0 else -120
+        ax_ha = "left" if idx == 0 else "right"
         ax.annotate(
             f"RC = {rc_y:.1f} mm",
             xy=(0, rc_y),
-            xytext=(120, rc_y + ann_offsets[idx]),
+            xytext=(ax_dx, rc_y + ann_offsets[idx]),
             fontsize=8,
             color=col,
             fontweight="bold",
+            ha=ax_ha,
             arrowprops=dict(arrowstyle="->", color=col, lw=0.8),
         )
 
-    # IC labels (right side only)
+    # IC labels (mirrored: Miata on right, A40 on left)
     for idx, (label, ht, hz, od, col, alp) in enumerate(configs):
         p = _build_suspension(ht, hub_z_ground=hz, tire_od=od)
         ic = p["ic"]
+        ic_x = abs(ic[0]) if idx == 0 else -abs(ic[0])
         short = "Miata" if idx == 0 else "A40"
+        dx = 120 if idx == 0 else -120
+        ha = "left" if idx == 0 else "right"
         yoff = 40 if idx == 0 else -50
         ax.annotate(
             f"IC ({short})",
-            xy=(ic[0], ic[1]),
-            xytext=(ic[0] + 120, ic[1] + yoff),
+            xy=(ic_x, ic[1]),
+            xytext=(ic_x + dx, ic[1] + yoff),
             fontsize=7.5,
             color=col,
             alpha=max(alp, 0.6),
+            ha=ha,
             arrowprops=dict(arrowstyle="->", color=col, lw=0.6, alpha=0.4),
         )
 
@@ -519,7 +526,7 @@ def plot_rc_construction():
     ax.axvline(0, color=TEXT, linewidth=0.5, alpha=0.2, linestyle=":")
 
     ax.text(
-        T_MIATA / 2,
+        -T_MIATA / 2,
         -30,
         f"Miata ({T_MIATA} mm)",
         color=MIATA_C,
@@ -570,7 +577,7 @@ def plot_rc_construction():
     for _, rc_y2, _, _ in rc_results:
         all_y.append(rc_y2)
     ax.set_xlim(min(all_x) - x_pad, max(all_x) + x_pad)
-    ax.set_ylim(min(all_y) - 60, max(all_y) + 100)
+    ax.set_ylim(min(all_y) - 200, max(all_y) + 380)
 
     from matplotlib.lines import Line2D
 
@@ -599,8 +606,8 @@ def plot_rc_tire_comparison():
     Both configurations use the A40 track width (1230 mm).  Only the
     tire diameter changes, shifting the entire assembly vertically.
     """
-    fig, ax = styled_fig(figsize=(10, 8))
-    ax.set_aspect(2)
+    fig, ax = styled_fig(figsize=(8, 8))
+    ax.set_aspect("equal")
 
     stock_od = 577.0  # 185/60R14
     a40_od = 646.0  # 5.25-16 (stock A40)
@@ -735,14 +742,16 @@ def plot_rc_tire_comparison():
         rc_y = draw_rc_lines(ic_r, cp_r, ic_l, cp_l, col, alp)
         rc_values.append((label, od, rc_y, col, alp))
 
-        # RC annotation
+        ax_dx = 120 if idx == 0 else -120
+        ax_ha = "left" if idx == 0 else "right"
         ax.annotate(
             f"RC = {rc_y:.1f} mm  ({label})",
             xy=(0, rc_y),
-            xytext=(120, rc_y + ann_offsets[idx]),
+            xytext=(ax_dx, rc_y + ann_offsets[idx]),
             fontsize=7.5,
             color=col,
             fontweight="bold",
+            ha=ax_ha,
             arrowprops=dict(arrowstyle="->", color=col, lw=0.7),
         )
 
@@ -794,7 +803,7 @@ def plot_rc_tire_comparison():
     for _, _, rc_y2, _, _ in rc_values:
         all_y.append(rc_y2)
     ax.set_xlim(min(all_x) - x_pad, max(all_x) + x_pad)
-    ax.set_ylim(min(all_y) - 60, max(all_y) + 100)
+    ax.set_ylim(min(all_y) - 200, max(all_y) + 380)
 
     from matplotlib.lines import Line2D
 
@@ -823,8 +832,8 @@ def plot_rc_combined():
     Miata: stock track (1405 mm) + stock tire (577 mm OD).
     A40:   narrowed track (1230 mm) + taller tire (646 mm OD).
     """
-    fig, ax = styled_fig(figsize=(10, 8))
-    ax.set_aspect(2)
+    fig, ax = styled_fig(figsize=(8, 8))
+    ax.set_aspect("equal")
 
     stock_od = 577.0
     a40_od = 646.0
@@ -963,13 +972,16 @@ def plot_rc_combined():
         # Collect IC positions for auto-fitting limits
         p = _build_suspension(ht, hub_z_ground=hz, tire_od=od)
         all_ic.append(p["ic"])
+        ax_dx = 120 if idx == 0 else -120
+        ax_ha = "left" if idx == 0 else "right"
         ax.annotate(
             f"RC = {rc_y:.1f} mm",
             xy=(0, rc_y),
-            xytext=(120, rc_y + ann_offsets[idx]),
+            xytext=(ax_dx, rc_y + ann_offsets[idx]),
             fontsize=7.5,
             color=col,
             fontweight="bold",
+            ha=ax_ha,
             arrowprops=dict(arrowstyle="->", color=col, lw=0.7),
         )
 
@@ -977,7 +989,7 @@ def plot_rc_combined():
     ax.axvline(0, color=TEXT, linewidth=0.5, alpha=0.2, linestyle=":")
 
     ax.text(
-        T_MIATA / 2,
+        -T_MIATA / 2,
         -30,
         f"Miata ({T_MIATA} mm)",
         color=MIATA_C,
@@ -1027,7 +1039,7 @@ def plot_rc_combined():
     for _, rc_y, _, _ in rc_results:
         all_y.append(rc_y)
     ax.set_xlim(min(all_x) - x_pad, max(all_x) + x_pad)
-    ax.set_ylim(min(all_y) - 60, max(all_y) + 100)
+    ax.set_ylim(min(all_y) - 200, max(all_y) + 380)
 
     from matplotlib.lines import Line2D
 
@@ -1045,6 +1057,677 @@ def plot_rc_combined():
     )
 
     save(fig, "rc_combined.png")
+
+
+# ====================================================================
+# 1d. RC migration polygon
+#
+#     Sweep both wheels' LCA angles independently across bump/droop
+#     and trace the area in the front view that the RC can occupy.
+#
+#     Travel: 5 in shock stroke, MR = 0.641 * sin(80 deg) = 0.631,
+#     wheel travel ~201 mm = 141 mm bump + 60 mm droop (70/30).
+#
+#     Kinematic model (planar front view):
+#       1. LCA inner pivot fixed; LBJ on circle of radius R_lca.
+#       2. UBJ = circle-circle intersection (knuckle from LBJ +
+#          UCA from UCA inner).  Take the upper solution.
+#       3. Hub is rigid relative to the knuckle: pre-compute its
+#          position in the LBJ→UBJ frame at ride height, transform
+#          through the current knuckle orientation.
+#       4. Contact patch = hub projected to z = 0.
+#       5. FVIC = intersection of LCA line and UCA line.
+#       6. RC = intersection of (CP_R → FVIC_R) and (CP_L → FVIC_L).
+#          Symmetric vehicle assumed; left side mirrors right.
+# ====================================================================
+def _solve_4bar(theta, lca_inner, R_lca, uca_inner, R_uca, knuckle_len, hub_local):
+    """Solve front-view 4-bar at LCA angle theta."""
+    lbj = lca_inner + R_lca * np.array([np.cos(theta), np.sin(theta)])
+    d_vec = uca_inner - lbj
+    d = np.linalg.norm(d_vec)
+    if d > knuckle_len + R_uca or d < abs(knuckle_len - R_uca) or d < 1e-9:
+        return None
+    a = (knuckle_len**2 - R_uca**2 + d**2) / (2 * d)
+    h_sq = knuckle_len**2 - a**2
+    if h_sq < 0:
+        return None
+    h = np.sqrt(h_sq)
+    p_mid = lbj + a * d_vec / d
+    n_perp = np.array([-d_vec[1], d_vec[0]]) / d
+    ubj_a = p_mid + h * n_perp
+    ubj_b = p_mid - h * n_perp
+    ubj = ubj_a if ubj_a[1] > ubj_b[1] else ubj_b
+
+    d_low = lbj - lca_inner
+    d_up = ubj - uca_inner
+    A_mat = np.array([[d_low[0], -d_up[0]], [d_low[1], -d_up[1]]])
+    if abs(np.linalg.det(A_mat)) < 1e-9:
+        return None
+    b_vec = uca_inner - lca_inner
+    ts = np.linalg.solve(A_mat, b_vec)
+    ic = lca_inner + ts[0] * d_low
+
+    knuckle_dir = (ubj - lbj) / knuckle_len
+    knuckle_perp = np.array([-knuckle_dir[1], knuckle_dir[0]])
+    hub = lbj + hub_local[0] * knuckle_dir + hub_local[1] * knuckle_perp
+    cp = np.array([hub[0], 0.0])
+    return dict(lbj=lbj, ubj=ubj, ic=ic, cp=cp, hub=hub)
+
+
+def _rc_from_sides(state_r, state_l):
+    """RC = intersection of (CP_r → IC_r) and (CP_l → IC_l)."""
+    cp_r, ic_r = state_r["cp"], state_r["ic"]
+    cp_l, ic_l = state_l["cp"], state_l["ic"]
+    d_r = ic_r - cp_r
+    d_l = ic_l - cp_l
+    A_mat = np.array([[d_r[0], -d_l[0]], [d_r[1], -d_l[1]]])
+    if abs(np.linalg.det(A_mat)) < 1e-9:
+        return None
+    b_vec = cp_l - cp_r
+    ts = np.linalg.solve(A_mat, b_vec)
+    return cp_r + ts[0] * d_r
+
+
+def _build_kinematic_params(half_track, hub_z_ground, tire_od):
+    """Pre-compute fixed kinematic parameters for one (right) side."""
+    p = _build_suspension(half_track, hub_z_ground=hub_z_ground, tire_od=tire_od)
+    lca_inner = p["lca_inner"]
+    uca_inner = p["uca_inner"]
+    lbj_ride = p["lbj"]
+    ubj_ride = p["ubj"]
+    hub_ride = np.array([p["half_track"], hub_z_ground])
+
+    R_lca = np.linalg.norm(lbj_ride - lca_inner)
+    R_uca = np.linalg.norm(ubj_ride - uca_inner)
+    knuckle_len = np.linalg.norm(ubj_ride - lbj_ride)
+
+    knuckle_dir = (ubj_ride - lbj_ride) / knuckle_len
+    knuckle_perp = np.array([-knuckle_dir[1], knuckle_dir[0]])
+    rel = hub_ride - lbj_ride
+    hub_local = np.array([rel @ knuckle_dir, rel @ knuckle_perp])
+
+    theta_ride = np.arctan2(
+        lbj_ride[1] - lca_inner[1], lbj_ride[0] - lca_inner[0]
+    )
+    ride = _solve_4bar(
+        theta_ride, lca_inner, R_lca, uca_inner, R_uca, knuckle_len, hub_local
+    )
+    return dict(
+        lca_inner=lca_inner, uca_inner=uca_inner,
+        lbj_ride=lbj_ride, ubj_ride=ubj_ride, hub_ride=hub_ride,
+        R_lca=R_lca, R_uca=R_uca, knuckle_len=knuckle_len,
+        hub_local=hub_local, theta_ride=theta_ride, ride=ride,
+    )
+
+
+def _theta_for_lbj_y(target_y, params):
+    """LCA angle that puts LBJ at the given height (ride-height branch)."""
+    sin_arg = (target_y - params["lca_inner"][1]) / params["R_lca"]
+    sin_arg = np.clip(sin_arg, -1.0, 1.0)
+    th_a = np.arcsin(sin_arg)
+    th_b = np.pi - th_a
+    th_ref = params["theta_ride"]
+    return th_a if abs(th_a - th_ref) < abs(th_b - th_ref) else th_b
+
+
+def _rc_migration_points(half_track, hub_z_ground, tire_od,
+                         bump_mm, droop_mm, n=27):
+    """Sweep (theta_right, theta_left) and return RC grid."""
+    params = _build_kinematic_params(half_track, hub_z_ground, tire_od)
+    y_static = params["lbj_ride"][1]
+    th_bump = _theta_for_lbj_y(y_static + bump_mm, params)
+    th_droop = _theta_for_lbj_y(y_static - droop_mm, params)
+    th_lo, th_hi = sorted((th_bump, th_droop))
+    thetas = np.linspace(th_lo, th_hi, n)
+
+    rc_grid = np.full((n, n, 2), np.nan)
+    for i, th_r in enumerate(thetas):
+        st_r = _solve_4bar(
+            th_r, params["lca_inner"], params["R_lca"], params["uca_inner"],
+            params["R_uca"], params["knuckle_len"], params["hub_local"],
+        )
+        if st_r is None:
+            continue
+        for j, th_l in enumerate(thetas):
+            st_l_right = _solve_4bar(
+                th_l, params["lca_inner"], params["R_lca"], params["uca_inner"],
+                params["R_uca"], params["knuckle_len"], params["hub_local"],
+            )
+            if st_l_right is None:
+                continue
+            mirror = lambda v: np.array([-v[0], v[1]])
+            st_l = {k: mirror(v) for k, v in st_l_right.items()}
+            rc = _rc_from_sides(st_r, st_l)
+            if rc is None:
+                continue
+            rc_grid[i, j] = rc
+    return rc_grid, params, thetas
+
+
+def _migration_boundary(rc_grid):
+    """Trace the parameter-rectangle boundary through the RC grid."""
+    top = rc_grid[0, :, :]
+    right = rc_grid[:, -1, :]
+    bottom = rc_grid[-1, ::-1, :]
+    left = rc_grid[::-1, 0, :]
+    poly = np.concatenate([top, right, bottom, left], axis=0)
+    return poly[~np.isnan(poly[:, 0])]
+
+
+def _draw_assembly(ax, params, st_r, color, *, half_track, tire_od,
+                   alpha=1.0, lw_arm=2.2, lw_knuckle=2.6, draw_tire=True,
+                   draw_ic_lines=False):
+    """Draw the full front-view assembly (both sides) for one
+    suspension state. `st_r` is the right-side `_solve_4bar` output."""
+    tw = SUSP["tire_w"]
+    for side in (1, -1):
+        mx = lambda v: np.array([side * v[0], v[1]])
+        lbj = mx(st_r["lbj"]); ubj = mx(st_r["ubj"])
+        lca_in = mx(params["lca_inner"]); uca_in = mx(params["uca_inner"])
+        hub = mx(st_r["hub"]); cp = mx(st_r["cp"]); ic = mx(st_r["ic"])
+        if draw_tire:
+            tx = hub[0] - tw / 2
+            ax.add_patch(plt.Rectangle(
+                (tx, 0), tw, tire_od, linewidth=0.8, edgecolor=color,
+                facecolor=color, alpha=0.05 * alpha, zorder=2,
+            ))
+            ax.plot(
+                [tx, tx + tw, tx + tw, tx, tx],
+                [0, 0, tire_od, tire_od, 0],
+                color=color, linewidth=0.8, alpha=0.35 * alpha, zorder=3,
+            )
+        ax.plot([lca_in[0], lbj[0]], [lca_in[1], lbj[1]],
+                color=color, linewidth=lw_arm, alpha=alpha,
+                solid_capstyle="round", zorder=4)
+        ax.plot([uca_in[0], ubj[0]], [uca_in[1], ubj[1]],
+                color=color, linewidth=lw_arm, alpha=alpha,
+                solid_capstyle="round", zorder=4)
+        ax.plot([lbj[0], ubj[0]], [lbj[1], ubj[1]],
+                color=color, linewidth=lw_knuckle, alpha=alpha,
+                solid_capstyle="round", zorder=4)
+        for pt in (lca_in, uca_in, lbj, ubj):
+            ax.plot(pt[0], pt[1], "o", color=color, markersize=3.5,
+                    alpha=alpha, zorder=5)
+        if draw_ic_lines:
+            ax.plot([cp[0], ic[0]], [cp[1], ic[1]],
+                    color=color, linewidth=0.8, alpha=0.55 * alpha,
+                    linestyle="-.", zorder=4)
+            ax.plot(ic[0], ic[1], "D", color=color, markersize=4,
+                    alpha=alpha, zorder=5)
+
+
+def _solve_state(theta, params):
+    return _solve_4bar(
+        theta, params["lca_inner"], params["R_lca"], params["uca_inner"],
+        params["R_uca"], params["knuckle_len"], params["hub_local"],
+    )
+
+
+def _mirror_state(st):
+    """Mirror a right-side state dict to the left side (negate x)."""
+    return {k: np.array([-v[0], v[1]]) for k, v in st.items()}
+
+
+def _rc_for_thetas(params, th_r, th_l):
+    st_r = _solve_state(th_r, params)
+    st_lr = _solve_state(th_l, params)
+    if st_r is None or st_lr is None:
+        return None, None, None
+    st_l = _mirror_state(st_lr)
+    rc = _rc_from_sides(st_r, st_l)
+    return rc, st_r, st_l
+
+
+def _rotate(p, phi):
+    c, s = np.cos(phi), np.sin(phi)
+    return np.array([c * p[0] - s * p[1], s * p[0] + c * p[1]])
+
+
+def _solve_side_body_pose(params, side, body_h, body_phi, tire_radius):
+    """Solve the front-view 4-bar for one side under a given body pose.
+
+    The tire is pinned to ground (cp.y = 0 ⇔ hub.y = tire_radius in the
+    GROUND frame).  The body (and its inner pivots) translates by
+    body_h (vertical) and rotates by body_phi about the ground at
+    car CL.  Returns a state dict {lbj, ubj, ic, cp, hub,
+    lca_inner_g, uca_inner_g, alpha} in GROUND coordinates, or None
+    if no valid solution exists for this side.
+    """
+    lca_in_b = np.array([side * params["lca_inner"][0], params["lca_inner"][1]])
+    uca_in_b = np.array([side * params["uca_inner"][0], params["uca_inner"][1]])
+    lca_in_g = _rotate(lca_in_b, body_phi) + np.array([0.0, body_h])
+    uca_in_g = _rotate(uca_in_b, body_phi) + np.array([0.0, body_h])
+
+    hub_local = params["hub_local"].copy()
+    if side == -1:  # mirror perp component for the left knuckle
+        hub_local = np.array([hub_local[0], -hub_local[1]])
+
+    R_lca = params["R_lca"]
+    R_uca = params["R_uca"]
+    knuckle_len = params["knuckle_len"]
+
+    def hub_err(alpha):
+        st = _solve_4bar(alpha, lca_in_g, R_lca, uca_in_g, R_uca,
+                         knuckle_len, hub_local)
+        if st is None:
+            return None, None
+        return st, st["hub"][1] - tire_radius
+
+    if side == 1:
+        alpha_static = params["theta_ride"]
+    else:
+        lbj_left = np.array([-params["lbj_ride"][0], params["lbj_ride"][1]])
+        lca_in_left = np.array([-params["lca_inner"][0], params["lca_inner"][1]])
+        diff = lbj_left - lca_in_left
+        alpha_static = np.arctan2(diff[1], diff[0])
+
+    alphas = np.linspace(alpha_static - 0.7, alpha_static + 0.7, 81)
+    states, errs = [], []
+    for a in alphas:
+        st, e = hub_err(a)
+        states.append(st)
+        errs.append(e if e is not None else np.nan)
+    errs = np.array(errs)
+
+    # Find sign-change closest to alpha_static
+    best_k = -1
+    best_d = np.inf
+    for k in range(len(alphas) - 1):
+        if np.isnan(errs[k]) or np.isnan(errs[k + 1]):
+            continue
+        if errs[k] * errs[k + 1] <= 0:
+            d = abs(0.5 * (alphas[k] + alphas[k + 1]) - alpha_static)
+            if d < best_d:
+                best_d = d
+                best_k = k
+    if best_k < 0:
+        return None
+
+    a_lo, a_hi = alphas[best_k], alphas[best_k + 1]
+    e_lo = errs[best_k]
+    for _ in range(50):
+        a_mid = 0.5 * (a_lo + a_hi)
+        st_mid, e_mid = hub_err(a_mid)
+        if e_mid is None:
+            return None
+        if e_mid * e_lo <= 0:
+            a_hi = a_mid
+        else:
+            a_lo, e_lo = a_mid, e_mid
+    a_final = 0.5 * (a_lo + a_hi)
+    st, _ = hub_err(a_final)
+    if st is None:
+        return None
+    st = dict(st)
+    st["lca_inner_g"] = lca_in_g
+    st["uca_inner_g"] = uca_in_g
+    st["alpha"] = a_final
+    return st
+
+
+def _body_pose_compression(state_g, body_h, body_phi, tire_radius):
+    """Body-frame suspension compression Δ for one side.
+
+    Δ > 0 → bump (suspension compressed)
+    Δ < 0 → droop (suspension extended)
+    """
+    hub = state_g["hub"]
+    s, c = np.sin(body_phi), np.cos(body_phi)
+    hub_y_body = -s * hub[0] + c * (hub[1] - body_h)
+    return hub_y_body - tire_radius
+
+
+def _draw_body_assembly(ax, params, st_r, st_l, color,
+                        *, tire_od, alpha=1.0, lw_arm=2.2,
+                        lw_knuckle=2.6, draw_tire=True,
+                        draw_ic_lines=False, body_phi=0.0):
+    """Draw both sides of the body-posed assembly using already-solved
+    ground-frame states.  Includes cambered tire rectangles."""
+    tw = SUSP["tire_w"]
+    for st_side, side_sign in ((st_r, 1), (st_l, -1)):
+        lbj = st_side["lbj"]; ubj = st_side["ubj"]
+        lca_in = st_side["lca_inner_g"]; uca_in = st_side["uca_inner_g"]
+        hub = st_side["hub"]; cp = st_side["cp"]; ic = st_side["ic"]
+
+        if draw_tire:
+            # Camber: rotate tire about cp by body_phi (wheel cambers
+            # with body when sticking to ground).
+            tr = tire_od / 2
+            corners = np.array([
+                [-tw / 2, 0], [tw / 2, 0],
+                [tw / 2, tire_od], [-tw / 2, tire_od],
+            ])
+            c, s = np.cos(body_phi), np.sin(body_phi)
+            R = np.array([[c, -s], [s, c]])
+            rotated = (corners @ R.T) + np.array([cp[0], 0])
+            ax.fill(rotated[:, 0], rotated[:, 1], color=color,
+                    alpha=0.05 * alpha, zorder=2,
+                    edgecolor=color, linewidth=0.8)
+            ax.plot(np.append(rotated[:, 0], rotated[0, 0]),
+                    np.append(rotated[:, 1], rotated[0, 1]),
+                    color=color, linewidth=0.8, alpha=0.35 * alpha, zorder=3)
+
+        ax.plot([lca_in[0], lbj[0]], [lca_in[1], lbj[1]],
+                color=color, linewidth=lw_arm, alpha=alpha,
+                solid_capstyle="round", zorder=4)
+        ax.plot([uca_in[0], ubj[0]], [uca_in[1], ubj[1]],
+                color=color, linewidth=lw_arm, alpha=alpha,
+                solid_capstyle="round", zorder=4)
+        ax.plot([lbj[0], ubj[0]], [lbj[1], ubj[1]],
+                color=color, linewidth=lw_knuckle, alpha=alpha,
+                solid_capstyle="round", zorder=4)
+        for pt in (lca_in, uca_in, lbj, ubj):
+            ax.plot(pt[0], pt[1], "o", color=color, markersize=3.5,
+                    alpha=alpha, zorder=5)
+        if draw_ic_lines:
+            ax.plot([cp[0], ic[0]], [cp[1], ic[1]],
+                    color=color, linewidth=0.8, alpha=0.55 * alpha,
+                    linestyle="-.", zorder=4)
+            ax.plot(ic[0], ic[1], "D", color=color, markersize=4,
+                    alpha=alpha, zorder=5)
+
+
+def _convex_hull_2d(points):
+    """Andrew's monotone chain convex hull. Returns vertices in CCW order."""
+    pts = sorted(set(map(tuple, points)))
+    if len(pts) < 3:
+        return np.array(pts) if pts else np.zeros((0, 2))
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+
+    lower = []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:
+            lower.pop()
+        lower.append(p)
+    upper = []
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    return np.array(lower[:-1] + upper[:-1])
+
+
+def _draw_body_cross(ax, params, body_h, body_phi, color, *,
+                     alpha=0.45, lw=1.2, zorder=4.0):
+    """Body-frame cross: vertical centerline + a single horizontal
+    line at the mid-height between the LBJ and UBJ rows.  Translates
+    and rotates with the body to indicate roll."""
+    half_w = max(params["lca_inner"][0], params["uca_inner"][0]) + 60.0
+    y_mid = 0.5 * (params["lbj_ride"][1] + params["ubj_ride"][1])
+    y_top = params["uca_inner"][1] + 220.0
+    y_bot = params["lca_inner"][1] - 80.0
+
+    segs_b = [
+        np.array([[0.0, y_bot], [0.0, y_top]]),                # CL
+        np.array([[-half_w, y_mid], [+half_w, y_mid]]),        # mid-BJ row
+    ]
+    c, s = np.cos(body_phi), np.sin(body_phi)
+    R = np.array([[c, -s], [s, c]])
+    for seg_b in segs_b:
+        seg_g = (seg_b @ R.T) + np.array([0.0, body_h])
+        ax.plot(seg_g[:, 0], seg_g[:, 1], color=color, linewidth=lw,
+                alpha=alpha, zorder=zorder, solid_capstyle="round")
+
+
+def _plot_rc_migration_panel(half_track, hub_z, tire_od, color, title, fname,
+                             bump, droop, n_h=41, n_phi=41):
+    """Render a single full-page RC migration figure for one
+    configuration.
+
+    Body has 2 DOF: heave (h) and roll (φ).  Each (h, φ) pair is
+    accepted only if both wheels' shock-compression Δ stays inside
+    [-droop, +bump].  Inner pivots translate and rotate with the
+    body; tires stay in ground contact.
+    """
+    params = _build_kinematic_params(half_track, hub_z, tire_od)
+    tire_radius = hub_z  # hub centre = tire radius above ground at static
+
+    # Sweep range: enough to cover any pose the shocks could reach.
+    h_max = max(bump, droop) + 10
+    phi_max = np.deg2rad(np.degrees(np.arcsin(min(bump, droop) / half_track)) + 6)
+    hs = np.linspace(-h_max, h_max, n_h)
+    phis = np.linspace(-phi_max, phi_max, n_phi)
+
+    pts_xy = []
+    n_total = 0
+    n_singular = 0
+    n_clipped = 0
+    x_clip = 1.5 * half_track
+    y_clip = 700.0
+    sing_cos_thresh = np.cos(np.deg2rad(5.0))  # angle < 5° → reject
+    for h in hs:
+        for phi in phis:
+            sR = _solve_side_body_pose(params, +1, h, phi, tire_radius)
+            sL = _solve_side_body_pose(params, -1, h, phi, tire_radius)
+            if sR is None or sL is None:
+                continue
+            cR = _body_pose_compression(sR, h, phi, tire_radius)
+            cL = _body_pose_compression(sL, h, phi, tire_radius)
+            if not (-droop <= cR <= bump and -droop <= cL <= bump):
+                continue
+            n_total += 1
+            # Singularity test: angle between (CP_R→IC_R) and (CP_L→IC_L).
+            dR = sR["ic"] - sR["cp"]
+            dL = sL["ic"] - sL["cp"]
+            nR = np.linalg.norm(dR); nL = np.linalg.norm(dL)
+            if nR < 1e-9 or nL < 1e-9:
+                n_singular += 1
+                continue
+            cos_ang = abs(dR @ dL) / (nR * nL)
+            if cos_ang > sing_cos_thresh:
+                n_singular += 1
+                continue
+            rc = _rc_from_sides(sR, sL)
+            if rc is None or not np.all(np.isfinite(rc)):
+                n_singular += 1
+                continue
+            if abs(rc[0]) > x_clip or abs(rc[1]) > y_clip or rc[1] < -300:
+                n_clipped += 1
+                continue
+            pts_xy.append(rc)
+    pts = np.array(pts_xy) if pts_xy else np.zeros((0, 2))
+
+    fig, ax = styled_fig(figsize=(11, 8))
+    ax.set_aspect(1.0)
+
+    # Static state: body cross + suspension assembly.
+    sR0 = _solve_side_body_pose(params, +1, 0.0, 0.0, tire_radius)
+    sL0 = _solve_side_body_pose(params, -1, 0.0, 0.0, tire_radius)
+    _draw_body_cross(ax, params, 0.0, 0.0, color, alpha=0.45, lw=1.2,
+                     zorder=4.0)
+    _draw_body_assembly(ax, params, sR0, sL0, color, tire_od=tire_od,
+                        alpha=0.95, draw_ic_lines=True, body_phi=0.0)
+    rc_static = _rc_from_sides(sR0, sL0)
+    ax.plot(0, rc_static[1], "s", color=color, markersize=9,
+            zorder=7, markeredgecolor=TEXT, markeredgewidth=0.6,
+            label="Static RC")
+
+    # Migration distribution: 2D histogram heatmap, contoured.
+    if len(pts) >= 10:
+        # Symmetrize about x = 0 (vehicle is L↔R symmetric); any
+        # asymmetry in the cloud is purely a sampling artifact.
+        pts_sym = np.vstack([pts, np.column_stack([-pts[:, 0], pts[:, 1]])])
+
+        x_pad = 80.0
+        y_pad = 40.0
+        x_abs = max(abs(pts_sym[:, 0].min()), abs(pts_sym[:, 0].max())) + x_pad
+        y_lo = pts_sym[:, 1].min() - y_pad
+        y_hi = pts_sym[:, 1].max() + y_pad
+        x_lo, x_hi = -x_abs, +x_abs
+        nb_x = 60
+        nb_y = max(24, int(nb_x * (y_hi - y_lo) / max(1.0, (x_hi - x_lo))))
+        H, xedges, yedges = np.histogram2d(
+            pts_sym[:, 0], pts_sym[:, 1], bins=[nb_x, nb_y],
+            range=[[x_lo, x_hi], [y_lo, y_hi]],
+        )
+        # Smooth the 2D histogram with several box blur passes for a
+        # cleaner density gradient.
+        Hs = H.copy()
+        for _ in range(4):
+            Hs = (
+                Hs
+                + np.roll(Hs, 1, 0) + np.roll(Hs, -1, 0)
+                + np.roll(Hs, 1, 1) + np.roll(Hs, -1, 1)
+            ) / 5.0
+        from matplotlib.colors import LinearSegmentedColormap
+        cmap = LinearSegmentedColormap.from_list(
+            "rcmig", [(0, 0, 0, 0), color], N=256,
+        )
+        ax.imshow(
+            Hs.T, origin="lower",
+            extent=[x_lo, x_hi, y_lo, y_hi],
+            cmap=cmap, alpha=0.55, aspect="auto",
+            interpolation="bilinear", zorder=6.5,
+        )
+        # Single soft envelope contour at low density.
+        H_max = Hs.max() if Hs.max() > 0 else 1.0
+        Xc = 0.5 * (xedges[:-1] + xedges[1:])
+        Yc = 0.5 * (yedges[:-1] + yedges[1:])
+        ax.contour(
+            Xc, Yc, Hs.T, levels=[0.10 * H_max],
+            colors=[color], alpha=0.55, linewidths=[0.9], zorder=6.7,
+        )
+        # Raw scatter samples on top.
+        ax.scatter(
+            pts[:, 0], pts[:, 1], s=4.0, color=color,
+            alpha=0.55, zorder=6.8, linewidths=0,
+            label=f"RC cloud ({len(pts)} poses)",
+        )
+
+    # Overlay states: corners of the (h, φ) admissible region.
+    # Solve the parallelogram: cR = -h*cosφ + ...  ≈ -h - φ·ht (small angles)
+    # The four corners are pure heave bump/droop and the two
+    # max-roll states (one wheel at +bump, the other at −droop).
+    # Look one block above for the parallelogram derivation.
+    # phi_max_roll, h_at_max_roll, phi_static_max are computed there.
+
+    # Overlay states at admissible-region corners + a static-heave roll
+    # to make the heave⇔roll coupling explicit:
+    #   At h = 0 the available roll is limited by min(B, D)/half_track
+    #   (the wheel that goes into droop runs out of room first).
+    #   Heaving into bump (h<0) gives more droop room → more roll possible.
+    #   Heaving into droop (h>0) gives less droop room → less roll possible.
+    # Maximum roll achievable, (B+D)/(2·half_track), occurs at
+    # h = (D-B)/2 where one wheel hits +B and the other hits −D simultaneously.
+    phi_max_roll = np.arcsin((bump + droop) / (2 * half_track))
+    h_at_max_roll = (np.sin(phi_max_roll) * half_track) - bump  # negative
+    phi_static_max = min(bump, droop) / half_track
+
+    overlays = [
+        dict(name="Pure heave bump", h=-bump, phi=0.0,
+             color=GOLD, marker="^", ms=11),
+        dict(name="Pure heave droop", h=+droop, phi=0.0,
+             color="#7be0a4", marker="v", ms=11),
+        dict(name="Max roll @ static heave", h=0.0,
+             phi=+phi_static_max, color="#5cd9d9", marker="D", ms=9),
+        dict(name="Max roll right (optimal heave)",
+             h=h_at_max_roll, phi=-phi_max_roll,
+             color="#f3a050", marker=">", ms=11),
+        dict(name="Max roll left  (optimal heave)",
+             h=h_at_max_roll, phi=+phi_max_roll,
+             color="#c79bff", marker="<", ms=11),
+    ]
+    for ov in overlays:
+        sR = _solve_side_body_pose(params, +1, ov["h"], ov["phi"], tire_radius)
+        sL = _solve_side_body_pose(params, -1, ov["h"], ov["phi"], tire_radius)
+        if sR is None or sL is None:
+            continue
+        cR = _body_pose_compression(sR, ov["h"], ov["phi"], tire_radius)
+        cL = _body_pose_compression(sL, ov["h"], ov["phi"], tire_radius)
+        rc = _rc_from_sides(sR, sL)
+        if rc is None:
+            continue
+        oc = ov["color"]
+        _draw_body_cross(ax, params, ov["h"], ov["phi"], oc,
+                         alpha=0.45, lw=1.0, zorder=5.2)
+        for st_side in (sR, sL):
+            lbj = st_side["lbj"]; ubj = st_side["ubj"]
+            lca_in = st_side["lca_inner_g"]; uca_in = st_side["uca_inner_g"]
+            ax.plot([lca_in[0], lbj[0]], [lca_in[1], lbj[1]],
+                    color=oc, linewidth=1.4, alpha=0.85, zorder=5.5)
+            ax.plot([uca_in[0], ubj[0]], [uca_in[1], ubj[1]],
+                    color=oc, linewidth=1.4, alpha=0.85, zorder=5.5)
+            ax.plot([lbj[0], ubj[0]], [lbj[1], ubj[1]],
+                    color=oc, linewidth=1.6, alpha=0.85, zorder=5.5)
+            ax.plot(lca_in[0], lca_in[1], "o", color=oc, markersize=3,
+                    alpha=0.9, zorder=6)
+            ax.plot(uca_in[0], uca_in[1], "o", color=oc, markersize=3,
+                    alpha=0.9, zorder=6)
+        ax.plot(rc[0], rc[1], ov["marker"], color=oc,
+                markersize=ov["ms"],
+                markeredgecolor=TEXT, markeredgewidth=0.6, zorder=8,
+                label=ov["name"])
+
+    # Diagnostics.
+    dx = params["lbj_ride"][0] - params["lca_inner"][0]
+    dz = params["lbj_ride"][1] - params["lca_inner"][1]
+    tilt_deg = np.degrees(np.arctan2(dz, dx))
+    n_valid = len(pts)
+    diag = (
+        f"LCA static tilt: {tilt_deg:+.2f}°  "
+        f"(LBJ {abs(dz):.0f} mm "
+        f"{'below' if dz < 0 else 'above'} inner pivot, "
+        f"span {dx:.0f} mm)\n"
+        f"shock travel: {bump:.0f} mm bump / {droop:.0f} mm droop  "
+        f"(per wheel; body Δ ∈ [-droop, +bump])\n"
+        f"available roll is heave-coupled:\n"
+        f"  h = 0       → ±{np.degrees(phi_static_max):.2f}°  (limited by smaller stroke)\n"
+        f"  h = {h_at_max_roll:+.0f} mm → ±{np.degrees(phi_max_roll):.2f}°  (max; both wheels at limits)\n"
+        f"  h = {-bump:+.0f} mm →   0°   (no room; both wheels at +bump)\n"
+        f"  h = {+droop:+.0f} mm →   0°   (no room; both wheels at −droop)\n"
+        f"sweep: {n_h} heave × {n_phi} roll → {n_total} feasible → {n_valid} plotted\n"
+        f"rejected: {n_singular} singular (CP→IC angle < 5°, RC → ±∞),  "
+        f"{n_clipped} clipped (|x| > {x_clip:.0f} mm)\n"
+        f"static RC = {rc_static[1]:.0f} mm above ground"
+    )
+    ax.text(0.02, 0.98, diag, transform=ax.transAxes,
+            fontsize=8, color=TEXT, va="top", ha="left",
+            bbox=dict(facecolor="#1a2438", edgecolor=color,
+                      alpha=0.85, boxstyle="round,pad=0.5"))
+
+    ax.axhline(0, color=TEXT, linewidth=1, alpha=0.3)
+    ax.axvline(0, color=TEXT, linewidth=0.5, alpha=0.2, linestyle=":")
+    ax.set_title(title, color=TEXT, fontsize=11)
+    ax.set_xlabel("Lateral position (mm)")
+    ax.set_ylabel("Height above ground (mm)")
+    ax.set_xlim(-1100, 1100)
+    ax.set_ylim(-50, 900)
+    ax.legend(loc="upper right", fontsize=8.0, framealpha=0.85,
+              facecolor="#1a2438", edgecolor=color, labelcolor=TEXT,
+              handlelength=1.4, borderpad=0.5)
+    fig.tight_layout()
+    save(fig, fname)
+
+
+def plot_rc_migration():
+    """Two separate figures (Miata, A40) — body has heave + roll DOFs,
+    tires pinned to ground.  Sweeps every (h, φ) admissible under the
+    shock-stroke limit and paints the resulting RC envelope."""
+    SHOCK_STROKE_MM = 5 * 25.4
+    MR = (240 / 374.5) * np.sin(np.deg2rad(80))  # 0.631
+    WHEEL_TRAVEL = SHOCK_STROKE_MM / MR
+    BUMP = 0.70 * WHEEL_TRAVEL
+    DROOP = 0.30 * WHEEL_TRAVEL
+
+    stock_od = 577.0
+    a40_od = 646.0
+    stock_hz = SUSP["hub_z_ground"]
+    a40_hz = stock_hz + (a40_od - stock_od) / 2
+
+    _plot_rc_migration_panel(
+        T_MIATA / 2, stock_hz, stock_od, MIATA_C,
+        f"RC migration — Stock Miata  ({T_MIATA} mm track, {stock_od:.0f} mm tire)",
+        "rc_migration_miata.png",
+        BUMP, DROOP, n_h=41, n_phi=41,
+    )
+    _plot_rc_migration_panel(
+        T_A40 / 2, a40_hz, a40_od, A40_C,
+        f"RC migration — A40 build  ({T_A40} mm track, {a40_od:.0f} mm tire)",
+        "rc_migration_a40.png",
+        BUMP, DROOP, n_h=41, n_phi=41,
+    )
 
 
 # ====================================================================
@@ -1157,7 +1840,7 @@ def plot_motion_ratio():
     fig, ax = styled_fig()
     mr = np.linspace(0.5, 1.0, 200)
 
-    wheel_rate_factor = (mr / 0.9) ** 2
+    wheel_rate_factor = (mr / 0.63) ** 2
     spring_comp = 1 / wheel_rate_factor
 
     ax.plot(
@@ -1165,7 +1848,7 @@ def plot_motion_ratio():
         wheel_rate_factor,
         color=BLUE,
         linewidth=2,
-        label="Wheel rate factor (vs MR = 0.9)",
+        label="Wheel rate factor (vs MR = 0.63)",
     )
     ax.plot(
         mr,
@@ -1174,10 +1857,10 @@ def plot_motion_ratio():
         linewidth=2,
         label="Spring rate compensation needed",
     )
-    ax.axvline(0.9, color=MIATA_C, linestyle="--", linewidth=1, alpha=0.5)
-    ax.axvline(0.7, color=A40_C, linestyle="--", linewidth=1, alpha=0.5)
-    ax.text(0.905, 0.45, "stock\nMR", color=MIATA_C, fontsize=7, alpha=0.7)
-    ax.text(0.705, 0.45, "if forced\ndown", color=A40_C, fontsize=7, alpha=0.7)
+    ax.axvline(0.63, color=MIATA_C, linestyle="--", linewidth=1, alpha=0.5)
+    ax.axvline(0.58, color=A40_C, linestyle="--", linewidth=1, alpha=0.5)
+    ax.text(0.635, 0.45, "Miata / A40\n(α ≈ 80°)", color=MIATA_C, fontsize=7, alpha=0.7)
+    ax.text(0.585, 0.45, "low edge\nof band", color=A40_C, fontsize=7, alpha=0.7)
     ax.axhline(1.0, color=TEXT, linestyle=":", linewidth=0.5, alpha=0.3)
 
     ax.set_xlabel("Motion ratio")
@@ -1187,6 +1870,137 @@ def plot_motion_ratio():
     ax.set_xlim(0.5, 1.0)
     ax.set_ylim(0, 3.5)
     save(fig, "motion_ratio.png")
+
+
+# ====================================================================
+# 4b. Motion ratio vs shock angle for the actual control-arm dimensions
+#
+#     MR(alpha) = (D_spring / D_arm) * sin(alpha)
+#
+#     All distances are perpendicular from the LCA inner-pivot axis:
+#       D_arm    = perpendicular from pivot axis to LBJ
+#       D_spring = perpendicular from pivot axis to coilover lower mount
+#
+#     Because the donor LCA is reused unchanged, the lever ratio is the
+#     same as stock Miata.  The only variable on the A40 build is the
+#     shock angle alpha at the lower mount, set by the shock-tower
+#     position on the custom frame.
+# ====================================================================
+def plot_motion_ratio_vs_angle():
+    fig, ax = styled_fig(figsize=(7.4, 5.0))
+
+    alpha_deg = np.linspace(40, 90, 400)
+    alpha_rad = np.deg2rad(alpha_deg)
+
+    # Both dimensions are perpendicular distances from the LCA inner-pivot
+    # axis, taken from the Miata donor geometry in SUSP (the LCA is reused
+    # unchanged).  Wheel-side lever runs to the tire contact patch, which
+    # sits under hub centre at T_MIATA/2 from the car CL.
+    d_arm = T_MIATA / 2 - SUSP["lca_from_cl"]  # 702.5 - 328 = 374.5 mm
+    d_spring = SUSP["lca_coilover_perp"]  # 240 mm
+    lever = d_spring / d_arm  # 0.641
+
+    mr = lever * np.sin(alpha_rad)
+
+    # Wheel-offset sensitivity band: a wheel with +/-15 mm offset versus
+    # the spec ET45 shifts the contact patch laterally by the same
+    # amount, changing D_arm and therefore the lever ratio.  This is
+    # the dominant tolerance once the donor arm and frame pickups are
+    # fixed — show it as a shaded band so the reader can see it
+    # without hunting through the caption.
+    delta_offset = 15  # mm, plausible alt-wheel offset spread
+    lever_lo = d_spring / (d_arm + delta_offset)
+    lever_hi = d_spring / (d_arm - delta_offset)
+    mr_lo = lever_lo * np.sin(alpha_rad)
+    mr_hi = lever_hi * np.sin(alpha_rad)
+    ax.fill_between(
+        alpha_deg,
+        mr_lo,
+        mr_hi,
+        color=A40_C,
+        alpha=0.12,
+        linewidth=0,
+        label=f"\u00b1{delta_offset} mm wheel-offset band",
+    )
+
+    ax.plot(
+        alpha_deg,
+        mr,
+        color=A40_C,
+        linewidth=2.4,
+        label=f"MR = {lever:.3f} \u00b7 sin(\u03b1)",
+    )
+
+    # Lever-ratio ceiling (alpha = 90 deg, vertical shock)
+    ax.axhline(lever, color=A40_C, linestyle=":", linewidth=0.9, alpha=0.65)
+    ax.text(
+        88,
+        lever + 0.012,
+        f"geometric ceiling  MR = {lever:.2f}\n(perfectly vertical shock, \u03b1 = 90\u00b0)",
+        color=A40_C,
+        fontsize=7,
+        ha="right",
+        alpha=0.9,
+    )
+
+    # 0.63 reference MR used elsewhere in the post for roll math
+    # (donor-Miata calculation at alpha = 80 deg, wheel-centerline
+    # convention so it's consistent with K_phi = K_w * T^2 / 2).
+    ax.axhline(0.63, color=GOLD, linestyle="--", linewidth=1, alpha=0.7)
+    ax.text(
+        40.5,
+        0.64,
+        "MR = 0.63 used in roll/spring math (α ≈ 80° reference)",
+        color=GOLD,
+        fontsize=7,
+        ha="left",
+        alpha=0.9,
+    )
+
+    # Shaded "shock-tower placement" band — practical alpha for a tower
+    # that fits inside the frame rails.  Final angle gets locked in
+    # during SA V2.
+    ax.axvspan(65, 85, color=GREEN, alpha=0.07)
+    ax.text(
+        75,
+        0.05,
+        "practical shock-tower\nangle range",
+        color=GREEN,
+        fontsize=6.8,
+        ha="center",
+        alpha=0.85,
+    )
+
+    # Annotate operating points across the practical band
+    sample_angles = [65, 75, 85]
+    for a in sample_angles:
+        mr_pt = lever * np.sin(np.deg2rad(a))
+        ax.plot(a, mr_pt, "o", color=A40_C, markersize=5, zorder=5)
+        wr_pct = (mr_pt / 0.9) ** 2 * 100
+        ax.annotate(
+            f"{a}\u00b0  \u2192  MR = {mr_pt:.2f}\nWR = {wr_pct:.0f}% of 0.9-baseline",
+            xy=(a, mr_pt),
+            xytext=(a - 11, mr_pt - 0.16),
+            fontsize=6.8,
+            color=TEXT,
+            alpha=0.85,
+            ha="left",
+            arrowprops=dict(arrowstyle="-", color=TEXT, lw=0.4, alpha=0.4),
+        )
+
+    ax.set_xlabel("Shock angle to LCA at lower mount, \u03b1 (\u00b0)")
+    ax.set_ylabel("Motion ratio  MR = (D$_{spring}$ / D$_{arm}$) \u00b7 sin(\u03b1)")
+    ax.set_title(
+        "Motion ratio vs shock angle "
+        f"(D$_{{spring}}$/D$_{{arm}}$ = {d_spring:.0f}/{d_arm:.1f} = {lever:.3f})"
+    )
+    ax.legend(
+        fontsize=8, facecolor=BG, edgecolor=GRID2, labelcolor=TEXT, loc="lower right"
+    )
+    ax.set_xlim(40, 90)
+    ax.set_ylim(0, 1.0)
+    ax.xaxis.set_major_locator(MultipleLocator(5))
+    save(fig, "motion_ratio_vs_angle.png")
 
 
 # ====================================================================
@@ -3876,6 +4690,7 @@ def main():
     plot_rc_construction()
     plot_rc_tire_comparison()
     plot_rc_combined()
+    plot_rc_migration()
     plot_track_effects()
     plot_arb_sizing()
     plot_ride_frequency()
@@ -3883,6 +4698,7 @@ def main():
     plot_ackermann_topview()
     plot_ackermann_turn()
     plot_motion_ratio()
+    plot_motion_ratio_vs_angle()
     plot_weight_transfer()
     plot_jacking()
     plot_rack_narrowing()
