@@ -146,12 +146,18 @@ export const roadmap: Roadmap = {
       epic: 'research',
       kind: 'decision',
       status: 'planning',
-      summary: 'Pick the gearbox. The decision stays open: the trans tunnel is sized to the larger CD009 envelope so either gearbox fits, and the trans crossmember is removable so it does not gate frame welding. Only impacts: shifter location and floor pan.',
+      summary: 'Pick the gearbox. Optimization target: shortest achievable bellhousing-to-shifter distance — the A40 cabin is short and any extra trans length pushes the shifter into the rear-seat zone. Most of the modern Nissan boxes have a front shifter-access plate that lets the shifter relocate ~6–10″ forward of stock, which flips the ranking vs. raw case length. The trans tunnel is sized to the largest candidate (CD009) and the trans crossmember is removable, so the choice does not gate frame welding — only the shifter location and floor pan cutout.',
       notes: [
-        'Shortlist: SR20DET OEM 5-spd (S13/S14) vs Nissan CD009 6-spd',
-        'Currently 50/50 — main blocker is cost',
-        'CD009 adapter plan: Driftworks Superfly S15 flywheel (may avoid grinding/milling CD009 flange)',
-        'Tunnel is sized for CD009; OEM 5-spd will fit with extra clearance — no rework either way',
+        'Shifter position is the optimization target, NOT raw case length. CD009 / RB25 / Z32 all have a forward access plate that accepts a shifter — moves the lever 6–10″ ahead of the rear-mounted stock position. SR20 OEM 5-spd has only a single rear-mount shifter location.',
+        'Shortlist (sorted by achievable shifter position with forward-mount where available, most-forward first):',
+        '  1. CD009 (350Z/G35 6-spd) — front access plate accepts shifter relocation; shifter moves WAY forward, often the most-forward option of the bunch despite the long case. Strongest of the realistic options. Requires adapter (Driftworks Superfly S15 flywheel plan).',
+        '  2. Z32 (300ZX TT) 5-spd — has a forward shifter-access plate (Z32 NA/TT both); shifter relocates well forward. Strong (~330 lb-ft). Needs an SR-to-Z32 adapter plate.',
+        '  3. RB25DET 5-spd (Skyline) — multiple shifter mount positions on the case; can run forward-mount. Bolts to SR20 with a $200-ish adapter. Stronger than OEM SR 5-spd.',
+        '  4. S15 6-spd (SR20DET OEM in S15 Spec-R) — bolts directly to SR20 (no adapter), 6 gears, but stuck with rear shifter location. Rare/expensive in NA.',
+        '  5. SR20DET OEM 5-spd (S13/S14) — shortest case but ONLY rear-mount shifter, so the lever ends up further back than CD009/Z32/RB25 with forward relocation. Cheap and proven.',
+        'Currently leaning CD009 if the budget allows — gives the most-forward shifter AND the strongest box. SR20 OEM 5-spd remains the cheap fallback.',
+        'Other options considered and parked: R154 (Toyota — long, no good forward shifter option, JZ-swap territory), T56 Magnum (huge, expensive, overkill).',
+        'Tunnel is sized for CD009; any of the above will fit with extra clearance — no rework either way',
         'Trans crossmember is bolt-in / removable: not a frame-weld dependency',
         'Open downstream impacts of the choice: shifter location (t-decide-shifter), floor pan cutout, clutch hydraulics (t-buy-clutch-hyd), driveshaft length (t-buy-driveshaft), final-drive ratio target (t-decide-final-drive)',
       ],
@@ -165,9 +171,11 @@ export const roadmap: Roadmap = {
       posts: ['rear-axle'],
       summary: 'Single-page spec sheet for the narrowed Ford 9": housing width, axles, U-joint series, bolt pattern. Goes to Moser (axles) + the housing-narrowing shop. Ratio + LSD split out into t-decide-final-drive.',
       notes: [
-        'Target rear track: 1340 mm (rounded from 1339.747)',
-        'Account for +38 mm wheel offset and rotor thickness when sizing flange-to-flange',
-        'Current housing measured ~60.5" flange-to-flange (~1537 mm) — needs ~200 mm narrowing',
+        'Target rear track: 1.340 m (locked — see t-decide-track-rear)',
+        'Outside-disc-face to outside-disc-face: 1.415 m — axle flange-to-flange sized so flange + rotor + caliper-bracket stack lands at this dimension',
+        'Wheel offset: +38 mm (matches purchased wheels)',
+        'Rotor face / caliper bracket stack: 7–9 mm → axle flange-to-flange target ~1.397–1.401 m (lock exact rotor + bracket before axle order)',
+        'Current housing measured ~60.5″ flange-to-flange (~1537 mm) — needs ~136–140 mm narrowing to land at the new flange-to-flange target',
         'Spline: 31-spline locked',
         'U-joint: 1310 vs 1330 — defer to driveshaft shop',
         'Custom axles + custom flanges, 4×100 bolt pattern',
@@ -253,8 +261,16 @@ export const roadmap: Roadmap = {
       title: 'Decide: Rear Track Width',
       epic: 'narrowing',
       kind: 'decision',
-      status: 'in-progress',
-      summary: 'Rear track width — drives rear axle width spec and tubbing/fender plan.',
+      status: 'decided',
+      decision: 'Rear track 1.340 m (centerline-to-centerline of the tires) with the on-hand +38 mm offset 15″ wheels and 205/65R15 tires. Outside-disc-face to outside-disc-face works out to 1.415 m, which is what sets the axle housing flange-to-flange and the rotor mounting plane for the rear disc conversion.',
+      summary: 'Rear track locked at 1.340 m using the rear scan + +38 mm offset wheels. Drives axle housing width and rear disc bracketry.',
+      notes: [
+        'Rear track (tire CL–CL): 1.340 m',
+        'Outside-disc to outside-disc: 1.415 m → sets axle flange-to-flange after subtracting rotor face thickness',
+        'Wheel offset assumption: +38 mm (already purchased — see t-buy-wheels)',
+        'Disc/rotor face stack thickness: 7–9 mm (final number from chosen Miata-style rear rotor + caliper bracket)',
+        'Confirmed against rear-scan body width — fits inside the (now widened) rear fenders with margin',
+      ],
     },
     {
       id: 't-narrowing-analysis',
@@ -339,13 +355,18 @@ export const roadmap: Roadmap = {
       title: 'Decide: Tub vs Widen Fenders',
       epic: 'design',
       kind: 'decision',
-      status: 'planning',
-      summary: 'Pick stock fenders, inner tubs, or flares. Decision is aesthetic-first: model fender options in Blender from the rear scan, pick the look, then derive rear track + tire margin.',
+      status: 'decided',
+      decision: 'Widen the rear fenders. Plan: shrink the metal along the bend on the inside of the fender lip to pull the existing flare/fender outward. No cut-and-add panel — the original sheetmetal stays continuous. Preserves rear-seat width (stock ~40″ at the wheelhouse pinch) and avoids the cabin/floor surgery a tub would require.',
+      summary: 'Decided on widening via shrink-and-pull rather than tubbing. Method keeps the original outer panel intact and reshapes the existing flare outward — no welded-in widening strip, no inner-wheelhouse rework, full stock interior width preserved.',
       notes: [
-        'Method: 3D-model fender options in Blender from the scan',
-        'Stock-fender 9 mm/side margin number from the narrowing analysis is unreliable — use the scan instead',
-        'Constraint: rear-passenger leg/shoulder room with inner tubs',
-        'Visual call leads — track width and tire width follow the chosen body shape',
+        'Method: shrink the inner bend of the fender lip (shrinker / hammer-and-dolly / heat-shrink) to pull the existing flare outward without cutting in new metal.',
+        'Arch opening is allowed to migrate upward as the fender radius pulls outward instead of downward — i.e. the lip ends up higher and wider, not lower and wider. Removes the need to stretch the outer crown to compensate, which is what would otherwise be required for a > ~¾″ pull. Side benefit: a touch more tire-to-arch clearance at full bump.',
+        'No interior loss — rear hip width stays at stock ~20″/person (vs ~17.5″ if tubbed).',
+        'Outer body skin reshapes rather than gets seamed — single continuous panel = no blend line to hide, paint is the only finishing concern.',
+        'Mock the target flare profile in tape/foam before committing the metalwork; small adjustments are easy in foam, hard in steel. Tape the new arch line at the higher position too so the visual proportion is checked, not just the width gain.',
+        'Tubbing rejected: 5″ total intrusion would drop the 2-person rear seat from snug-but-OK to shoulders-touching.',
+        'Bolt-on flares rejected: read as "modified" on a 1950 saloon.',
+        'Drives: rear track + tire spec (now bounded by how far the flare can be pulled before the metal cracks or looks wrong, not by inner wheelhouse).',
       ],
     },
     {
@@ -1475,11 +1496,14 @@ export const roadmap: Roadmap = {
       title: 'Decide: Turbo + Manifold Architecture',
       epic: 'design',
       kind: 'decision',
-      status: 'planning',
+      status: 'decided',
+      decision: 'Forward-mounted top-mount manifold. Routes the downpipe down past cylinders 3/4 on the passenger side, keeping it clear of the firewall and steering shaft and giving the cleanest path under the floor.',
       summary: 'Pick turbo (likely re-using one on hand), manifold flange (T3/T4), scroll arch, wastegate style, mount position. Strategy: work from envelope down — manifold geometry should minimize firewall hack-out, then exhaust + IC piping fall out of that.',
       notes: [
+        'Forward top-mount manifold chosen — turbo sits high and forward, downpipe drops near cyl 3/4',
+        'Keeps the downpipe out of the firewall / steering shaft zone',
         'Turbo: probably one I already have — inspect/spec soon',
-        'Goal: minimize firewall removal via manifold geometry',
+        'Flange / scroll / wastegate spec still to confirm against the on-hand turbo',
         'Drives: t-buy-exhaust-manifold, t-exhaust-routing, t-decide-firewall (passthroughs), t-cooling-design (charge-air load)',
       ],
     },
@@ -2395,6 +2419,117 @@ export function bottleneckTier(id: TaskId): 0 | 1 | 2 | 3 {
   if (r >= 0.66) return 3;
   if (r >= 0.33) return 2;
   return 1;
+}
+
+/* ── Purchase priority ranking ─────────────────────────
+   Purchases ranked 1..N where 1 = buy first. Sorted by
+   bottleneckScores DESC (= most-urgent first). Ties get
+   the same rank (standard competition ranking: 1, 2, 2, 4).
+   Already-complete purchases get rank 0 (not shown).
+
+   Tiebreak inside identical scores: shallower-depth task
+   first (closer to the root → needed sooner in the build).
+   ──────────────────────────────────────────────────── */
+
+const purchaseRankMap = new Map<TaskId, number>();
+(() => {
+  const purchases = roadmap.tasks
+    .filter((t) => {
+      const k = t.kind ?? (t.id.startsWith('t-decide-') ? 'decision' : 'task');
+      return k === 'purchase';
+    })
+    .filter((t) => t.status !== 'complete' && t.status !== 'decided')
+    .filter((t) => (bottleneckCount.get(t.id) ?? 0) > 0)
+    .map((t) => ({
+      id: t.id,
+      score: bottleneckScores.get(t.id) ?? 0,
+      depth: fullDepth.get(t.id) ?? 0,
+    }))
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.depth - b.depth;
+    });
+
+  // Competition ranking: same score → same rank, next distinct score skips.
+  let lastScore = Infinity;
+  let lastRank = 0;
+  for (let i = 0; i < purchases.length; i++) {
+    const p = purchases[i];
+    if (p.score !== lastScore) {
+      lastRank = i + 1;
+      lastScore = p.score;
+    }
+    purchaseRankMap.set(p.id, lastRank);
+  }
+})();
+
+/** Buy-order rank for a purchase task. 1 = buy first. 0 = not ranked. */
+export function purchaseRank(id: TaskId): number {
+  return purchaseRankMap.get(id) ?? 0;
+}
+
+/* ── Top blockers ─────────────────────────────────────
+   "Top N" tasks that are CURRENTLY ACTIONABLE (all hard
+   incoming deps complete/decided) AND gate the most/soonest
+   downstream work. These are the "what should I do next"
+   highlights — surfaced in the UI with a vivid border.
+
+   Selection:
+     1. status not complete/decided
+     2. all hard upstream deps are complete/decided
+     3. bottleneckCount > 0  (must actually block something)
+     4. sort by bottleneckScores desc, take top N
+
+   Tiebreak: prefer decision > task > purchase (decisions
+   unblock thinking before they unblock fab).
+   ──────────────────────────────────────────────────── */
+
+const TOP_BLOCKER_N = 5;
+
+const incomingByTask = new Map<TaskId, RoadmapEdge[]>();
+for (const t of roadmap.tasks) incomingByTask.set(t.id, []);
+for (const e of roadmap.edges) {
+  if (incomingByTask.has(e.to)) incomingByTask.get(e.to)!.push(e);
+}
+
+function isActionable(t: RoadmapTask): boolean {
+  if (t.status === 'complete' || t.status === 'decided') return false;
+  for (const e of incomingByTask.get(t.id) ?? []) {
+    if (e.kind !== 'hard') continue;
+    const up = taskMap.get(e.from);
+    if (!up) continue;
+    if (up.status !== 'complete' && up.status !== 'decided') return false;
+  }
+  return true;
+}
+
+function kindRank(t: RoadmapTask): number {
+  const k = t.kind ?? (t.id.startsWith('t-decide-') ? 'decision' : 'task');
+  if (k === 'decision') return 0;
+  if (k === 'purchase') return 2;
+  return 1;
+}
+
+const topBlockerList: RoadmapTask[] = roadmap.tasks
+  .filter(isActionable)
+  .filter((t) => (bottleneckCount.get(t.id) ?? 0) > 0)
+  .sort((a, b) => {
+    const ds = (bottleneckScores.get(b.id) ?? 0) - (bottleneckScores.get(a.id) ?? 0);
+    if (ds !== 0) return ds;
+    return kindRank(a) - kindRank(b);
+  })
+  .slice(0, TOP_BLOCKER_N);
+
+/** Ordered list of top-N actionable blockers (rank 1 = most blocking). */
+export const topBlockerIds: TaskId[] = topBlockerList.map((t) => t.id);
+
+const topBlockerRankMap = new Map<TaskId, number>(
+  topBlockerList.map((t, i) => [t.id, i + 1]),
+);
+
+/** 1-indexed rank if the task is a top blocker, else 0. */
+export function topBlockerRank(id: TaskId): number {
+  return topBlockerRankMap.get(id) ?? 0;
 }
 
 /* ── Validation (runs at import) ──────────────────── */

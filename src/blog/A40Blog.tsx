@@ -240,7 +240,6 @@ export const A40Blog: React.FC = () => {
           <Link to="/" className="blog-back-link">&larr; Portfolio</Link>
           <h1 className="blog-sidebar-title">A40 Build Log</h1>
           <p className="blog-sidebar-sub"><span>1950 Austin A40 Devon</span></p>
-          <Link to="/a40/roadmap" className="blog-roadmap-link">Roadmap &rarr;</Link>
           <div className="blog-sidebar-divider" aria-hidden="true" />
           <p className="gc-under-construction" aria-hidden="true">
             &#9888; Under Construction &#9888;
@@ -261,6 +260,11 @@ export const A40Blog: React.FC = () => {
             />
           ))}
         </nav>
+        <div className="blog-sidebar-footer">
+          <Link to="/a40/roadmap" className="blog-roadmap-link blog-roadmap-link--footer">
+            Roadmap &rarr;
+          </Link>
+        </div>
       </aside>
 
       <PostContent

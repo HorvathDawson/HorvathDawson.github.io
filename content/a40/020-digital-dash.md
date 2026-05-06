@@ -42,10 +42,11 @@ An SR20DET on a standalone ECU broadcasts everything over CAN bus. The dashboard
 |-----------|------|------|
 | ECU | Haltech Nexus S2 | Engine management, DBW throttle, CAN bus broadcast |
 | Computer | Raspberry Pi 5 (4GB) | Runs the dashboard UI |
+| Cooling | Official Raspberry Pi Active Cooler | Required — Pi 5 throttles fast under sustained load, especially in a sealed dash enclosure on a hot engine bay-adjacent firewall |
 | Storage | Freenove M.2 Adapter V2 + Crucial 256GB M.2 NVMe SSD | Fast boot (~8 seconds cold start) |
 | CAN interface | PiCAN3 HAT (Copperhill Technologies) | Translates Haltech CAN to Linux SocketCAN |
 | Power supply | Mini-Box DCDC-USB (100W) | Clean 5V/12V from car's dirty 12V; handles ignition-off shutdown |
-| Display | Waveshare 12.3" 1920×720 DSI | Portrait-native panel, DSI ribbon (no HDMI cable). Active area must be at least 10.5" × 3.5" to fill the A40 bezel |
+| Display | [Waveshare 12.3" 1920×720 DSI](https://www.waveshare.com/wiki/12.3-DSI-TOUCH-A) | Portrait-native panel, DSI ribbon (no HDMI cable). Active area must be at least 10.5" × 3.5" to fill the A40 bezel |
 | Bench-only PSU | Official Pi 5 27W USB-C | For desk testing before the car wiring |
 
 ---
@@ -62,12 +63,13 @@ The build happens in two stages. **Phase 1** is a bench-test stack used to verif
 ### Phase 1 — Bench setup (Pi + NVMe + screen)
 
 1. **Mount the SSD.** Attach the Crucial NVMe SSD to the Freenove adapter board.
-2. **Stack the Pi.** Use the supplied brass standoffs to mount the Raspberry Pi 5 directly on top of the Freenove adapter.
-3. **Connect the NVMe ribbon.** Connect the tiny PCIe FPC ribbon between the two boards.
-4. **Connect the screen.**
+2. **Fit the Pi 5 active cooler.** Peel the thermal-pad backings, press the cooler onto the SoC + PMIC, and clip the spring pins through the Pi's mounting holes. Plug the fan lead into the 4-pin JST header next to the GPIO. Without this the Pi 5 throttles within minutes under sustained UI load — in a closed dash pod near the firewall it'll throttle even faster.
+3. **Stack the Pi.** Use the supplied brass standoffs to mount the Raspberry Pi 5 (with cooler attached) directly on top of the Freenove adapter. Verify the cooler clears the M.2 ribbon and the standoffs.
+4. **Connect the NVMe ribbon.** Connect the tiny PCIe FPC ribbon between the two boards.
+5. **Connect the screen.**
    - Route the Waveshare DSI ribbon cable into the **DSI1** port (closest to the outer edge of the Pi).
    - Connect the 2-pin power jumper from the back of the Waveshare screen to the Pi's **5V** and **GND** GPIO pins.
-5. **Power up.** Plug the official 27W USB-C PSU into the Pi.
+6. **Power up.** Plug the official 27W USB-C PSU into the Pi.
 
 > **Note — ribbon orientation.** The contacts on the PCIe FPC ribbon usually face **inward** toward the Pi's center, but check the Freenove V2 manual to confirm. Make sure it's seated perfectly flush before pushing the locking tab down.
 
@@ -88,6 +90,11 @@ Once the desk tests are clean and the dash UI is loading correctly, the stack co
    - Connect the Mini-Box shutdown pins to the Pi 5's **J2 power header** for a safe OS shutdown when the ignition is cut.
 
 > **Note — shutdown timing.** When the ignition turns off, the Mini-Box triggers a clean OS shutdown and only cuts power ~45 seconds later, so the Pi never gets yanked mid-write.
+
+<figure class="wide">
+  <img src="/assets/projects/a40-austin/blog/dash-wiring.svg" alt="Digital dash wiring diagram: battery, kill switch, fused ignition feed, Mini-Box DCDC-USB, PiCAN3 HAT, Raspberry Pi 5, NVMe SSD, Waveshare DSI display, and Haltech Nexus S2 ECU, with the PSW shutdown signal routed to the Pi 5 J2 header" />
+  <figcaption>Phase 2 wiring overview. Switched +12 V feeds the Mini-Box DCDC-USB (red trunk) plus its ignition-sense pin (orange dashed). Clean V(out) +12 V drops into the PiCAN3 screw terminal pin 4, which runs the on-HAT 3 A SMPS that powers the Pi 5 (and the Waveshare screen via the GPIO 5 V rail). The blue PSW \u2192 Pi 5 J2 trace is the safe-shutdown pulse: on key-off the DCDC-USB pulses the Pi's power-button header to start a clean OS shutdown before HARDOFF cuts power. CAN_H/L (green) come straight from the Haltech Nexus S2 to the PiCAN3 with the on-board 120 \u03a9 terminator. Diagram source: <code>scripts/a40-dash-wiring.py</code>.</figcaption>
+</figure>
 
 <figure>
   <img src="/assets/projects/a40-austin/blog/dash-phase2-assembly.jpg" alt="Phase 2 automotive stack with PiCAN3 HAT and DCDC-USB power manager" />

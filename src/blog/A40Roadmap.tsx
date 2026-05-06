@@ -9,6 +9,8 @@ import {
   bottleneckScores,
   bottleneckCount,
   bottleneckTier,
+  purchaseRank,
+  topBlockerRank,
   type RoadmapTask,
   type TaskId,
 } from './roadmapData';
@@ -56,6 +58,8 @@ const TaskCard: React.FC<CardProps> = React.memo(({
   const showDecisionOutcome = !!task.decision && (isDecided || isComplete);
   const blocks = bottleneckCount.get(task.id) ?? 0;
   const tier = kind === 'purchase' ? bottleneckTier(task.id) : 0;
+  const buyRank = kind === 'purchase' ? purchaseRank(task.id) : 0;
+  const blockerRank = topBlockerRank(task.id);
 
   /* Touch interaction model:
      - Tap (short press)  → opens / isolates (the existing onClick path).
@@ -120,6 +124,7 @@ const TaskCard: React.FC<CardProps> = React.memo(({
         `rm-card--${task.status}`,
         `rm-card--kind-${kind}`,
         tier > 0 ? `rm-card--bottleneck-${tier}` : '',
+        blockerRank > 0 ? 'rm-card--top-blocker' : '',
         isActive ? 'rm-card--active' : '',
         isFocused ? 'rm-card--focused' : '',
         isUpstream ? 'rm-card--upstream' : '',
@@ -131,7 +136,17 @@ const TaskCard: React.FC<CardProps> = React.memo(({
       aria-pressed={isActive}
       aria-hidden={isHidden}
       tabIndex={isHidden ? -1 : 0}
+      data-blocker-rank={blockerRank > 0 ? blockerRank : undefined}
     >
+      {blockerRank > 0 && (
+        <span
+          className="rm-card-blocker-rank"
+          aria-label={`Top blocker rank ${blockerRank}`}
+          title={`Top blocker #${blockerRank} — actionable now and gates the most downstream work`}
+        >
+          #{blockerRank}
+        </span>
+      )}
       <div className="rm-card-row">
         <span className={`sb-status-dot sb-dot--${task.status}`} aria-hidden="true" />
         {kind === 'purchase' && <span className="rm-card-kind rm-card-kind--purchase" aria-label="Purchase">$</span>}
@@ -161,12 +176,12 @@ const TaskCard: React.FC<CardProps> = React.memo(({
         {hasSoftIncoming && (
           <span className="rm-card-soft" title="Has soft dependencies">~</span>
         )}
-        {kind === 'purchase' && blocks > 0 && (
+        {kind === 'purchase' && buyRank > 0 && (
           <span
             className={`rm-card-blocks rm-card-blocks--t${tier}`}
-            title={`Blocks ${blocks} downstream task${blocks === 1 ? '' : 's'} via hard deps. Urgency score ${bottleneckScores.get(task.id) ?? 0} — weighted by how soon they're needed.`}
+            title={`Buy priority #${buyRank} — hard-blocks ${blocks} downstream task${blocks === 1 ? '' : 's'}. Urgency score ${bottleneckScores.get(task.id) ?? 0}. Lower number = buy sooner. Ties share a rank.`}
           >
-            ⛓ {blocks}
+            buy #{buyRank}
           </span>
         )}
       </div>
@@ -325,13 +340,14 @@ const TaskDrawer: React.FC<{
           const blocks = bottleneckCount.get(task.id) ?? 0;
           const score = bottleneckScores.get(task.id) ?? 0;
           const tier = kind === 'purchase' ? bottleneckTier(task.id) : 0;
-          if (kind !== 'purchase' || blocks <= 0) return null;
+          const buyRank = kind === 'purchase' ? purchaseRank(task.id) : 0;
+          if (kind !== 'purchase' || buyRank <= 0) return null;
           return (
             <span
               className={`rm-drawer-blocks rm-drawer-blocks--t${tier}`}
-              title={`Hard-blocks ${blocks} downstream task${blocks === 1 ? '' : 's'}. Urgency score ${score} (weighted by how early in the build they land).`}
+              title={`Lower number = buy sooner. Ties share a rank. Hard-blocks ${blocks} downstream task${blocks === 1 ? '' : 's'}. Urgency score ${score}.`}
             >
-              ⛓ blocks {blocks} · urgency {score}
+              buy #{buyRank} · blocks {blocks} · urgency {score}
             </span>
           );
         })()}

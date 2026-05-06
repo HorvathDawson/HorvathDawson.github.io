@@ -1359,6 +1359,56 @@
   box-shadow: 0 0 0 1px rgba(255, 90, 90, 0.55), 0 1px 8px rgba(255, 90, 90, 0.28);
 }
 
+/* Top-N actionable blockers — most-blocking tasks whose hard upstream deps
+   are all complete. Vivid magenta border + glow so they're impossible to
+   miss in the graph. Higher specificity than status border-left so the
+   blocker color wins on all four edges, but still loses to focus / cone
+   highlights (those use .rm-card.rm-card--focused etc., same specificity
+   but defined later in the cascade — see the focus block above for the
+   ordering rule). */
+.rm-card.rm-card--top-blocker {
+  position: relative;
+  border-color: #ff4dd2;
+  border-left-color: #ff4dd2;
+  box-shadow:
+    0 0 0 2px rgba(255, 77, 210, 0.65),
+    0 0 14px rgba(255, 77, 210, 0.35);
+}
+.rm-card.rm-card--top-blocker:hover {
+  border-color: #ffa3ea;
+  border-left-color: #ffa3ea;
+}
+.rm-card-blocker-rank {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1a0a18;
+  background: #ff4dd2;
+  border: 1px solid #ffa3ea;
+  border-radius: 11px;
+  box-shadow: 0 0 6px rgba(255, 77, 210, 0.55);
+  pointer-events: none;
+  z-index: 2;
+}
+/* Focus / cone classes win over the blocker glow when active — match the
+   existing pattern (.rm-card.rm-card--focused etc. defined earlier in the
+   file). The blocker glow is intentionally a steady-state cue; cone glows
+   are interaction cues. */
+.rm-card.rm-card--focused.rm-card--top-blocker,
+.rm-card.rm-card--upstream.rm-card--top-blocker,
+.rm-card.rm-card--downstream.rm-card--top-blocker {
+  /* fall back to the cone color set by the cone class above */
+}
+
 .rm-drawer-blocks {
   font-size: 11px;
   border-radius: 3px;
@@ -1649,13 +1699,21 @@
 .blog-topbar .blog-roadmap-link {
   margin-left: auto;
 }
-/* Desktop sidebar: stack with breathing room */
-.blog-sidebar-header .blog-roadmap-link {
-  align-self: flex-start;
-  margin-top: 8px;
+/* Desktop sidebar: pin to bottom-left */
+.blog-sidebar-footer {
+  margin-top: auto;
+  padding: 14px 20px 4px;
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(0deg, rgba(15, 10, 40, 0.98) 70%, rgba(15, 10, 40, 0));
+}
+.blog-roadmap-link--footer {
+  display: flex;
+  justify-content: center;
   font-size: 13px;
   letter-spacing: 1.5px;
   padding: 8px 14px;
+  border-radius: 0;
 }
 
 /* Mobile tweaks */
