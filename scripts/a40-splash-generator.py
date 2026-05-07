@@ -308,6 +308,7 @@ def main():
         "projects",
         "a40-austin",
         "blog",
+        "dash",
         "a40-boot-splash-landscape.png",
     )
 

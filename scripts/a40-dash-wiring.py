@@ -16,7 +16,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT_DIR = ROOT / "public" / "assets" / "projects" / "a40-austin" / "blog"
+OUT_DIR = ROOT / "public" / "assets" / "projects" / "a40-austin" / "blog" / "dash"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 YAML = r"""

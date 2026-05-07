@@ -9,7 +9,7 @@ tags: [electronics, dash, raspberry-pi, haltech, can-bus]
 The A40's original gauge cluster is a simple oval bezel with speedo and a handful of idiot lights. It's not going back in. A modified SR20DET needs real instrumentation, and the stock cluster doesn't have room for half of what matters. The plan is a custom React-based digital dashboard running on a Raspberry Pi, mounted behind the original bezel opening.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-reference.jpeg" alt="A40 Austin Devon dash bezel with dimension reference" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-reference.jpeg" alt="A40 Austin Devon dash bezel with dimension reference" />
   <figcaption>A40 dash bezel opening. The Waveshare 12.3" screen's active area (10.5" x 3.5" minimum) needs to fill this space cleanly behind the original trim ring.</figcaption>
 </figure>
 
@@ -36,6 +36,24 @@ An SR20DET on a standalone ECU broadcasts everything over CAN bus. The dashboard
 
 ---
 
+## Sensors to add beyond a stock SR20DET
+
+A factory SR20DET only gives the ECU about half of the signals the dash wants to display. Battery voltage, intake air temp, coolant temp, RPM, throttle position, and ECU-internal MAP all come for free over the Haltech CAN stream. Everything else needs a sensor added during the swap — most of these are tiny 1/8 NPT screw-ins that take ten minutes once the engine is on the stand, but every one of them has to be on the build list before the dash can light up its full layout.
+
+| Signal | Sensor to install | Where it goes |
+|--------|-------------------|---------------|
+| Oil pressure | 0–150 psi 3-wire pressure transducer (e.g. AEM 30-2130-150 / Honeywell PX3) — **not** the OEM single-wire idiot-light switch | 1/8 NPT tee at the oil-pressure sender boss on the block |
+| Oil temperature | 1/8 NPT thermistor (Haltech HT-010-300 or equivalent) | Oil pan bung, or sandwich plate at the filter |
+| Wideband AFR | Bosch **LSU 4.9** sensor + CAN-capable controller (Haltech WB1 or Nexus-internal WB) — OEM narrowband O2 cannot show real AFR | Welded boss in the downpipe, **post-turbo, pre-cat**, ≥600 mm from the turbine to keep the sensor below 850 °C |
+| Boost (MAP) above factory range | The **Haltech Nexus S2** has a built-in **3.5 bar** MAP sensor (good to ~36 psi of boost) and the **Elite 1500** has a built-in **2.5 bar** sensor (~22 psi). For this build neither needs an added MAP sensor. Only swap to an external 4-bar (or 5-bar) MAP on a spare analog input if pushing past those ceilings | Vacuum tap on the intake manifold \u2014 only required if exceeding the ECU's internal MAP ceiling |
+| Fuel level | Custom resistive sender sized for the A40 tank (the OEM A40 sender, if it survives the tank rebuild, is 0–80 Ω which the Haltech can scale) | Top of the fuel tank — likely fabricated alongside the new in-tank pump hat |
+| Vehicle speed | GPS speed (Haltech RACEPAK GPS module on CAN) **or** Hall-effect sensor on the driveshaft yoke; the A40 has no factory VSS that maps cleanly to the new gearbox | GPS antenna on the dash top, or sensor bracket near the gearbox tail-housing |
+| Gear position | Derived in software from `vehicle_speed / engine_rpm` against a per-gear ratio table — **no sensor needed** | — |
+
+Things the dash gets for free from the ECU stream and that do **not** need an added sensor: battery voltage (ECU measures its own supply), intake air temp (MAF or dedicated IAT already on a stock SR20), coolant temp (factory CTS), RPM, throttle position, and ignition/fuel diagnostics.
+
+---
+
 ## Bill of materials
 
 | Component | Part | Role |
@@ -56,7 +74,7 @@ An SR20DET on a standalone ECU broadcasts everything over CAN bus. The dashboard
 The build happens in two stages. **Phase 1** is a bench-test stack used to verify the OS, NVMe boot, and the screen. **Phase 2** swaps the bench PSU for the automotive power chain once the UI is ready.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-hardware-stack.jpg" alt="Full Pi 5 + NVMe + PiCAN3 stack on the bench" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-hardware-stack.jpg" alt="Full Pi 5 + NVMe + PiCAN3 stack on the bench" />
   <figcaption>Placeholder: full hardware stack laid out for bench testing.</figcaption>
 </figure>
 
@@ -74,7 +92,7 @@ The build happens in two stages. **Phase 1** is a bench-test stack used to verif
 > **Note — ribbon orientation.** The contacts on the PCIe FPC ribbon usually face **inward** toward the Pi's center, but check the Freenove V2 manual to confirm. Make sure it's seated perfectly flush before pushing the locking tab down.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-phase1-assembly.jpg" alt="Phase 1 bench assembly with NVMe base, Pi 5, and Waveshare DSI screen" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-phase1-assembly.jpg" alt="Phase 1 bench assembly with NVMe base, Pi 5, and Waveshare DSI screen" />
   <figcaption>Placeholder: Phase 1 desk setup — NVMe base, Pi 5, and DSI display wired up.</figcaption>
 </figure>
 
@@ -92,12 +110,12 @@ Once the desk tests are clean and the dash UI is loading correctly, the stack co
 > **Note — shutdown timing.** When the ignition turns off, the Mini-Box triggers a clean OS shutdown and only cuts power ~45 seconds later, so the Pi never gets yanked mid-write.
 
 <figure class="wide">
-  <img src="/assets/projects/a40-austin/blog/dash-wiring.svg" alt="Digital dash wiring diagram: battery, kill switch, fused ignition feed, Mini-Box DCDC-USB, PiCAN3 HAT, Raspberry Pi 5, NVMe SSD, Waveshare DSI display, and Haltech Nexus S2 ECU, with the PSW shutdown signal routed to the Pi 5 J2 header" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-wiring.svg" alt="Digital dash wiring diagram: battery, kill switch, fused ignition feed, Mini-Box DCDC-USB, PiCAN3 HAT, Raspberry Pi 5, NVMe SSD, Waveshare DSI display, and Haltech Nexus S2 ECU, with the PSW shutdown signal routed to the Pi 5 J2 header" />
   <figcaption>Phase 2 wiring overview. Switched +12 V feeds the Mini-Box DCDC-USB (red trunk) plus its ignition-sense pin (orange dashed). Clean V(out) +12 V drops into the PiCAN3 screw terminal pin 4, which runs the on-HAT 3 A SMPS that powers the Pi 5 (and the Waveshare screen via the GPIO 5 V rail). The blue PSW \u2192 Pi 5 J2 trace is the safe-shutdown pulse: on key-off the DCDC-USB pulses the Pi's power-button header to start a clean OS shutdown before HARDOFF cuts power. CAN_H/L (green) come straight from the Haltech Nexus S2 to the PiCAN3 with the on-board 120 \u03a9 terminator. Diagram source: <code>scripts/a40-dash-wiring.py</code>.</figcaption>
 </figure>
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-phase2-assembly.jpg" alt="Phase 2 automotive stack with PiCAN3 HAT and DCDC-USB power manager" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-phase2-assembly.jpg" alt="Phase 2 automotive stack with PiCAN3 HAT and DCDC-USB power manager" />
   <figcaption>Placeholder: Phase 2 automotive stack — PiCAN3 on top, Mini-Box DCDC-USB feeding the rail.</figcaption>
 </figure>
 
@@ -119,7 +137,7 @@ Prepare the OS on a temporary MicroSD card before booting the Pi.
 > **Note — Wi-Fi country code.** The Imager's Wireless LAN section requires the correct country code, otherwise the Wi-Fi chip stays disabled and the Pi never appears on the network.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-rpi-imager.png" alt="Raspberry Pi Imager OS customization screen" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-rpi-imager.png" alt="Raspberry Pi Imager OS customization screen" />
   <figcaption>Placeholder: Raspberry Pi Imager OS customization (hostname, user, Wi-Fi, SSH).</figcaption>
 </figure>
 
@@ -214,25 +232,36 @@ cat /dev/zero    > /dev/fb0   # wipes back to black
 If the snow appears and then clears cleanly to black, the hardware foundation is bulletproof.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-snow-test.jpg" alt="Waveshare 12.3 inch DSI display showing colored static from /dev/urandom" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-snow-test.jpg" alt="Waveshare 12.3 inch DSI display showing colored static from /dev/urandom" />
   <figcaption>Placeholder: the "snow" test — `/dev/urandom` piped straight into the framebuffer.</figcaption>
 </figure>
 
 ---
 
-## Section 6 — UI framework: Qt vs. Godot
+## Section 6 — UI framework: Qt vs. Godot (and why a game engine)
 
-To land the high-end OEM look (think modern Porsche / Audi virtual cluster) — anti-aliased needles, smooth sweeps, subtle glow on warnings — there are two realistic options for a single developer:
+The goal of the cluster software is **not** "draw five numbers on a screen." The goal is to replicate the feel of a modern OEM virtual cluster (Porsche Taycan, Audi Virtual Cockpit, Polestar) on top of an Austin A40 bezel that's older than the moon landing. That means anti-aliased dial faces, needles that ease into their target instead of snapping, soft glow on warnings, an animated startup sweep that mirrors a real car's self-test, and shader-driven chrome on the bezels — all at a locked 60 FPS so the eye never catches a stutter.
 
-- **Qt / QML.** The literal industry standard for OEM clusters. Locks to 60 FPS on bare metal. The catch is a brutal learning curve: custom shaders, glow effects, and complex animations in QML/C++ are hard if you aren't a full-time embedded GUI engineer.
-- **Godot Engine.** A lightweight game engine that takes the visual-design problem and makes it trivial. Glowing needle? Drop a Bloom node. Smooth sweep? Use an `AnimationPlayer`. Gauge faces drag in visually, redline warnings can be particle effects, scripting is GDScript (effectively Python). The Pi 5 has plenty of GPU headroom to run a 2D Godot dash at 60 FPS.
+There are two realistic stacks for a single developer:
+
+- **Qt / QML.** The literal industry standard for OEM clusters (used by Tesla, Mercedes, Rivian). Rock-solid on bare metal. The catch is a brutal learning curve: custom QML shaders, GLSL glow, and animation curves are hard if you aren't a full-time embedded GUI engineer.
+- **Godot Engine.** A lightweight 2D/3D game engine that turns the visual-design problem into a drag-and-drop one. It already exists to draw moving artwork at 60 FPS; a digital cluster is just a tiny game that happens to read CAN instead of a controller.
+
+### Why Godot makes the cluster come alive
+
+Everything that makes a real OEM cluster feel alive (rather than a Win98 gauge widget) is a one-node operation in Godot:
+
+- **Eased needle motion.** A `Tween` on each needle's `rotation` with `TRANS_CUBIC / EASE_OUT` gives the OEM-style "settle" instead of digital snapping when boost or RPM change.
+- **Startup sweep self-test.** An `AnimationPlayer` track that animates every needle from min → max → resting position on boot — the same key-on theatre Audi and BMW ship.
+- **Glow on warnings.** A `WorldEnvironment` node with `Glow` enabled, plus a `CanvasModulate` flashing the warning icon's emission, gives the soft-bloom red overheat / low-oil halo that QML would need a custom shader for.
+- **Particle redline.** A `GPUParticles2D` node spawning embers around the tach arc above the shift point — visceral, not just a red zone on the dial face.
+- **Shaded chrome bezels.** A small fragment shader on the gauge ring fakes brushed-aluminum highlights that track a virtual light source as the car rolls — same trick Forza uses on its cluster.
+- **Driver-facing scripting.** GDScript is essentially Python; bolting a CAN frame to a needle is `needle.rotation = lerp(needle.rotation, rpm_to_angle(rpm), 0.2)`. No C++ build cycle, no QML/JS/C++ trampoline.
+- **Free editor preview.** Hit Play in Godot and the cluster runs on the Mac with mocked CAN data — iterate on visuals without touching the Pi.
+
+The Pi 5 has more GPU headroom than the entire infotainment SoC of a 2014 luxury car; running a 2D Godot dash at 1920×720 / 60 FPS is well under its budget.
 
 **Verdict for this build: Godot.** Shortest path from "Pi with a black screen" to "glowing OEM-style cluster I'm proud of," without spending months learning QML shader pipelines.
-
-<figure>
-  <img src="/assets/projects/a40-austin/blog/dash-godot-mockup.png" alt="Mockup of the Godot-based digital cluster UI" />
-  <figcaption>Placeholder: Godot UI mockup — gauge faces, glow, and animation done in the editor.</figcaption>
-</figure>
 
 ---
 
@@ -253,7 +282,7 @@ The original A40 bezel has **5 mechanical openings**: one large round hole in th
 The four outer gauges share identical visual sizing so the cluster stays symmetric behind the original A40 trim ring; only the center gauge scales up to match the bigger bezel hole.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-gauge-layout.png" alt="Five-slot turbo SR20 gauge layout mapped onto the A40 bezel" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-gauge-layout.png" alt="Five-slot turbo SR20 gauge layout mapped onto the A40 bezel" />
   <figcaption>Placeholder: 5-slot composite gauge layout mapped onto the A40 bezel openings.</figcaption>
 </figure>
 
@@ -268,14 +297,16 @@ source $HOME/miniconda3/etc/profile.d/conda.sh
 conda activate a40-gauge
 cd scripts
 python a40-gauge-placeholders.py
-# → public/assets/projects/a40-austin/blog/gauges/   (backgrounds, needle sprites, pivot log)
+# → public/assets/projects/a40-austin/blog/dash/gauges/   (backgrounds, needle sprites, pivot log)
 ```
 
 The pivot numbers from the log feed straight into Godot in the next section — no manual measuring, no Photoshop ruler.
 
-<figure>
-  <img src="/assets/projects/a40-austin/blog/dash-asset-generation.png" alt="Generated gauge backgrounds and needle sprites from the Python placeholder script" />
-  <figcaption>Placeholder: generated dial backgrounds + needle sprites with computed pivot coordinates.</figcaption>
+The visual target is to replicate the **feel** of the original A40 instrument cluster — same five-hole bezel layout, same warm cream-on-black face, same skinny chrome needles — while packing in every signal a turbo SR20 actually needs. The generated artwork below is what the Godot scenes consume; the bezel sizes and dial color palette are pulled straight from the OEM cluster reference photo at the top of the post.
+
+<figure class="wide">
+  <img src="/assets/projects/a40-austin/blog/dash/gauges/dashboard_preview.png" alt="Complete mockup of the A40 digital cluster: tachometer flanked by four pill gauges" />
+  <figcaption>Complete cluster mockup — center tach flanked by four pill gauges (coolant, oil pressure + oil temp, boost + AFR, fuel + battery + IAT), sized and spaced to drop into the original A40 bezel openings. This is the layout Godot composes from the individual scenes in Section 9.</figcaption>
 </figure>
 
 ---
@@ -323,7 +354,7 @@ Repeat for each of the five composite gauges (coolant, oil pair, tach/speed/gear
 4. Click **Export Project** and save to `~/Desktop/dash_app.arm64`.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-godot-scene.png" alt="Godot 2D scene with composite gauge faces laid out for the A40 cluster" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-godot-scene.png" alt="Godot 2D scene with composite gauge faces laid out for the A40 cluster" />
   <figcaption>Placeholder: Godot 2D scene with the five composite gauges arranged for the A40 bezel.</figcaption>
 </figure>
 
@@ -415,7 +446,7 @@ sudo systemctl start dash.service
 Every power cycle now boots the Pi straight into a borderless, cursor-free, hardware-accelerated digital dashboard — no SSH, no manual login, no desktop in sight.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash-final-boot.jpg" alt="A40 digital dash booted natively on the Waveshare 12.3 inch DSI panel" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-final-boot.jpg" alt="A40 digital dash booted natively on the Waveshare 12.3 inch DSI panel" />
   <figcaption>Placeholder: final native boot — Godot dash running under Sway on the Waveshare bar display.</figcaption>
 </figure>
 
@@ -435,7 +466,7 @@ A stock Pi boot dumps a wall of kernel text and a blinking cursor. To turn the k
 The repo includes [scripts/a40-splash-generator.py](scripts/a40-splash-generator.py) — a Pillow script that renders the Austin A40 crest (oxblood enamel, robin's-egg-blue diagonal band, tall gold "40" numerals, gold "Austin" cursive) and emits **two** files in a single run:
 
 - `scripts/output/a40-dash/a40-boot-splash-portrait.png` — **720×1920**, pre-rotated 90° for Plymouth on the portrait-native panel.
-- `public/assets/projects/a40-austin/blog/a40-boot-splash-landscape.png` — **1920×720**, landscape, for the blog frontend.
+- `public/assets/projects/a40-austin/blog/dash/a40-boot-splash-landscape.png` — **1920×720**, landscape, for the blog frontend.
 
 ```bash
 source $HOME/miniconda3/etc/profile.d/conda.sh
@@ -446,7 +477,7 @@ python scripts/a40-splash-generator.py
 > **Note — rotation.** The Pi output defaults to `--rotate 90` to match Sway's `output * transform 270`. If it boots upside-down, regenerate with `--rotate 270`. The blog output is always landscape and is never rotated. Pass `--blog-out ''` to skip writing the blog copy.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/a40-boot-splash-landscape.png" alt="Generated Austin A40 boot splash crest with diagonal band and gold lettering" />
+  <img src="/assets/projects/a40-austin/blog/dash/a40-boot-splash-landscape.png" alt="Generated Austin A40 boot splash crest with diagonal band and gold lettering" />
   <figcaption>Generated boot splash, shown in landscape for readability. The actual file shipped to the Pi is pre-rotated 90° to match the panel.</figcaption>
 </figure>
 
