@@ -282,11 +282,6 @@ The original A40 bezel has **5 mechanical openings**: one large round hole in th
 
 The four outer gauges share identical visual sizing so the cluster stays symmetric behind the original A40 trim ring; only the center gauge scales up to match the bigger bezel hole.
 
-<figure>
-  <img src="/assets/projects/a40-austin/blog/dash/dash-gauge-layout.png" alt="Five-slot turbo SR20 gauge layout mapped onto the A40 bezel" />
-  <figcaption>Placeholder: 5-slot composite gauge layout mapped onto the A40 bezel openings.</figcaption>
-</figure>
-
 ---
 
 ## Section 8 — Generate gauge assets (Mac)
@@ -308,6 +303,11 @@ The visual target is to replicate the **feel** of the original A40 instrument cl
 <figure class="wide">
   <img src="/assets/projects/a40-austin/blog/dash/gauges/dashboard_preview.png" alt="Complete mockup of the A40 digital cluster: tachometer flanked by four pill gauges" />
   <figcaption>Complete cluster mockup — center tach flanked by four pill gauges (coolant, oil pressure + oil temp, boost + AFR, fuel + battery + IAT), sized and spaced to drop into the original A40 bezel openings. This is the layout Godot composes from the individual scenes in Section 9.</figcaption>
+</figure>
+
+<figure>
+  <img src="/assets/projects/a40-austin/blog/dash/dash-gauge-layout.jpg" alt="Generated cluster artwork overlaid on the scanned A40 dash bezel for fit-check" />
+  <figcaption>Fit-check: the generated cluster artwork dropped onto the scanned A40 bezel mesh. Confirms the four outer pill gauges line up with the small bezel openings and the central tach fills the large opening cleanly before any Godot scene work begins.</figcaption>
 </figure>
 
 ---
