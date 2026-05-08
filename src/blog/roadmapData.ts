@@ -123,7 +123,7 @@ export const roadmap: Roadmap = {
       kind: 'decision',
       status: 'decided',
       decision: 'Miata NA rack (depowered, 175 mm narrowed) + junkyard column-mount EPAS (Prius / Kia Soul) in failsafe mode.',
-      posts: ['steering', 'steering-upgrade'],
+      posts: ['steering'],
       summary: 'Lock the rack donor and the EPAS column donor. Output: parts list and a one-pager noting failsafe wiring approach.',
       notes: [
         'Rack: Miata NA, depowered (Flyin\' Miata method), narrowed by the front-track delta',
@@ -277,7 +277,7 @@ export const roadmap: Roadmap = {
       title: 'Narrowing & Geometry Analysis',
       epic: 'narrowing',
       status: 'in-progress',
-      posts: ['narrowing-analysis', '005b-geometry-design-reference'],
+      posts: ['narrowing-analysis', 'geometry-design-reference'],
       summary: 'Track width, tire choice, and how much to narrow the donor subframe.',
     },
     {
@@ -285,14 +285,14 @@ export const roadmap: Roadmap = {
       title: 'SA V2 Output Pack: RC, Camber, Ackermann, MR',
       epic: 'narrowing',
       status: 'in-progress',
-      posts: ['005c-sa-v2-workflow'],
+      posts: ['geometry-design-reference'],
       summary: 'Run SA V2 with donor-verified pickup coords. Done = numbers in hand for: front RC height + migration cloud, camber curve, anti-dive/squat, Ackermann error vs lock, motion ratio, ARB stiffness split.',
       notes: [
         'Tool runs but inputs are mix of real + placeholder estimates',
         'Main blocker: time',
         'Inputs from t-miata-measurements (online refs); t-scan-donor-miata is a soft validation that may trigger a re-run',
         'CG strategy: CAD-aggregate from per-component mass + CoG (body, SR20, trans, etc.) — accept higher error band',
-        'Done = each row of the "Expected outputs" table in 005c has a number',
+        'Done = each row of the SA V2 expected-outputs table in the geometry design reference has a number',
         'Blocks frame finalization and ARB sizing',
       ],
     },
@@ -301,7 +301,7 @@ export const roadmap: Roadmap = {
       title: 'Suspension Tuning Reference',
       epic: 'narrowing',
       status: 'in-progress',
-      posts: ['005d-suspension-tuning'],
+      posts: ['suspension-tuning'],
       summary: 'Spring/damper targets, anti-dive, motion ratio.',
     },
     {
@@ -554,7 +554,7 @@ export const roadmap: Roadmap = {
       title: 'Steering Rack Narrowing CAD',
       epic: 'design',
       status: 'planning',
-      posts: ['steering-rack'],
+      posts: ['steering'],
       summary: 'Cut and re-weld the donor rack to match the narrowed track.',
     },
     {
@@ -594,7 +594,7 @@ export const roadmap: Roadmap = {
       title: 'Dash UI / Software',
       epic: 'design',
       status: 'in-progress',
-      summary: 'React-based dashboard app on the Pi 5: layout (survival data peripheral, driving data center, admin right), CAN frame parsing, render loop. Can be developed against synthetic / replayed CAN data before a real ECU is on hand.',
+      summary: 'Godot/GDScript dashboard app on the Pi 5: layout (survival data peripheral, driving data center, admin right), CAN frame parsing, render loop. Built as a Godot 2D scene exported to dash_app.arm64 with Sway autoboot. Can be developed against synthetic / replayed CAN data before a real ECU is on hand.',
       notes: [
         'Priority order: coolant temp, oil pressure, AFR, MAP, tach, speed, oil temp, fuel level, battery V, IAT',
         'Bench-testable with PiCAN3 in loopback or pre-recorded Haltech logs',
@@ -821,7 +821,12 @@ export const roadmap: Roadmap = {
       epic: 'fabrication',
       status: 'planning',
       kind: 'purchase',
-      summary: 'Hard line, AN flex hoses, fittings, P-clips. Routing follows frame rails away from heat sources.',
+      summary: 'Hard line (3/16" cunifer or stainless), AN flex hoses for axle + caliper drops, fittings, P-clips, flare tool consumables. Routing follows frame rails away from heat sources.',
+      notes: [
+        'Hard line: cunifer preferred over stainless for ease of bending and corrosion resistance',
+        'Flex hoses at each caliper + one bridging frame to rear axle housing',
+        'Diagonal (X-pattern) split layout — separate runs from each master port to opposite-corner caliper pairs',
+      ],
     },
     {
       id: 't-buy-calipers',
@@ -837,7 +842,7 @@ export const roadmap: Roadmap = {
       epic: 'fabrication',
       status: 'planning',
       kind: 'purchase',
-      summary: 'Inline adjustable proportioning valve (Wilwood/Tilton) for the rear circuit. Required: Miata rears are oversized for the A40\u2019s weight.',
+      summary: 'Inline adjustable proportioning valve (Wilwood/Tilton) for the rear circuit. Required: Miata rears are oversized for the A40’s weight.',
     },
 
     /* Builds */
@@ -919,11 +924,24 @@ export const roadmap: Roadmap = {
       summary: 'Driveshaft, narrowed rear end, axles.',
     },
     {
+      id: 't-brake-lines-fab',
+      title: 'Brake Line Routing & Fab',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Bend, flare, and route hard lines along frame rails per the diagonal (X-pattern) split. Mount the adjustable proportioning valve inline on the rear circuit (accessible from cabin / under-dash for adjustment). Mount tabs / P-clips welded to frame during frame fab.',
+      notes: [
+        'Two hard-line runs from the master — one per diagonal circuit',
+        'Prop valve sits inline on the rear circuit, upstream of the rear flex hose',
+        'Flex hoses bridge frame → each front caliper and frame → rear axle (axle moves on four-link)',
+        'Keep lines off the exhaust + downpipe; heat shielding where unavoidable',
+      ],
+    },
+    {
       id: 't-brake-install',
       title: 'Brake System Install',
       epic: 'fabrication',
       status: 'planning',
-      summary: 'Master cylinder, hard lines, flex hoses, calipers, bleed.',
+      summary: 'Mount master cylinder, install hard lines + flex hoses + adjustable prop valve (per t-brake-lines-fab), bolt on calipers, install rear caliper brackets, bench-bleed the master, full-system bleed.',
     },
     {
       id: 't-wiring',
@@ -1265,18 +1283,28 @@ export const roadmap: Roadmap = {
     /* ─────────── Seat hardware ─────────── */
     {
       id: 't-buy-harnesses',
-      title: 'Buy: Seat Belts / Harnesses',
+      title: 'Buy: 3-Point Seat Belts',
       epic: 'fabrication',
       status: 'planning',
       kind: 'purchase',
-      summary: '3- or 4-point belts compatible with the chosen seats and the frame anchor geometry.',
+      summary: '3-point retractable lap+shoulder belts (street-legal, inspection-required). Universal hot-rod kit (Wesco / Juliano’s / Securon) sized to the chosen seats and the frame anchor geometry.',
+      notes: [
+        '3-point locked — 4-point harnesses dropped (require a harness bar, conflict with no-cage decision)',
+        'Retractable type for street use',
+        'Need 3 anchor points per side: outboard floor (lap), inboard floor (lap+buckle), upper B-pillar / rear bulkhead (shoulder)',
+      ],
     },
     {
       id: 't-seats-install',
-      title: 'Seats & Harnesses Install',
+      title: 'Seats & 3-Point Belt Install',
       epic: 'fabrication',
       status: 'planning',
-      summary: 'Mount seats, sliders, and belt anchors to the frame.',
+      summary: 'Mount seats, sliders, and 3-point belt anchors to the frame. Anchor tabs welded to frame nodes during frame fab; belts installed once seats are in.',
+      notes: [
+        'Outboard lap and shoulder anchors take the full crash load — reinforced frame tabs, not sheet metal',
+        'Shoulder anchor height: ~250-300 mm above the seated shoulder for correct belt angle',
+        'Verify belt geometry with the actual seat in place before final-welding any tabs',
+      ],
     },
 
     /* ─────────── Shock + EPAS install ─────────── */
@@ -1446,8 +1474,8 @@ export const roadmap: Roadmap = {
       epic: 'research',
       kind: 'decision',
       status: 'planning',
-      summary: 'Pick the Ford 9\u2033 ratio (3.55 / 3.73 / 4.10) and LSD model. Driven by transmission gearing + final tune target.',
-      deferrable: '3rd-member can be ordered late; doesn\u2019t block axle housing or shafts.',
+      summary: 'Pick the Ford 9″ ratio (3.55 / 3.73 / 4.10) and LSD model. Driven by transmission gearing + final tune target.',
+      deferrable: '3rd-member can be ordered late; doesn’t block axle housing or shafts.',
       notes: [
         'Ratio: 3.55 / 3.73 / 4.10',
         'LSD: Truetrac/Torsen gear-type baseline',
@@ -1459,7 +1487,7 @@ export const roadmap: Roadmap = {
       title: 'Pinion Angle Setup on Jig',
       epic: 'fabrication',
       status: 'planning',
-      summary: 'On the jig at ride height, set upper four-link bar lengths to give equal 2\u20133\u00b0 U-joint operating angles. Done before driveshaft is measured.',
+      summary: 'On the jig at ride height, set upper four-link bar lengths to give equal 2–3° U-joint operating angles. Done before driveshaft is measured.',
     },
     {
       id: 't-bump-steer-check',
@@ -1526,6 +1554,7 @@ export const roadmap: Roadmap = {
       notes: [
         'Leaning welded for stiffness (consistent with t-decide-cage = no cage initially)',
         'NVH trade-off: welded = more vibration into cabin',
+        'Still open — traditional rubber mounts and hybrid both viable',
       ],
     },
     {
@@ -1938,6 +1967,10 @@ export const roadmap: Roadmap = {
     { from: 't-firewall-build',     to: 't-brake-install',         kind: 'hard', label: 'Masters mount on firewall.' },
     { from: 't-buy-brake-master',   to: 't-brake-install',         kind: 'hard' },
     { from: 't-buy-brake-lines',    to: 't-brake-install',         kind: 'hard' },
+    { from: 't-buy-brake-lines',    to: 't-brake-lines-fab',       kind: 'hard' },
+    { from: 't-buy-prop-valve',     to: 't-brake-lines-fab',       kind: 'hard' },
+    { from: 't-frame-build',        to: 't-brake-lines-fab',       kind: 'hard', label: 'Lines route along frame rails.' },
+    { from: 't-brake-lines-fab',    to: 't-brake-install',         kind: 'hard' },
     { from: 't-buy-calipers',       to: 't-brake-install',         kind: 'hard' },
     { from: 't-pedal-box-design',   to: 't-brake-install',         kind: 'soft' },
 

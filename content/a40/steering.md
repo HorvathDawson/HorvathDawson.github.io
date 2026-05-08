@@ -2,7 +2,8 @@
 title: "Steering"
 date: 2024-04-01
 status: in-progress
-epic: research
+epic: design
+kind: reference
 tags: [steering, safety, fabrication]
 ---
 

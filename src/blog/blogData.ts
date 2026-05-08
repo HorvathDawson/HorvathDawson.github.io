@@ -5,6 +5,8 @@ marked.use(markedKatex({ throwOnError: false, nonStandard: true }));
 
 export type Status = 'planning' | 'in-progress' | 'complete' | 'decided';
 
+export type PostKind = 'log' | 'reference' | 'tutorial';
+
 export interface BlogPostMeta {
   slug: string;
   title: string;
@@ -12,6 +14,7 @@ export interface BlogPostMeta {
   status: Status;
   tags: string[];
   epic: string;
+  kind?: PostKind;
 }
 
 export interface BlogPost extends BlogPostMeta {
@@ -60,6 +63,9 @@ function parseTags(raw: string | undefined): string[] {
 /** Convert raw Markdown (with frontmatter) into a BlogPost. */
 export function parsePost(raw: string, slug: string): BlogPost {
   const { meta, body } = parseFrontmatter(raw);
+  const rawKind = meta.kind as PostKind | undefined;
+  const kind: PostKind | undefined =
+    rawKind === 'log' || rawKind === 'reference' || rawKind === 'tutorial' ? rawKind : undefined;
   return {
     slug,
     title: meta.title ?? slug,
@@ -67,6 +73,7 @@ export function parsePost(raw: string, slug: string): BlogPost {
     status: (meta.status as BlogPost['status']) ?? 'planning',
     tags: parseTags(meta.tags),
     epic: meta.epic ?? 'planning',
+    kind,
     html: marked.parse(body, { async: false }) as string,
   };
 }

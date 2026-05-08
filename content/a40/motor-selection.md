@@ -3,6 +3,7 @@ title: "Motor Selection"
 date: 2023-09-08
 status: complete
 epic: research
+kind: log
 tags: [motor, sr20det]
 ---
 

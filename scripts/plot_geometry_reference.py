@@ -2,7 +2,7 @@
 Generate engineering plots for the A40 build blog.
 
 Outputs PNG files to public/assets/projects/a40-austin/blog/plots/
-Run from the repo root: python scripts/plot_005b.py
+Run from the repo root: python scripts/plot_geometry_reference.py
 
 Constants come from the 005b analysis:
   - Miata NA front track 1405 mm, A40 target 1230 mm
@@ -93,7 +93,7 @@ IR_BAR = 1.977
 
 # Rear: live axle on four-link.  Roll stiffness uses the spring base
 # (lateral distance between coilover mounts on the axle housing), not
-# the track width.  Estimated spring base ~950mm (narrowed Ford 8-inch
+# the track width.  Estimated spring base ~950mm (narrowed Ford 9-inch
 # housing, coilovers mounted near the bearing caps).
 # Rear spring: 20 N/mm, MR ~1.0 (coilover acts directly on the axle tube).
 # K_phi_r = K_w_rear * spring_base^2 / 2 = 20000 * 0.95^2 / 2 = 9,025 N-m/rad
@@ -1903,7 +1903,7 @@ def plot_motion_ratio_vs_angle():
     mr = lever * np.sin(alpha_rad)
 
     # Wheel-offset sensitivity band: a wheel with +/-15 mm offset versus
-    # the spec ET45 shifts the contact patch laterally by the same
+    # the spec ET+38 shifts the contact patch laterally by the same
     # amount, changing D_arm and therefore the lever ratio.  This is
     # the dominant tolerance once the donor arm and frame pickups are
     # fixed — show it as a shaded band so the reader can see it
@@ -2008,11 +2008,11 @@ def plot_motion_ratio_vs_angle():
 # ====================================================================
 def plot_ride_frequency():
     fig, ax = styled_fig()
-    ks = np.linspace(10, 50, 200)
-    MR = 0.9
+    ks = np.linspace(10, 80, 200)
+    MR = 0.63
 
     colors = [BLUE, PURPLE, PINK, GOLD]
-    masses = [180, 210, 240, 270]
+    masses = [180, 210, 234, 270]
 
     for mc, c in zip(masses, colors):
         kw = ks * 1000 * MR**2
@@ -2025,8 +2025,8 @@ def plot_ride_frequency():
     ax.text(11, 1.38, "1.2-1.6 Hz street target", color=GOLD, fontsize=7.5, alpha=0.7)
 
     ax.annotate(
-        "A40 front ~234 kg corner\n" "18-28 N/mm \u2192 1.2-1.6 Hz",
-        xy=(38, 2.15),
+        "A40 front ~234 kg corner\n" "33-60 N/mm \u2192 1.2-1.6 Hz",
+        xy=(60, 2.4),
         fontsize=7.5,
         color=TEXT,
         alpha=0.7,
@@ -2039,7 +2039,7 @@ def plot_ride_frequency():
     ax.legend(
         fontsize=8, facecolor=BG, edgecolor=GRID2, labelcolor=TEXT, loc="upper left"
     )
-    ax.set_xlim(10, 50)
+    ax.set_xlim(10, 80)
     ax.set_ylim(0.5, 3.0)
     save(fig, "ride_frequency.png")
 
@@ -4556,7 +4556,7 @@ def plot_driveshaft_angles():
     ax.text(
         px1 - 0.5,
         py1 + 1.2,
-        'Ford 8" Pinion',
+        'Ford 9" Pinion',
         color=A40_C,
         fontsize=9,
         ha="right",

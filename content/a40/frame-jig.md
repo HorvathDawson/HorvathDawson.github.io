@@ -2,7 +2,8 @@
 title: "Frame Jig Build"
 date: 2025-06-22
 status: complete
-epic: design
+epic: fabrication
+kind: log
 tags: [frame, fabrication, jig]
 ---
 

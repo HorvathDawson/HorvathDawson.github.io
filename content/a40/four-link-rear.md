@@ -1,18 +1,19 @@
 ---
 title: "Four-Link Rear Suspension"
-date:
+date: 2026-03-26
 status: planning
-epic: research
+epic: fabrication
+kind: log
 tags: [suspension, rear, four-link]
 ---
 
-Going with a triangulated four-link setup for the rear. The kit is the Welder Series (WS) 318500 triangulated four-link. It's a weld-in kit designed for custom chassis work, which is exactly what this is.
+Going with a triangulated four-link setup for the rear. The kit is the Welder Series (WS) 318500 (Horton Hot Rod) triangulated four-link. It's a weld-in kit designed for custom chassis work, which is exactly what this is.
 
-> The front suspension narrowing analysis, roll stiffness, and rear roll center interaction are covered in the 005 geometry design reference and suspension tuning reference posts.
+> The front suspension narrowing analysis, roll stiffness, and rear roll centre interaction are covered in the [geometry design reference](./geometry-design-reference) and [suspension tuning reference](./suspension-tuning) posts.
 
 The kit gives you the brackets, rod ends, adjusters, and tube for the four bars. Two lower bars run parallel, two upper bars angle inward to provide lateral location. This means no Panhard bar or Watts link needed, the triangulated uppers handle it.
 
-The rear axle is the narrowed Ford 8" from the second car. It's a solid choice for this, strong enough for the SR20's output, and custom axle shafts are available in whatever length and bolt pattern you want. Redrilling to 4x100 to match the Miata hubs up front.
+The rear axle is a 31-spline Ford 9" that I bought to narrow down to the required track for this car. It's a solid choice for this, strong enough for the SR20's output, and custom axle shafts are available in whatever length and bolt pattern you want. Shafts will be ordered from Moser with 4x100 flanges and the Miata-compatible hub register so the rear runs the same wheels as the front.
 
 ## Welder Series 318500 installation notes
 
@@ -33,7 +34,7 @@ Key dimensions and setup from the instructions (all measurements at ride height)
 - Upper rear axle bracket plates mount the bar with the middle of the urethane bushing **2-1/8" above rear axle centerline**
 - One plate faces ahead, one faces back. On curved housing sections each plate will need trimming to fit
 - Try to keep the bolts horizontal
-- If the differential is offset (like Ford 8" and 9"), start mockup on the shorter side
+- If the differential is offset (like the Ford 9"), start mockup on the shorter side
 - Upper bars might need to be shortened depending on rear end width and frame width — tack the bushing outer tube first until length is established during mockup
 - Upper frame brackets may need trimming to accommodate the upper bar angle. Ensure wrench clearance on the nut
 - Some rear ends require the upper bars to be "reversed"
@@ -50,7 +51,7 @@ Key dimensions and setup from the instructions (all measurements at ride height)
 - Mounting heights on frame and axle (starting from the 5" below / 27-1/8" ahead and 2-1/8" above numbers)
 - Coilover mounting location and spring rate
 - Clearances inside the A40's body with the axle at full droop and full bump
-- Whether the uppers need to be reversed for the Ford 8" housing
+- Whether the uppers need to be reversed for the Ford 9" housing
 - How the offset differential affects the shorter-side mockup sequence
 
 ## Anti-roll bar considerations

@@ -3,10 +3,11 @@ title: "Digital Dash"
 date: 2026-04-16
 status: in-progress
 epic: fabrication
+kind: tutorial
 tags: [electronics, dash, raspberry-pi, haltech, can-bus]
 ---
 
-The A40's original gauge cluster is a simple oval bezel with speedo and a handful of idiot lights. It's not going back in. A modified SR20DET needs real instrumentation, and the stock cluster doesn't have room for half of what matters. The plan is a custom React-based digital dashboard running on a Raspberry Pi, mounted behind the original bezel opening.
+The A40's original gauge cluster is a simple oval bezel with speedo and a handful of idiot lights. It's not going back in. A modified SR20DET needs real instrumentation, and the stock cluster doesn't have room for half of what matters. The plan is a custom Godot/GDScript digital dashboard running on a Raspberry Pi, mounted behind the original bezel opening. (The selection process between Godot and a React/web stack is in section 6 below — Godot won.)
 
 <figure>
   <img src="/assets/projects/a40-austin/blog/dash/dash-reference.jpeg" alt="A40 Austin Devon dash bezel with dimension reference" />
@@ -45,7 +46,7 @@ A factory SR20DET only gives the ECU about half of the signals the dash wants to
 | Oil pressure | 0–150 psi 3-wire pressure transducer (e.g. AEM 30-2130-150 / Honeywell PX3) — **not** the OEM single-wire idiot-light switch | 1/8 NPT tee at the oil-pressure sender boss on the block |
 | Oil temperature | 1/8 NPT thermistor (Haltech HT-010-300 or equivalent) | Oil pan bung, or sandwich plate at the filter |
 | Wideband AFR | Bosch **LSU 4.9** sensor + CAN-capable controller (Haltech WB1 or Nexus-internal WB) — OEM narrowband O2 cannot show real AFR | Welded boss in the downpipe, **post-turbo, pre-cat**, ≥600 mm from the turbine to keep the sensor below 850 °C |
-| Boost (MAP) above factory range | The **Haltech Nexus S2** has a built-in **3.5 bar** MAP sensor (good to ~36 psi of boost) and the **Elite 1500** has a built-in **2.5 bar** sensor (~22 psi). For this build neither needs an added MAP sensor. Only swap to an external 4-bar (or 5-bar) MAP on a spare analog input if pushing past those ceilings | Vacuum tap on the intake manifold \u2014 only required if exceeding the ECU's internal MAP ceiling |
+| Boost (MAP) above factory range | The **Haltech Nexus S2** has a built-in **3.5 bar** MAP sensor (good to ~36 psi of boost) and the **Elite 1500** has a built-in **2.5 bar** sensor (~22 psi). For this build neither needs an added MAP sensor. Only swap to an external 4-bar (or 5-bar) MAP on a spare analog input if pushing past those ceilings | Vacuum tap on the intake manifold — only required if exceeding the ECU's internal MAP ceiling |
 | Fuel level | Custom resistive sender sized for the A40 tank (the OEM A40 sender, if it survives the tank rebuild, is 0–80 Ω which the Haltech can scale) | Top of the fuel tank — likely fabricated alongside the new in-tank pump hat |
 | Vehicle speed | GPS speed (Haltech RACEPAK GPS module on CAN) **or** Hall-effect sensor on the driveshaft yoke; the A40 has no factory VSS that maps cleanly to the new gearbox | GPS antenna on the dash top, or sensor bracket near the gearbox tail-housing |
 | Gear position | Derived in software from `vehicle_speed / engine_rpm` against a per-gear ratio table — **no sensor needed** | — |
@@ -111,7 +112,7 @@ Once the desk tests are clean and the dash UI is loading correctly, the stack co
 
 <figure class="wide">
   <img src="/assets/projects/a40-austin/blog/dash/dash-wiring.svg" alt="Digital dash wiring diagram: battery, kill switch, fused ignition feed, Mini-Box DCDC-USB, PiCAN3 HAT, Raspberry Pi 5, NVMe SSD, Waveshare DSI display, and Haltech Nexus S2 ECU, with the PSW shutdown signal routed to the Pi 5 J2 header" />
-  <figcaption>Phase 2 wiring overview. Switched +12 V feeds the Mini-Box DCDC-USB (red trunk) plus its ignition-sense pin (orange dashed). Clean V(out) +12 V drops into the PiCAN3 screw terminal pin 4, which runs the on-HAT 3 A SMPS that powers the Pi 5 (and the Waveshare screen via the GPIO 5 V rail). The blue PSW \u2192 Pi 5 J2 trace is the safe-shutdown pulse: on key-off the DCDC-USB pulses the Pi's power-button header to start a clean OS shutdown before HARDOFF cuts power. CAN_H/L (green) come straight from the Haltech Nexus S2 to the PiCAN3 with the on-board 120 \u03a9 terminator. Diagram source: <code>scripts/a40-dash-wiring.py</code>.</figcaption>
+  <figcaption>Phase 2 wiring overview. Switched +12 V feeds the Mini-Box DCDC-USB (red trunk) plus its ignition-sense pin (orange dashed). Clean V(out) +12 V drops into the PiCAN3 screw terminal pin 4, which runs the on-HAT 3 A SMPS that powers the Pi 5 (and the Waveshare screen via the GPIO 5 V rail). The blue PSW → Pi 5 J2 trace is the safe-shutdown pulse: on key-off the DCDC-USB pulses the Pi's power-button header to start a clean OS shutdown before HARDOFF cuts power. CAN_H/L (green) come straight from the Haltech Nexus S2 to the PiCAN3 with the on-board 120 Ω terminator. Diagram source: <code>scripts/a40-dash-wiring.py</code>.</figcaption>
 </figure>
 
 <figure>

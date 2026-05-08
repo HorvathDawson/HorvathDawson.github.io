@@ -3,6 +3,7 @@ title: "Teardown"
 date: 2022-06-15
 status: complete
 epic: project
+kind: log
 tags: [teardown]
 ---
 
@@ -12,11 +13,9 @@ After that, separated the body from the frame. Unbolted all the body mounts, dis
 
 The frame is only being kept for measurements. All the body mount locations, bolt patterns, and key dimensions got recorded before anything else happened. The frame itself is done, it's not being modified or reused.
 
-Also found a second A40 for sale that came with a narrowed Ford 8" already done and a bunch of spare parts. Picked that up too. More on that later since some of those parts are going to be useful.
-
 ## Body condition
 
-With the body up on the hoists I went over the whole thing. It's in decent shape overall. One rocker panel has some rust that will need cutting out and patching, but the floors, rear quarters, and structural areas are solid.
+With the body up on the hoists I went over the whole thing. Visible condition is decent overall — one rocker panel has obvious rust that needs cutting out and patching, and there's surface rust in the usual A40 spots, but nothing has fallen through. Before any final scope is set, the shell is going to be media-blasted to expose what's actually under the paint and seam sealer (floors, sills, A-pillar bases, dogleg, boot floor, inner fender / wheelhouse seams). Mk1-era unibodies tend to hide rust in those areas, so I'm assuming there's more than what's visible until proven otherwise.
 
 The rubber seals and gaskets are all shot. Decades old, melted and cracked. Finding replacements for A40-specific rubbers is going to be a challenge since most of this stuff isn't reproduced anymore. That'll be its own project.
 
