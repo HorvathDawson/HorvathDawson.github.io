@@ -2537,7 +2537,9 @@ export function purchaseRank(id: TaskId): number {
      1. status not complete/decided
      2. all hard upstream deps are complete/decided
      3. bottleneckCount > 0  (must actually block something)
-     4. sort by bottleneckScores desc, take top N
+     4. not marked `deferrable` (those can be figured out
+        during the build — they don't belong in "do next")
+     5. sort by bottleneckScores desc, take top N
 
    Tiebreak: prefer decision > task > purchase (decisions
    unblock thinking before they unblock fab).
@@ -2572,6 +2574,7 @@ function kindRank(t: RoadmapTask): number {
 const topBlockerList: RoadmapTask[] = roadmap.tasks
   .filter(isActionable)
   .filter((t) => (bottleneckCount.get(t.id) ?? 0) > 0)
+  .filter((t) => !t.deferrable)
   .sort((a, b) => {
     const ds = (bottleneckScores.get(b.id) ?? 0) - (bottleneckScores.get(a.id) ?? 0);
     if (ds !== 0) return ds;
