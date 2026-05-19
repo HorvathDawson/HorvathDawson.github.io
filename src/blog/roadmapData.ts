@@ -574,9 +574,9 @@ export const roadmap: Roadmap = {
       id: 't-digital-dash-design',
       title: 'Digital Dash Architecture',
       epic: 'design',
-      status: 'in-progress',
+      status: 'complete',
       posts: ['digital-dash'],
-      summary: 'Pick the stack and lock the architecture: Pi 5 + PiCAN3 + Waveshare 12.3" portrait-DSI screen behind the original A40 bezel, Godot UI consuming Haltech CAN. Output is the spec the hardware, software, CAN-integration, and install tasks build against.',
+      summary: 'Architecture locked: Pi 5 (4GB) + Active Cooler + Freenove M.2 NVMe + PiCAN3 HAT + Waveshare 12.3″ portrait-DSI behind the original A40 bezel, Godot/GDScript UI consuming the Haltech Nexus S2 CAN broadcast, Mini-Box DCDC-USB for clean 12 V + ~45 s graceful shutdown. Full stack, BoM, and Phase 1/Phase 2 wiring documented in the digital-dash post — that spec is what hardware, software, CAN-integration, and install build against.',
     },
     {
       id: 't-dash-hardware',
