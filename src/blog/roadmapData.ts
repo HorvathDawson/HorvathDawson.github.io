@@ -1073,7 +1073,7 @@ export const roadmap: Roadmap = {
       title: 'Charging & Battery Plan',
       epic: 'design',
       status: 'planning',
-      summary: 'Battery location, alternator wiring, fuse/relay panel, kill switch.',
+      summary: 'Full electrical-system plan downstream of the battery-location decision: alternator wiring (charge cable size, regulator), fuse + relay panel layout, kill-switch routing, cable runs from the chosen battery location. Battery location itself is the separate t-decide-battery-location decision.',
     },
     {
       id: 't-buy-battery',
@@ -1594,10 +1594,11 @@ export const roadmap: Roadmap = {
       epic: 'design',
       kind: 'decision',
       status: 'in-progress',
-      summary: 'Out of engine bay for the shaved look. Boot vs under-floor / passenger footwell still TBD.',
+      summary: 'Single decision: where the battery physically lives. Out of engine bay for the shaved look — boot vs under-floor vs passenger footwell still TBD. Output feeds t-charging-design (cable runs, fuse-panel placement, kill-switch routing).',
       notes: [
         'Drives: kill-switch routing, cable spec/length, frame mount tab location',
         'Boot mount: longer cables, more voltage drop, easier access',
+        'Scope distinction: this task = location only. Alternator wiring, fuse panel, charging logic = t-charging-design.',
       ],
     },
     {
