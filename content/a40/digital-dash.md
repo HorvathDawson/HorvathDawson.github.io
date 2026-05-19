@@ -68,6 +68,8 @@ Things the dash gets for free from the ECU stream and that do **not** need an ad
 | Display | [Waveshare 12.3" 1920×720 DSI](https://www.waveshare.com/wiki/12.3-DSI-TOUCH-A) | Portrait-native panel, DSI ribbon (no HDMI cable). Active area must be at least 10.5" × 3.5" to fill the A40 bezel |
 | Bench-only PSU | Official Pi 5 27W USB-C | For desk testing before the car wiring |
 
+> **Upcoming hardware change — dual-bus revision for the EPAS gateway.** Once the [EPAS CAN gateway](./epas-can-gateway) gets wired in, the single-channel PiCAN3 above is replaced by a **PiCAN FD Duo Isolated (non-SMPS)** — same Pi, same Mini-Box DCDC-USB, but two galvanically-isolated CAN channels (Haltech on `can0` @ 1 Mbps, Toyota Prius column on `can1` @ 500 kbps). The dash UI continues to read `can0`; a separate `systemd` service runs the gateway. The Phase 1 / Phase 2 procedure below describes the current PiCAN3 bench state — the dual-bus swap will get its own write-up in the gateway post when the new HAT is on the bench.
+
 ---
 
 ## Section 1 — Hardware assembly

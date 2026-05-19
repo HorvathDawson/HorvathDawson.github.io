@@ -35,7 +35,9 @@ Companies like EPAS Performance (sold through Silver Sport Transmissions) make u
 
 ### Decision
 
-Going with a **junkyard column-mount EPAS unit**, most likely a Prius or Kia Soul column. Cheapest and simplest option, keeps the rack clean with no hydraulic anything, and the whole assembly can provide power steering even with the engine off (handy for pushing the car around the shop). The column will need to be adapted to fit the A40 dash and connect to the rack, but that's fab work that has to happen anyway since nothing about the stock steering is being reused.
+Going with a **2010 Toyota Prius column-mount EPAS unit**, driven by the dash Pi acting as a CAN gateway. Cheapest and simplest hardware path, keeps the rack clean with no hydraulic anything, and the whole assembly can provide power steering even with the engine off (handy for pushing the car around the shop). The column will need to be adapted to fit the A40 dash and connect to the rack, but that's fab work that has to happen anyway since nothing about the stock steering is being reused.
+
+Failsafe-mode wiring (12 V + ignition only) is the baseline and the fallback. The full setup goes one step further: the Raspberry Pi already sitting behind the dash gets a second CAN channel and rebroadcasts the two Toyota frames the column expects (`0x1C4` Powertrain RPM and `0xB4` Speed) so the column delivers speed-sensitive assist instead of a fixed curve. Full architecture, frame IDs, checksum math, and the safety reasoning for keeping the gateway out of the Godot dash app live in the [EPAS CAN gateway post](./epas-can-gateway).
 
 The collapsible column is non-negotiable from a safety standpoint. EPAS keeps things simple: no hydraulic pump to drive off the engine, no high-pressure lines to route and leak, no parasitic power loss.
 

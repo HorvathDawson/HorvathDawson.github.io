@@ -67,7 +67,7 @@ Before pin one of the harness gets crimped, these have to be locked. Each one ch
 - Fans (two PDM channels, staged)
 - Starter / ignition switch / cranking signal
 - Reverse light + neutral safety switch (from the CD009 if I run one)
-- Steering EPAS (covered separately, but the harness needs to budget for a CAN tap or a switched-12V feed depending on how that lands — see the [EPAS notes in the roadmap](./overview))
+- Steering EPAS (covered separately — Prius column driven by the dash Pi as a dual-bus CAN gateway; see [EPAS CAN gateway](./epas-can-gateway). Harness budget on this side is just a switched-12 V + ground run to the Pi enclosure; the Toyota CAN bus is internal to the gateway.)
 
 ## Dash-driven sensor adds
 

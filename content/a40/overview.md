@@ -28,6 +28,7 @@ If you want to follow the build the way it was actually decided:
 9. [Frame jig build](./frame-jig).
 10. [Ladder frame design](./frame-design) → [design overview](./design-overview) (integration view) → [design finalization & cut list](./design-finalization).
 11. [Digital dash](./digital-dash) — Godot/GDScript dash on a Pi over CAN.
+12. [EPAS CAN gateway](./epas-can-gateway) — same Pi, second job: dual-bus gateway so the Prius column gets speed-sensitive assist.
 
 ## By system
 
@@ -37,5 +38,5 @@ If you want to follow the build the way it was actually decided:
 - **Steering:** [steering](./steering)
 - **Frame:** [jig](./frame-jig) → [frame design](./frame-design) → [design overview](./design-overview) → [design finalization](./design-finalization)
 - **Drivetrain:** [motor selection](./motor-selection)
-- **Electronics:** [digital dash](./digital-dash)
+- **Electronics:** [digital dash](./digital-dash) · [EPAS CAN gateway](./epas-can-gateway)
 
