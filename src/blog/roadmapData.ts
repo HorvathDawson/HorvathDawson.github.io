@@ -803,9 +803,9 @@ export const roadmap: Roadmap = {
       id: 't-buy-seats',
       title: 'Buy: Seats',
       epic: 'fabrication',
-      status: 'planning',
+      status: 'complete',
       kind: 'purchase',
-      summary: 'Lightweight buckets compatible with belt anchor geometry and intended H-point.',
+      summary: 'Purchased: MR2 seats. Compact, supportive bucket-style, compatible with belt anchor geometry and the planned H-point.',
     },
 
     /* Purchases — brakes */
