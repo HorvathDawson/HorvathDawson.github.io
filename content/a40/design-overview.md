@@ -35,7 +35,7 @@ This post is the integration view: a one-paragraph summary of each system and a 
 | Driveshaft | Single-piece custom length. 3.5" drop over 37" run; both U-joints at 2.4°. Detail in [rear axle](./rear-axle). |
 | Shock mounts | Front shock towers integrated into the frame (not bolted plates). Rear coilovers between axle housing and frame. |
 | Gas tank | Target OEM location under trunk floor; pending body scan and four-link routing. |
-| Shifter | Cable-operated remote (Lokar-style) — both trans options put the lever well behind the firewall. |
+| Shifter | Remote linkage — trans length puts the native shifter location behind the driver's hip either way. Linkage style (solid rod vs short-throw kit) still TBD. |
 
 ---
 
@@ -45,7 +45,7 @@ Problems to solve in CAD before fabrication. Each gets annotated images as the d
 
 | Issue | Constraint | Approach |
 |---|---|---|
-| **Engine + trans length** | SR20DET + either trans is long for a 2350 mm wheelbase. Single biggest packaging constraint. | Firewall, tunnel width, and floor designed around the bellhousing. CD009 puts the lever behind the driver's hip; OEM 5-speed worse — remote cable shifter required either way. |
+| **Engine + trans length** | SR20DET + either trans is long for a 2350 mm wheelbase. Single biggest packaging constraint. | Firewall, tunnel width, and floor designed around the bellhousing. CD009 puts the lever behind the driver's hip; OEM 5-speed worse — remote shifter linkage required either way. |
 | **Oil pan vs steering rack** | Sump hangs below the block; rack mounts to the crossmember below/behind the engine. Risk of interference with rack housing or tie rod ends. | CAD overlay of engine + rack at mounting height. Custom baffled pan or modified sump may be needed. |
 | **Pedal box placement** | Compact cabin, firewall close to front axle. Manual brakes (no booster) — locked decision. | Three options on the table: engine-bay side of firewall (tight against the SR20DET), underfloor (cuts the floor pan, sealed enclosure), or dash-mounted / bulkhead-recessed (Wilwood-style, masters poking through above the rack). Throttle is DBW — wiring path only. |
 | **Shock selection** | No off-the-shelf "kit" covers both ends. Front locks the shock-tower geometry early. | Options: monotube fronts in custom sleeves + separate rears; full custom (QA1, Viking) both ends; or Miata coilover front kit + four-link-spec rears. Decision must land before frame design is final. |
@@ -56,9 +56,17 @@ Problems to solve in CAD before fabrication. Each gets annotated images as the d
 | **Steering linkage routing** | Narrowed rack ⇒ steeper outboard tie rod angle. At full lock, tie rod arc must clear frame rail / LCA / brackets. | Steering shaft column-to-rack routed to clear exhaust manifold and accessories on that side of the engine. |
 | **Shock + spring clearance** | At full bump shock body must clear frame rail, upper arm, inner fender. Tire sweeps inboard + forward at bump-and-lock. | Budget 12-18 mm of lock loss from narrowing; check tire-to-shock at the worst-case combined position. |
 | **Body-to-frame clearance** | Mount style still TBD. At full travel + body roll the panels must clear tires, arms, shock bodies. | Needs the [body laser scan](#body) most. Until then, conservative estimates from original body-mount measurements + fender opening dimensions. |
-| **Remote shifter packaging** | Two cables (fore-aft + gate). Sharp bends drive friction and make shifts feel heavy. | Cables routed with gentle bends from tailshaft to lever (centred on tunnel between seats). CD009's shorter length helps. |
+| **Remote shifter packaging** | Solid linkage from the native trans shifter location forward to the lever. Sharp bends or excess length add slop and load up the bushings. | Linkage routed with minimal joints from tailshaft to lever (centred on tunnel between seats). CD009's shorter length helps. |
 | **Brake line routing** | 4-wheel disc, braided flex at each corner, hard lines along frame rails. Rear flex must accommodate full droop without tension and full bump without kinking. | Front lines routed around exhaust. Rear flex bridges frame to axle "T" with travel margin. |
 | **Wiring harness routing** | Standalone Haltech ECU. Engine harness through a bulkhead connector; body harness separate along frame rails. | Harness kept away from exhaust heat, moving suspension, steering linkage. Dedicated frame ground bus, individual returns to a common point. |
+
+---
+
+### Downpipe routing reference
+
+![SR20DET assembly with forward top-mount turbo and downpipe routing down the driver side between cylinders 3 and 4](/assets/projects/a40-austin/blog/reference/sr20-downpipe-routing.png)
+
+Forward top-mount manifold with the turbo high and ahead of the head. The downpipe drops down the driver side between cylinders 3 and 4, runs under the pedal box, then along the driver-side frame rail to the rear exit. Crossmembers are unaffected — no relief notches required.
 
 ---
 

@@ -103,12 +103,12 @@ Once the desk tests are clean and the dash UI is loading correctly, the stack co
 
 1. **Add the CAN HAT.** Mount the PiCAN3 directly on top of the Pi 5, seating it on the GPIO header pins.
 2. **Drop the USB-C.** No more wall plug — the PiCAN3's built-in SMPS now powers the Pi (and through it, the SSD) via the GPIO header.
-3. **Wire the Mini-Box DCDC-USB** next to the Pi stack:
+3. **Wire the Mini-Box DCDC-USB** next to the Pi stack (see the [Mini-Box DCDC-USB manual](/assets/projects/a40-austin/blog/reference/PWR-DCDC-USB-manual.pdf) for pinout, jumper settings, and timing configuration):
    - Run car 12V battery / ignition into the Mini-Box input.
    - Run the clean 12V output from the Mini-Box to the PiCAN3 screw terminals, and splice it to power the Waveshare screen's barrel jack.
    - Connect the Mini-Box shutdown pins to the Pi 5's **J2 power header** for a safe OS shutdown when the ignition is cut.
 
-> **Note — shutdown timing.** When the ignition turns off, the Mini-Box triggers a clean OS shutdown and only cuts power ~45 seconds later, so the Pi never gets yanked mid-write.
+> **Note — shutdown timing.** When the ignition turns off, the Mini-Box triggers a clean OS shutdown and only cuts power ~45 seconds later, so the Pi never gets yanked mid-write. Timing is configurable via the DCDC-USB's USB interface — refer to the [manual](/assets/projects/a40-austin/blog/reference/PWR-DCDC-USB-manual.pdf) for the available parameters.
 
 <figure class="wide">
   <img src="/assets/projects/a40-austin/blog/dash/dash-wiring.svg" alt="Digital dash wiring diagram: battery, kill switch, fused ignition feed, Mini-Box DCDC-USB, PiCAN3 HAT, Raspberry Pi 5, NVMe SSD, Waveshare DSI display, and Haltech Nexus S2 ECU, with the PSW shutdown signal routed to the Pi 5 J2 header" />

@@ -193,8 +193,8 @@ export const roadmap: Roadmap = {
       id: 't-scan-front',
       title: '3D Scan: Front',
       epic: 'research',
-      status: 'planning',
-      summary: 'Scan front bodywork — needed before locking front tire / track width.',
+      status: 'complete',
+      summary: 'Front bodywork scanned. Outputs: verified fender clearances for the front-track decision and grille-opening dims for the cooling stack.',
     },
     {
       id: 't-miata-measurements',
@@ -248,12 +248,11 @@ export const roadmap: Roadmap = {
       epic: 'narrowing',
       kind: 'decision',
       status: 'in-progress',
-      summary: 'Working number is ~1230 mm. Could widen later if t-scan-front shows headroom — will not narrow further.',
+      summary: 'Working number is ~1230 mm. Front scan is now in hand — final widening (if any) can be locked against verified fender clearances. Will not narrow further.',
       notes: [
         '1230 mm baseline holds for downstream design',
-        'Final widening (if any) gates on t-scan-front for verified fender clearances',
-        'Front scan is not blocked by anything except scheduling — just needs to be done',
-        'Hand re-measurement skipped — scan will be the source of truth',
+        'Front scan complete (t-scan-front) — use scanned fender geometry to validate / widen',
+        'Hand re-measurement skipped — scan is the source of truth',
       ],
     },
     {
@@ -387,13 +386,15 @@ export const roadmap: Roadmap = {
       id: 't-exhaust-routing',
       title: 'Exhaust / Downpipe Routing',
       epic: 'design',
-      status: 'planning',
-      summary: 'Output: 3D path for 3″ downpipe → mid → single rear exit, clearing rack, frame crossmembers, and floor. Notch list for any crossmember needing relief.',
+      status: 'complete',
+      posts: ['design-overview'],
+      summary: '3D path locked for 3″ downpipe → mid → single rear exit. Forward top-mount turbo drops the downpipe down the driver side between cylinders 3 and 4, under the pedal box, then along the frame rail to the rear exit. Crossmembers unaffected.',
       notes: [
         '3″ committed (single exit out the back)',
-        'No CAD path yet — only visualized rough route',
-        'Must verify clearance to steering rack (low-mount, near downpipe entry zone)',
-        'Crossmembers may need relief notches — list output of this task',
+        'Forward top-mount turbo + driver-side downpipe drop between cyl 3/4 (see design-overview reference image)',
+        'Routes under the pedal box, then along the driver-side frame rail',
+        'No crossmember relief notches required — path clears existing crossmembers',
+        'Clearance to steering rack and column shaft verified',
       ],
     },
     {
@@ -497,7 +498,7 @@ export const roadmap: Roadmap = {
         'Rad: Mishimoto X-Line for 1992–2000 Civic (likely half-core variant)',
         'IC: FMIC, lower half in front of rad',
         'Separate oil cooler — location TBD',
-        'Grille opening dims come from t-scan-front (not yet measured)',
+        'Grille opening dims now available from t-scan-front',
         'Slim electric fan required for small A40 grille',
       ],
     },
@@ -571,11 +572,11 @@ export const roadmap: Roadmap = {
     },
     {
       id: 't-digital-dash-design',
-      title: 'Digital Dash — Overview',
+      title: 'Digital Dash Architecture',
       epic: 'design',
       status: 'in-progress',
       posts: ['digital-dash'],
-      summary: 'Pi 5 + PiCAN3 + Waveshare 12.3" portrait-DSI dash, mounted behind the original A40 bezel. Umbrella node — actual work is split across hardware, software, CAN integration, and physical install.',
+      summary: 'Pick the stack and lock the architecture: Pi 5 + PiCAN3 + Waveshare 12.3" portrait-DSI screen behind the original A40 bezel, Godot UI consuming Haltech CAN. Output is the spec the hardware, software, CAN-integration, and install tasks build against.',
     },
     {
       id: 't-dash-hardware',
@@ -617,8 +618,8 @@ export const roadmap: Roadmap = {
       id: 't-dash-bezel-scan',
       title: 'Scan A40 Dash Bezel',
       epic: 'design',
-      status: 'planning',
-      summary: 'Einstar 2 scan of the A40 dash bezel opening + surrounding mount surfaces so the shroud and screen mounts can be modeled to fit it directly.',
+      status: 'complete',
+      summary: 'Einstar 2 scan of the A40 dash bezel opening + surrounding mount surfaces, used to size the dash display in CAD (and the digital-dash blog renders) so the shroud and screen mounts fit the real bezel directly.',
     },
     {
       id: 't-dash-shroud',
@@ -721,7 +722,8 @@ export const roadmap: Roadmap = {
       epic: 'fabrication',
       status: 'planning',
       kind: 'purchase',
-      summary: 'Standalone ECU (Haltech) and engine-side connectors.',
+      summary: 'Standalone ECU — most likely Haltech Nexus S2 (all-in-one ECU + PDM + wideband + DBW). Final pick locked in the wiring overview.',
+      posts: ['wiring-overview'],
     },
 
     /* Purchases — driveline */
@@ -948,7 +950,17 @@ export const roadmap: Roadmap = {
       title: 'Engine Wiring Harness',
       epic: 'fabrication',
       status: 'planning',
-      summary: 'Engine + chassis harness, power distribution, grounds.',
+      summary: 'Engine + chassis harness, power distribution, grounds. Likely a hybrid build: Haltech Nexus universal harness for the ECU trunk, custom engine-side sub-harnesses with Wiring Specialties connectors, full DR-25 loom.',
+      posts: ['wiring-overview'],
+      notes: [
+        'Pinout & branch map — single one-page diagram of every Nexus branch',
+        'Universal-vs-custom call (leaning hybrid: universal trunk + custom sub-harnesses)',
+        'Connector BOM from Wiring Specialties (EV14 injectors, smart coils, Bosch sensors, DBW TB + pedal, LSU 4.9, bulkhead)',
+        'Engine-side sub-harnesses: injectors, coils, sensors',
+        'Trunk + firewall bulkhead pass-through',
+        'Looming: DR-25 + Raychem SCL boots, P-clip support, 90° branches',
+        'Bench power-up: PDM channels with test loads before sensors go on',
+      ],
     },
     {
       id: 't-engine-startup',
@@ -1528,7 +1540,7 @@ export const roadmap: Roadmap = {
       decision: 'Forward-mounted top-mount manifold. Routes the downpipe down past cylinders 3/4 on the passenger side, keeping it clear of the firewall and steering shaft and giving the cleanest path under the floor.',
       summary: 'Pick turbo (likely re-using one on hand), manifold flange (T3/T4), scroll arch, wastegate style, mount position. Strategy: work from envelope down — manifold geometry should minimize firewall hack-out, then exhaust + IC piping fall out of that.',
       notes: [
-        'Forward top-mount manifold chosen — turbo sits high and forward, downpipe drops near cyl 3/4',
+        'Forward top-mount manifold chosen — turbo sits high and forward, downpipe drops on the driver side between cyl 3/4',
         'Keeps the downpipe out of the firewall / steering shaft zone',
         'Turbo: probably one I already have — inspect/spec soon',
         'Flange / scroll / wastegate spec still to confirm against the on-hand turbo',
@@ -1654,6 +1666,19 @@ export const roadmap: Roadmap = {
       ],
     },
     {
+      id: 't-rough-clean-body',
+      title: 'Rough Clean Body (Needle Scale + Pressure Wash)',
+      epic: 'fabrication',
+      status: 'planning',
+      summary: 'Knock loose scale, undercoat, surface rust, and decades of grime off the bare shell with a needle scaler + pressure wash before media blasting. Pre-clean so the blaster does less work and the rust map is visible early.',
+      notes: [
+        'Needle scaler on undercarriage, wheel wells, frame rails — anywhere flaky undercoat or scale builds up',
+        'Hot pressure wash + degreaser for oil, wax, and seam-sealer residue',
+        'Dry the shell fully before storage; surface rust will flash overnight on bare wet steel',
+        'Output: a first-pass rust map informing t-rust-repair-body scope before t-media-blast-body',
+      ],
+    },
+    {
       id: 't-rust-repair-body',
       title: 'Rust Repair (Floors, Sills, A-Pillars)',
       epic: 'fabrication',
@@ -1749,7 +1774,7 @@ export const roadmap: Roadmap = {
       title: 'Decide: Fuel System Architecture',
       epic: 'design',
       kind: 'decision',
-      status: 'in-progress',
+      status: 'decided',
       decision: 'External Aeromotive 340 + surge tank — the pump is already on hand and drives the choice.',
       summary: 'In-tank conversion vs external pump + surge tank. Locked to external + surge because the Aeromotive 340 is already purchased. Gates fuel-line + tank-prep scope.',
     },
@@ -2269,7 +2294,8 @@ export const roadmap: Roadmap = {
     { from: 't-horn-install',       to: 't-registration',          kind: 'hard' },
 
     /* ── Body / rust prep (added after audit) ── */
-    { from: 't-teardown',           to: 't-media-blast-body',      kind: 'hard' },
+    { from: 't-teardown',           to: 't-rough-clean-body',      kind: 'hard' },
+    { from: 't-rough-clean-body',   to: 't-media-blast-body',      kind: 'hard' },
     { from: 't-media-blast-body',   to: 't-rust-repair-body',      kind: 'hard' },
     { from: 't-rust-repair-body',   to: 't-bodywork',              kind: 'hard' },
 
