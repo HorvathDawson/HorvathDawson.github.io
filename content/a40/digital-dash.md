@@ -63,12 +63,10 @@ Things the dash gets for free from the ECU stream and that do **not** need an ad
 | Computer | Raspberry Pi 5 (4GB) | Runs the dashboard UI |
 | Cooling | Official Raspberry Pi Active Cooler | Required — Pi 5 throttles fast under sustained load, especially in a sealed dash enclosure on a hot engine bay-adjacent firewall |
 | Storage | Freenove M.2 Adapter V2 + Crucial 256GB M.2 NVMe SSD | Fast boot (~8 seconds cold start) |
-| CAN interface | PiCAN3 HAT (Copperhill Technologies) | Translates Haltech CAN to Linux SocketCAN |
+| CAN interface | [PiCAN FD Duo Isolated (non-SMPS)](https://copperhilltech.com/pican-fd-duo-board-with-real-time-clock-for-raspberry-pi/) | Two galvanically-isolated CAN channels: `can0` reads the Haltech broadcast (1 Mbps) for the dash, `can1` drives the Toyota Prius EPAS column (500 kbps) for the [CAN gateway](./epas-can-gateway). Isolation is the primary reason — a ground loop between the Haltech and the column transceivers would otherwise fry the HAT and leave the car with no power steering. Second channel is the bonus that makes the gateway possible at all. |
 | Power supply | Mini-Box DCDC-USB (100W) | Clean 5V/12V from car's dirty 12V; handles ignition-off shutdown |
 | Display | [Waveshare 12.3" 1920×720 DSI](https://www.waveshare.com/wiki/12.3-DSI-TOUCH-A) | Portrait-native panel, DSI ribbon (no HDMI cable). Active area must be at least 10.5" × 3.5" to fill the A40 bezel |
 | Bench-only PSU | Official Pi 5 27W USB-C | For desk testing before the car wiring |
-
-> **Upcoming hardware change — dual-bus revision for the EPAS gateway.** Once the [EPAS CAN gateway](./epas-can-gateway) gets wired in, the single-channel PiCAN3 above is replaced by a **PiCAN FD Duo Isolated (non-SMPS)** — same Pi, same Mini-Box DCDC-USB, but two galvanically-isolated CAN channels (Haltech on `can0` @ 1 Mbps, Toyota Prius column on `can1` @ 500 kbps). The dash UI continues to read `can0`; a separate `systemd` service runs the gateway. The Phase 1 / Phase 2 procedure below describes the current PiCAN3 bench state — the dual-bus swap will get its own write-up in the gateway post when the new HAT is on the bench.
 
 ---
 
@@ -77,7 +75,7 @@ Things the dash gets for free from the ECU stream and that do **not** need an ad
 The build happens in two stages. **Phase 1** is a bench-test stack used to verify the OS, NVMe boot, and the screen. **Phase 2** swaps the bench PSU for the automotive power chain once the UI is ready.
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash/dash-hardware-stack.jpg" alt="Full Pi 5 + NVMe + PiCAN3 stack on the bench" />
+  <img src="/assets/projects/a40-austin/blog/dash/dash-hardware-stack.jpg" alt="Full Pi 5 + NVMe + PiCAN FD Duo stack on the bench" />
   <figcaption>Placeholder: full hardware stack laid out for bench testing.</figcaption>
 </figure>
 
@@ -103,23 +101,23 @@ The build happens in two stages. **Phase 1** is a bench-test stack used to verif
 
 Once the desk tests are clean and the dash UI is loading correctly, the stack converts for the car:
 
-1. **Add the CAN HAT.** Mount the PiCAN3 directly on top of the Pi 5, seating it on the GPIO header pins.
-2. **Drop the USB-C.** No more wall plug — the PiCAN3's built-in SMPS now powers the Pi (and through it, the SSD) via the GPIO header.
+1. **Add the CAN HAT.** Mount the PiCAN FD Duo Isolated directly on top of the Pi 5, seating it on the GPIO header pins. Both CAN channels are independent and galvanically isolated from the Pi and from each other.
+2. **Power the Pi from the Mini-Box.** The FD Duo Isolated is the non-SMPS variant — it does not feed the Pi over GPIO. The Pi gets its 5 V directly from the Mini-Box DCDC-USB's USB output. (The SMPS variant of this HAT exists; the isolated version intentionally trades it away to keep the CAN side fully isolated.)
 3. **Wire the Mini-Box DCDC-USB** next to the Pi stack (see the [Mini-Box DCDC-USB manual](/assets/projects/a40-austin/blog/reference/PWR-DCDC-USB-manual.pdf) for pinout, jumper settings, and timing configuration):
    - Run car 12V battery / ignition into the Mini-Box input.
-   - Run the clean 12V output from the Mini-Box to the PiCAN3 screw terminals, and splice it to power the Waveshare screen's barrel jack.
+   - Run the clean 5 V USB output from the Mini-Box to the Pi 5's USB-C input. Run the clean 12 V output to the Waveshare screen's barrel jack and to the FD Duo's screw terminals (HAT-side bias supply for the isolated transceivers).
    - Connect the Mini-Box shutdown pins to the Pi 5's **J2 power header** for a safe OS shutdown when the ignition is cut.
 
 > **Note — shutdown timing.** When the ignition turns off, the Mini-Box triggers a clean OS shutdown and only cuts power ~45 seconds later, so the Pi never gets yanked mid-write. Timing is configurable via the DCDC-USB's USB interface — refer to the [manual](/assets/projects/a40-austin/blog/reference/PWR-DCDC-USB-manual.pdf) for the available parameters.
 
 <figure class="wide">
-  <img src="/assets/projects/a40-austin/blog/dash/dash-wiring.svg" alt="Digital dash wiring diagram: battery, kill switch, fused ignition feed, Mini-Box DCDC-USB, PiCAN3 HAT, Raspberry Pi 5, NVMe SSD, Waveshare DSI display, and Haltech Nexus S2 ECU, with the PSW shutdown signal routed to the Pi 5 J2 header" />
-  <figcaption>Phase 2 wiring overview. Switched +12 V feeds the Mini-Box DCDC-USB (red trunk) plus its ignition-sense pin (orange dashed). Clean V(out) +12 V drops into the PiCAN3 screw terminal pin 4, which runs the on-HAT 3 A SMPS that powers the Pi 5 (and the Waveshare screen via the GPIO 5 V rail). The blue PSW → Pi 5 J2 trace is the safe-shutdown pulse: on key-off the DCDC-USB pulses the Pi's power-button header to start a clean OS shutdown before HARDOFF cuts power. CAN_H/L (green) come straight from the Haltech Nexus S2 to the PiCAN3 with the on-board 120 Ω terminator. Diagram source: <code>scripts/a40-dash-wiring.py</code>.</figcaption>
+  <img src="/assets/projects/a40-austin/blog/dash/dash-wiring.svg" alt="Digital dash wiring diagram: battery, kill switch, fused ignition feed, Mini-Box DCDC-USB, PiCAN FD Duo Isolated HAT, Raspberry Pi 5, NVMe SSD, Waveshare DSI display, Haltech Nexus S2 ECU on can0, and Toyota Prius EPAS column on can1, with the PSW shutdown signal routed to the Pi 5 J2 header" />
+  <figcaption>Phase 2 wiring overview. Switched +12 V feeds the Mini-Box DCDC-USB (red trunk) plus its ignition-sense pin (orange dashed). The Mini-Box's clean 5 V USB rail powers the Pi 5 directly (the FD Duo Isolated is non-SMPS, so it intentionally does not feed the Pi over GPIO). The 12 V rail powers the Waveshare screen and biases the FD Duo's HAT-side. The blue PSW → Pi 5 J2 trace is the safe-shutdown pulse: on key-off the DCDC-USB pulses the Pi's power-button header to start a clean OS shutdown before HARDOFF cuts power. CAN_H/L on `can0` (green) come from the Haltech Nexus S2 to the FD Duo's channel 0 transceiver; CAN_H/L on `can1` (purple) run to the Toyota Prius EPAS column on the FD Duo's channel 1 — the two channels are galvanically isolated on the HAT. Diagram source: <code>scripts/a40-dash-wiring.py</code>.</figcaption>
 </figure>
 
 <figure>
-  <img src="/assets/projects/a40-austin/blog/dash/dash-phase2-assembly.jpg" alt="Phase 2 automotive stack with PiCAN3 HAT and DCDC-USB power manager" />
-  <figcaption>Placeholder: Phase 2 automotive stack — PiCAN3 on top, Mini-Box DCDC-USB feeding the rail.</figcaption>
+  <img src="/assets/projects/a40-austin/blog/dash/dash-phase2-assembly.jpg" alt="Phase 2 automotive stack with PiCAN FD Duo Isolated HAT and DCDC-USB power manager" />
+  <figcaption>Placeholder: Phase 2 automotive stack — PiCAN FD Duo Isolated on top, Mini-Box DCDC-USB feeding the rail.</figcaption>
 </figure>
 
 ---
@@ -148,7 +146,7 @@ Prepare the OS on a temporary MicroSD card before booting the Pi.
 
 ## Section 3 — Provisioning script (Mac → Pi)
 
-Rather than typing setup commands by hand, this Bash script runs from the Mac. It SSHes in, injects the screen / NVMe / PiCAN3 device-tree overlays into `/boot/firmware/config.txt`, installs `can-utils`, brings up the `can0` interface, and enables a virtual `vcan0` interface for mock testing.
+Rather than typing setup commands by hand, this Bash script runs from the Mac. It SSHes in, injects the screen / NVMe / FD Duo device-tree overlays into `/boot/firmware/config.txt`, installs `can-utils`, brings up both `can0` (1 Mbps Haltech) and `can1` (500 kbps Toyota EPAS) interfaces, and enables a virtual `vcan0` interface for mock testing.
 
 1. On the Mac, create the file: `nano setup_dash.sh`
 2. Paste the script:
@@ -162,14 +160,15 @@ Rather than typing setup commands by hand, this Bash script runs from the Mac. I
    #!/bin/bash
    sudo apt-get update
 
-   # Driver overlays: Waveshare DSI panel, NVMe boot, PiCAN3
+   # Driver overlays: Waveshare DSI panel, NVMe boot, PiCAN FD Duo Isolated
    sudo cp /boot/firmware/config.txt /boot/firmware/config.txt.bak
    for line in \
      'dtoverlay=vc4-kms-dsi-waveshare-panel-v2,12_3_inch_a_4lane' \
      'dtparam=pciex1' \
      'dtparam=nvme' \
      'dtparam=spi=on' \
-     'dtoverlay=mcp2515-can0,oscillator=16000000,interrupt=25'
+     'dtoverlay=mcp251xfd,spi0-0,interrupt=25' \
+     'dtoverlay=mcp251xfd,spi0-1,interrupt=24'
    do
      sudo grep -qxF "$line" /boot/firmware/config.txt || \
        echo "$line" | sudo tee -a /boot/firmware/config.txt
@@ -181,6 +180,12 @@ Rather than typing setup commands by hand, this Bash script runs from the Mac. I
    auto can0
    iface can0 can static
        bitrate 1000000
+   NETEOF'
+
+   sudo bash -c 'cat > /etc/network/interfaces.d/can1 << "NETEOF"
+   auto can1
+   iface can1 can static
+       bitrate 500000
    NETEOF'
 
    sudo grep -qxF 'vcan' /etc/modules || echo 'vcan' | sudo tee -a /etc/modules
