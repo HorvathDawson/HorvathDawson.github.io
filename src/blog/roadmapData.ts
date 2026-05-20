@@ -1619,7 +1619,8 @@ export const roadmap: Roadmap = {
       epic: 'design',
       kind: 'decision',
       status: 'planning',
-      summary: 'Welded (unibody-style) vs traditional rubber body mounts vs hybrid. Drives NVH, frame stiffness, paint sequencing, and t-body-mount scope.',
+      deferrable: true,
+      summary: 'Welded (unibody-style) vs traditional rubber body mounts vs hybrid. Drives NVH, frame stiffness, paint sequencing, and t-body-mount scope. Deferrable — the actual decision can wait until trial-fit since frame rails can accept either approach.',
       notes: [
         'Leaning welded for stiffness (consistent with t-decide-cage = no cage initially)',
         'NVH trade-off: welded = more vibration into cabin',
