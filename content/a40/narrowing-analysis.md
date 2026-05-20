@@ -63,4 +63,16 @@ The chosen 205/ET+38 sits 19 mm outboard of stock A40 outer-to-outer (≈10 mm p
 
 ## Narrowing target
 
-**1230 mm front track, 87.5 mm narrowing per side.** Within 2 mm of the stock A40 front track, with the chosen 205/ET+38 wheel/tire landing within the body-scan envelope. Pickup-point coordinates and donor-side dimensions are in the [geometry design reference](./geometry-design-reference#numbers).
+**1230 mm front track, 87.5 mm narrowing per side — locked.** Within 2 mm of the stock A40 front track, with the chosen 205/ET+38 wheel/tire landing within the body-scan envelope. Pickup-point coordinates and donor-side dimensions are in the [geometry design reference](./geometry-design-reference#numbers).
+
+### Full-lock-and-full-bump caveat
+
+The envelope check above is done at ride height. Sweeping the tire through the steering arc at ride height clears the body; sweeping it through the bump travel with the wheels pointed straight also clears. The one combination that doesn't quite clear is **simultaneous full steering lock + full suspension compression** — the inboard front corner of the tire kisses the inner fender / wheel arch by a few millimetres.
+
+It's not enough to justify another 5–10 mm of narrowing per side (which would compound back into the rack-narrowing, the inboard pickup geometry, and the front RC height). Three options for handling it, in order of preference:
+
+1. **Steering-lock stops.** Add adjustable hard stops on the rack (or on the knuckle) that pull a couple degrees off maximum lock. Loses some low-speed turning-circle, costs nothing in suspension geometry. Easy to dial in once the car is together.
+2. **Bump-stop progression.** A slightly stiffer bump stop limits how much travel is actually available at full lock — the car would have to be cornering *and* hit a bump big enough to use all of bump travel at the same time, which is a vanishingly rare load case for a street car.
+3. **Local inner-fender massage.** Roll or trim the few millimetres of inner fender at the contact point. Cheapest fix if the interference shows up worse than predicted at mock-up.
+
+Decision deferred until the front subframe is on the jig and a real steering knuckle + tire can be swept against the actual body. The expected outcome is option 1 (lock stops). Not changing the 1230 mm number over a few millimetres in the worst-case corner of the envelope.

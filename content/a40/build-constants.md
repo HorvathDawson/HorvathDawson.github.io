@@ -21,7 +21,7 @@ A single source of truth for the headline numbers used across the rest of the bu
 | Sprung mass | ~850 kg **(working)** | Total minus wheels, hubs, brakes, half of arms and axle. |
 | Centre of gravity height | ~575 mm ±50 **(working)** | Used for roll-stiffness math. Will be refined once the build is rolling. |
 | Wheelbase | 2350 mm **(locked)** | Frame is being designed around this. |
-| Front track | 1230 mm **(working)** | Falls out of 87.5 mm/side narrowing on a 205/65R15 ET+38 wheel. Nearly matches the stock A40 front track of 1232 mm. |
+| Front track | 1230 mm **(locked)** | Falls out of 87.5 mm/side narrowing on a 205/65R15 ET+38 wheel. Nearly matches the stock A40 front track of 1232 mm. Minor tire-to-body interference at simultaneous full steering lock + full bump is a known caveat — see [narrowing analysis](./narrowing-analysis#full-lock-and-full-bump-caveat). |
 | Rear track | 1340 mm **(locked)** | Drives the Ford 9" narrowing target. |
 
 ## Wheels and tires

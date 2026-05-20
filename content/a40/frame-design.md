@@ -16,7 +16,7 @@ The frame is being designed from scratch in CAD. It's a ladder frame — two mai
 The frame is the integration point for everything else. Before any tube is drawn it has to commit to a coherent set of inputs:
 
 - **Wheelbase 2350 mm** — locked, matches the stock A40 body so the wheel openings sit where the original sheet metal expects them.
-- **Front track 1230 mm working / rear track 1340 mm locked** — sets where the front pickup brackets and rear axle perches sit relative to centreline. See [narrowing](./narrowing-analysis) for the front-track derivation.
+- **Front track 1230 mm locked / rear track 1340 mm locked** — sets where the front pickup brackets and rear axle perches sit relative to centreline. See [narrowing](./narrowing-analysis) for the front-track derivation.
 - **Front pickup geometry** — LCA inner mounts 240.5 mm from CL, UCA inner mounts 290.5 mm from CL, with fore/aft span and heights preserved from the donor Miata. Full table in the [geometry design reference](./geometry-design-reference).
 - **Rear four-link brackets** — Welder Series 318500 (Horton Hot Rod) kit. Lower bar mounts 5" below axle CL, 27‑1/8" forward; upper bar mounts 2‑1/8" above axle CL. Detail in the [four-link rear post](./four-link-rear).
 - **Engine + trans envelope** — SR20DET with the trans tunnel sized to the larger CD009 case so either OEM 5‑speed or CD009 fits without rework.
