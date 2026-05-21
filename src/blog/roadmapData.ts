@@ -170,7 +170,7 @@ export const roadmap: Roadmap = {
       epic: 'research',
       status: 'decided',
       kind: 'decision',
-      deferrable: true,
+      deferrable: 'Track + housing are locked. Moser is speccing the custom axles + flanges against those; remaining U-joint series is a driveshaft-shop call later.',
       posts: ['rear-axle'],
       summary: 'Rear track is locked at 1.340 m, so the remaining axle spec (exact flange-to-flange, U-joint series, axle length) is a conversation with Moser using the existing housing as the starting point. Contacted Moser to size custom axles to the locked track + the current housing on hand.',
       decision: 'Moser to spec custom 31-spline axles + flanges (4×100) to land outside-disc-face-to-outside-disc-face at 1.415 m with the +38 mm wheel offset. Housing narrowing ~136–140 mm off the current ~60.5″ stock width. U-joint series deferred to the driveshaft shop.',
@@ -1619,7 +1619,7 @@ export const roadmap: Roadmap = {
       epic: 'design',
       kind: 'decision',
       status: 'planning',
-      deferrable: true,
+      deferrable: 'Frame rails can accept welded, rubber, or hybrid body mounts. Real decision can wait until body trial-fit.',
       summary: 'Welded (unibody-style) vs traditional rubber body mounts vs hybrid. Drives NVH, frame stiffness, paint sequencing, and t-body-mount scope. Deferrable — the actual decision can wait until trial-fit since frame rails can accept either approach.',
       notes: [
         'Leaning welded for stiffness (consistent with t-decide-cage = no cage initially)',
