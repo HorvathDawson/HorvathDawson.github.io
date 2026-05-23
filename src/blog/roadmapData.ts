@@ -147,19 +147,18 @@ export const roadmap: Roadmap = {
       title: 'Decide: Transmission',
       epic: 'research',
       kind: 'decision',
-      status: 'planning',
-      summary: 'Pick the gearbox. Optimization target: shortest achievable bellhousing-to-shifter distance — the A40 cabin is short and any extra trans length pushes the shifter into the rear-seat zone. Most of the modern Nissan boxes have a front shifter-access plate that lets the shifter relocate ~6–10″ forward of stock, which flips the ranking vs. raw case length. The trans tunnel is sized to the largest candidate (CD009) and the trans crossmember is removable, so the choice does not gate frame welding — only the shifter location and floor pan cutout.',
+      status: 'decided',
+      decision: 'Either CD009 (350Z/G35 6-spd) or Z32 (300ZX TT 5-spd) — final pick comes down to whichever clean unit shows up first at the right price. Both sidestep the weak SR20 3rd gear, both have forward shifter access, both fit the existing tunnel.',
+      deferrable: 'Final CD009-vs-Z32 pick is a purchase-availability call. Tunnel + crossmember accept either, so the choice doesn’t gate frame welding.',
+      summary: 'Picking between two finalists: CD009 (350Z/G35 6-spd) or Z32 (300ZX TT 5-spd). Both are similar overall size, both have a forward shifter-access plate that lets the lever sit ~6–10″ ahead of stock, and both sidestep the well-known weak 3rd gear of the SR20 OEM 5-spd. The trans tunnel is already sized for the larger of the two and the crossmember is bolt-in, so the choice does not gate frame welding — only the shifter location, floor pan cutout, and adapter spec.',
       notes: [
-        'Shifter position is the optimization target, NOT raw case length. CD009 / RB25 / Z32 all have a forward access plate that accepts a shifter — moves the lever 6–10″ ahead of the rear-mounted stock position. SR20 OEM 5-spd has only a single rear-mount shifter location.',
-        'Shortlist (sorted by achievable shifter position with forward-mount where available, most-forward first):',
-        '  1. CD009 (350Z/G35 6-spd) — front access plate accepts shifter relocation; shifter moves WAY forward, often the most-forward option of the bunch despite the long case. Strongest of the realistic options. Requires adapter (Driftworks Superfly S15 flywheel plan).',
-        '  2. Z32 (300ZX TT) 5-spd — has a forward shifter-access plate (Z32 NA/TT both); shifter relocates well forward. Strong (~330 lb-ft). Needs an SR-to-Z32 adapter plate.',
-        '  3. RB25DET 5-spd (Skyline) — multiple shifter mount positions on the case; can run forward-mount. Bolts to SR20 with a $200-ish adapter. Stronger than OEM SR 5-spd.',
-        '  4. S15 6-spd (SR20DET OEM in S15 Spec-R) — bolts directly to SR20 (no adapter), 6 gears, but stuck with rear shifter location. Rare/expensive in NA.',
-        '  5. SR20DET OEM 5-spd (S13/S14) — shortest case but ONLY rear-mount shifter, so the lever ends up further back than CD009/Z32/RB25 with forward relocation. Cheap and proven.',
-        'Currently leaning CD009 if the budget allows — gives the most-forward shifter AND the strongest box. SR20 OEM 5-spd remains the cheap fallback.',
-        'Other options considered and parked: R154 (Toyota — long, no good forward shifter option, JZ-swap territory), T56 Magnum (huge, expensive, overkill).',
-        'Tunnel is sized for CD009; any of the above will fit with extra clearance — no rework either way',
+        'Why not the SR20 OEM 5-spd: its 3rd gear is famously weak behind any meaningful boost — the whole reason for going to a stronger box.',
+        'Finalists (similar physical size, both with forward shifter access):',
+        '  • CD009 (350Z/G35 6-spd) — 6 gears, strongest of the realistic options. Requires SR20 → CD009 adapter (Driftworks Superfly S15 flywheel plan).',
+        '  • Z32 (300ZX TT) 5-spd — 5 gears, ~330 lb-ft rating. Needs an SR-to-Z32 adapter plate. Cheaper than CD009.',
+        'Decision driver: cost + availability of a clean unit vs. value of the 6th gear. Both fit the existing tunnel; both land the shifter in the right place.',
+        'Parked options: RB25 5-spd (similar size, but adapter ecosystem is weaker than the two finalists), S15 6-spd OEM (rare/expensive in NA), R154 (no good forward shifter option), T56 Magnum (overkill).',
+        'Tunnel is sized for CD009; Z32 fits with extra clearance — no rework either way',
         'Trans crossmember is bolt-in / removable: not a frame-weld dependency',
         'Open downstream impacts of the choice: shifter location (t-decide-shifter), floor pan cutout, clutch hydraulics (t-buy-clutch-hyd), driveshaft length (t-buy-driveshaft), final-drive ratio target (t-decide-final-drive)',
       ],
@@ -279,33 +278,26 @@ export const roadmap: Roadmap = {
       id: 't-narrowing-analysis',
       title: 'Narrowing & Geometry Analysis',
       epic: 'narrowing',
-      status: 'in-progress',
+      status: 'complete',
       posts: ['narrowing-analysis', 'geometry-design-reference'],
-      summary: 'Track width, tire choice, and how much to narrow the donor subframe.',
+      summary: 'Track width, tire choice, and rack-width / subframe-narrowing all locked in the blog post and reflected in CAD. The remaining suspension-geometry validation (RC, camber, Ackermann, MR sweeps) moves to t-sa-v2 in Suspension Analyzer.',
     },
     {
       id: 't-sa-v2',
-      title: 'SA V2 Output Pack: RC, Camber, Ackermann, MR',
+      title: 'SA V2 Output Pack: RC, Camber, Ackermann, MR + Tuning Targets',
       epic: 'narrowing',
       status: 'in-progress',
-      posts: ['geometry-design-reference'],
-      summary: 'Run SA V2 with donor-verified pickup coords. Done = numbers in hand for: front RC height + migration cloud, camber curve, anti-dive/squat, Ackermann error vs lock, motion ratio, ARB stiffness split.',
+      posts: ['geometry-design-reference', 'suspension-tuning'],
+      summary: 'Run SA V2 with donor-verified pickup coords. Done = numbers in hand for: front RC height + migration cloud, camber curve, anti-dive/squat, Ackermann error vs lock, motion ratio, ARB stiffness split, plus the on-paper tuning targets (ride frequency, wheel rate, damper-stroke envelope) that feed coilover + ARB purchasing. NOT track tuning — corner weights / damper clicks / ride height live post-build under t-suspension-tune.',
       notes: [
         'Tool runs but inputs are mix of real + placeholder estimates',
         'Main blocker: time',
         'Inputs from t-miata-measurements (online refs); t-scan-donor-miata is a soft validation that may trigger a re-run',
         'CG strategy: CAD-aggregate from per-component mass + CoG (body, SR20, trans, etc.) — accept higher error band',
         'Done = each row of the SA V2 expected-outputs table in the geometry design reference has a number',
-        'Blocks frame finalization and ARB sizing',
+        'Tuning-targets sub-output (was t-susp-tuning): ride frequency front/rear, motion ratio, wheel rate, damper stroke envelope, anti-dive, anti-squat — these are what coilover + ARB orders quote against',
+        'Blocks frame finalization, coilover spec, and ARB sizing',
       ],
-    },
-    {
-      id: 't-susp-tuning',
-      title: 'Suspension Tuning Reference',
-      epic: 'narrowing',
-      status: 'in-progress',
-      posts: ['suspension-tuning'],
-      summary: 'Spring/damper targets, anti-dive, motion ratio.',
     },
     {
       id: 't-decide-shocks-front',
@@ -406,8 +398,8 @@ export const roadmap: Roadmap = {
       title: 'Steering Column Routing CAD',
       epic: 'design',
       kind: 'task',
-      status: 'planning',
-      summary: 'Path from column to rack around exhaust/downpipe; clearance and U-joint angles.',
+      status: 'complete',
+      summary: 'Path from column to rack around exhaust/downpipe with U-joint angles and clearance — routed and locked in CAD.',
     },
     {
       id: 't-decide-firewall',
@@ -514,24 +506,18 @@ export const roadmap: Roadmap = {
       summary: 'Charge pipe routing from turbo → IC → throttle body.',
     },
     {
-      id: 't-epas-design',
-      title: 'EPAS Integration CAD',
-      epic: 'design',
-      status: 'planning',
-      posts: ['epas-can-gateway'],
-      summary: 'Donor (Prius) EPAS column packaging, mounting, harness plan, and dual-bus CAN gateway envelope inside the dash Pi enclosure.',
-    },
-    {
       id: 't-decide-brake-system',
       title: 'Brake Hydraulic Spec (Master, Pedal Ratio, Bias)',
       epic: 'design',
       kind: 'task',
       status: 'planning',
+      deferrable: 'Manual-brake decision is locked. The bore + pedal-ratio + bias calc only needs to be done before t-buy-brake-master and t-pedal-box-design, both of which are well downstream of frame welding.',
       summary: 'Output: confirmed master bore + pedal ratio (calc), diagonal split plumbing layout, prop-valve PN, F/R bias target. Manual-brake decision already locked.',
       notes: [
         'Sized to ~950 kg with non-50/50 bias',
+        'F=PA worksheet: caliper piston area F+R, line pressure target, driver foot force → pedal ratio + master bore + pedal travel at peak braking',
         'Master bore: leaning ~7/8" (small) — needs F=PA + line-pressure calc to confirm',
-        'Pedal ratio: TBD — pedal box should allow adjustability (multi-hole pivot)',
+        'Pedal ratio: starting from 5.5:1 (typical for manual brake) — pedal box should allow adjustability (multi-hole pivot)',
         'Split: diagonal (X-pattern)',
         'Prop valve: leaning Tilton — exact PN TBD',
         'Calipers: 4-corner Miata baseline (front + rear); Miata rears bracketed onto Ford 9" housing',
@@ -1031,9 +1017,11 @@ export const roadmap: Roadmap = {
       title: 'Fuel System Design',
       epic: 'design',
       status: 'planning',
-      summary: 'Reuse stock A40 tank under boot floor. Pump architecture (in-tank vs surge+external) TBD — Aeromotive 340 already on hand. Output: line routing, filter, regulator, vent.',
+      deferrable: 'Tank choice (stock vs custom cell) only needs to be resolved once exhaust routing is finalized in CAD. Pump architecture (in-tank vs external+surge) is also a late call — Aeromotive 340 is already on hand. Nothing here gates frame welding.',
+      summary: 'Likely reuse stock A40 tank under boot floor, but possible clearance conflict with the driver-side SR20 downpipe routing may force a custom fuel cell. Pump architecture (in-tank vs surge+external) TBD — Aeromotive 340 already on hand. Output: line routing, filter, regulator, vent.',
       notes: [
-        'Tank: stock A40, stock location (under boot floor)',
+        'Tank: stock A40 in stock location is the default — but downpipe routing (driver side, under pedal box, along driver-side frame rail) may interfere. Confirm clearance against exhaust CAD before committing.',
+        'Fallback: custom fuel cell sized to fit around the locked exhaust path (and/or relocated forward of the rear axle for CG).',
         'Pump: Aeromotive 340 in hand — surge-tank vs in-tank conversion still being researched',
         'Surge tank likely if stock tank lacks baffling for cornering',
         'Hard-line routing along frame, away from exhaust',
@@ -1651,7 +1639,8 @@ export const roadmap: Roadmap = {
       title: 'Decide: Battery Location',
       epic: 'design',
       kind: 'decision',
-      status: 'in-progress',
+      status: 'planning',
+      deferrable: 'Location only needs to be locked before frame welds set the tray mount tabs (soft) and before t-charging-design starts. Battery is out of the engine bay either way; boot vs under-floor vs footwell can be decided once the rear floor + fuel-tank layout is finalised.',
       summary: 'Single decision: where the battery physically lives. Out of engine bay for the shaved look — boot vs under-floor vs passenger footwell still TBD. Output feeds t-charging-design (cable runs, fuse-panel placement, kill-switch routing).',
       notes: [
         'Drives: kill-switch routing, cable spec/length, frame mount tab location',
@@ -1874,17 +1863,6 @@ export const roadmap: Roadmap = {
         'Mount provisions: bracket tabs welded to frame at front cross-tube',
       ],
     },
-    {
-      id: 't-calc-pedal-ratio-bore',
-      title: 'Pedal Ratio + Master Bore Calc',
-      epic: 'design',
-      status: 'planning',
-      summary: 'F=PA worksheet picking pedal ratio (typically 5.5:1 for manual brake) and the master cylinder bore. Output gates the master purchase and the pedal box geometry.',
-      notes: [
-        'Inputs: caliper piston area F+R, line pressure target, driver foot force',
-        'Output: pedal ratio, master bore diameter, pedal travel at peak braking',
-      ],
-    },
   ],
 
   edges: [
@@ -1907,7 +1885,8 @@ export const roadmap: Roadmap = {
     { from: 't-miata-measurements', to: 't-sa-v2',                kind: 'hard', label: 'Pivot/BJ/rack coords.' },
     { from: 't-scan-donor-miata',   to: 't-sa-v2',                kind: 'soft', label: 'Validation — may trigger re-run.' },
     { from: 't-scan-donor-miata',   to: 't-narrowing-analysis',   kind: 'soft' },
-    { from: 't-sa-v2',              to: 't-susp-tuning',          kind: 'hard' },
+    { from: 't-sa-v2',              to: 't-decide-shocks-front',  kind: 'hard' },
+    { from: 't-sa-v2',              to: 't-decide-shocks-rear',   kind: 'hard' },
 
     /* Track-rear → axle width spec → narrow housing + axles */
     { from: 't-decide-track-rear',  to: 't-axle-research',        kind: 'hard' },
@@ -1924,8 +1903,6 @@ export const roadmap: Roadmap = {
     { from: 't-buy-calipers',       to: 't-rear-brake-brackets',  kind: 'soft' },
 
     /* Shocks must land before frame design finalizes */
-    { from: 't-susp-tuning',        to: 't-decide-shocks-front',  kind: 'hard' },
-    { from: 't-susp-tuning',        to: 't-decide-shocks-rear',   kind: 'hard' },
     { from: 't-decide-shocks-front', to: 't-frame-design',        kind: 'hard', label: 'Shock body length sets pickup geometry.' },
     { from: 't-decide-shocks-rear',  to: 't-frame-design',        kind: 'hard', label: 'Shock body length sets pickup geometry.' },
     { from: 't-decide-shocks-front', to: 't-buy-shocks-front',    kind: 'hard' },
@@ -1967,9 +1944,8 @@ export const roadmap: Roadmap = {
     { from: 't-steering-research',  to: 't-decide-steering-route', kind: 'hard' },
     { from: 't-decide-firewall',    to: 't-decide-steering-route', kind: 'soft' },
     { from: 't-decide-steering-route', to: 't-steering-rack-design', kind: 'hard' },
-    { from: 't-steering-research',  to: 't-epas-design',           kind: 'hard' },
+    { from: 't-steering-research',  to: 't-buy-steering-column',   kind: 'hard' },
     { from: 't-steering-research',  to: 't-buy-epas',              kind: 'hard' },
-    { from: 't-epas-design',        to: 't-buy-steering-column',   kind: 'hard' },
     { from: 't-decide-steering-route', to: 't-buy-steering-column', kind: 'hard' },
     { from: 't-steering-rack-design', to: 't-frame-design',        kind: 'soft' },
 
@@ -2005,7 +1981,7 @@ export const roadmap: Roadmap = {
 
     /* Frame design → finalization → build */
     { from: 't-frame-design',       to: 't-design-finalization',   kind: 'hard' },
-    { from: 't-susp-tuning',        to: 't-design-finalization',   kind: 'hard' },
+    { from: 't-sa-v2',              to: 't-design-finalization',   kind: 'hard' },
     { from: 't-decide-tubbing',     to: 't-frame-design',          kind: 'soft', label: 'Tub width informs rear rail spacing.' },
     { from: 't-design-finalization', to: 't-buy-metal',            kind: 'hard' },
     { from: 't-frame-design',       to: 't-buy-mandrel-tubes',     kind: 'hard' },
@@ -2249,7 +2225,7 @@ export const roadmap: Roadmap = {
     { from: 't-buy-tires',          to: 't-alignment',             kind: 'hard' },
 
     /* Anti-roll bars */
-    { from: 't-susp-tuning',        to: 't-decide-arb',            kind: 'hard' },
+    { from: 't-sa-v2',              to: 't-decide-arb',            kind: 'hard' },
     { from: 't-decide-arb',         to: 't-frame-design',          kind: 'soft', label: 'ARB mount nodes.' },
     { from: 't-decide-arb',         to: 't-buy-arb',               kind: 'hard' },
     { from: 't-buy-arb',            to: 't-suspension-install-front', kind: 'hard' },
@@ -2345,7 +2321,7 @@ export const roadmap: Roadmap = {
     { from: 't-buy-rear-housing',   to: 't-fab-four-link',         kind: 'hard' },
     { from: 't-narrow-rear-housing', to: 't-fab-four-link',        kind: 'hard', label: 'Bracket positions reference final housing width.' },
     { from: 't-frame-build',        to: 't-fab-four-link',         kind: 'hard' },
-    { from: 't-susp-tuning',        to: 't-fab-four-link',         kind: 'soft', label: 'Bar lengths from kinematic tuning.' },
+    { from: 't-sa-v2',              to: 't-fab-four-link',         kind: 'soft', label: 'Bar lengths from kinematic tuning.' },
     { from: 't-fab-four-link',      to: 't-suspension-install-rear', kind: 'hard' },
 
     /* Pedal box install */
@@ -2413,7 +2389,7 @@ export const roadmap: Roadmap = {
 
     /* EPAS control strategy decision drives ECU/harness scope. */
     { from: 't-steering-research',  to: 't-decide-epas-control',    kind: 'hard' },
-    { from: 't-decide-epas-control', to: 't-epas-design',           kind: 'hard' },
+    { from: 't-decide-epas-control', to: 't-buy-steering-column',   kind: 'hard' },
     { from: 't-decide-epas-control', to: 't-decide-ecu',            kind: 'soft' },
 
     /* Quick-release decision drives column length. */
@@ -2422,14 +2398,13 @@ export const roadmap: Roadmap = {
     { from: 't-decide-quick-release', to: 't-steering-wheel-adapt', kind: 'hard' },
 
     /* Front ARB now its own decision (rear stays in t-decide-arb). */
-    { from: 't-susp-tuning',        to: 't-decide-arb-front',       kind: 'soft' },
+    { from: 't-sa-v2',              to: 't-decide-arb-front',       kind: 'soft' },
     { from: 't-decide-arb-front',   to: 't-frame-design',           kind: 'soft', label: 'Front ARB mount tabs welded to frame.' },
     { from: 't-decide-arb-front',   to: 't-buy-arb',                kind: 'hard' },
 
-    /* Pedal-ratio + master-bore calc gates master purchase + pedal box. */
-    { from: 't-decide-brake-system', to: 't-calc-pedal-ratio-bore', kind: 'hard' },
-    { from: 't-calc-pedal-ratio-bore', to: 't-buy-brake-master',    kind: 'hard' },
-    { from: 't-calc-pedal-ratio-bore', to: 't-pedal-box-design',    kind: 'hard' },
+    /* Brake hydraulic spec gates master purchase + pedal box. */
+    { from: 't-decide-brake-system', to: 't-buy-brake-master',    kind: 'hard' },
+    { from: 't-decide-brake-system', to: 't-pedal-box-design',    kind: 'hard' },
   ],
 };
 
