@@ -80,7 +80,7 @@ The two scans below are the published Miata reference drawings (factory document
 
 <figure class="wide" style="margin:1rem 0">
   <img src="/assets/projects/a40-austin/blog/reference/pickups-p0.png" alt="Miata front suspension pickup points technical drawing" style="width:100%;border-radius:4px;display:block;margin-bottom:6px" />
-  <figcaption>frontcontrolpickups.pdf — Miata NA front suspension pickup point reference. Published reference.</figcaption>
+  <figcaption>frontcontrolpickups.pdf — Miata NA front suspension pickup point reference. Published reference, but the donor subframe scan disagreed materially with the UCA pickup positions and the LCA inner-pivot lateral shown here. Treat this drawing as illustrative; the scanned coordinates in the Numbers table override it.</figcaption>
 </figure>
 
 ### Numbers
