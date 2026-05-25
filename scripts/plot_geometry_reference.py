@@ -142,14 +142,10 @@ SUSP = dict(
     lca_arb_fa=+35.0,  # ARB end-link: fore-aft = +35mm (forward of BJ)
     # ── UCA inner pivot positions (donor scan — symmetric arm) ────────────────
     # UCA is SYMMETRIC: front and rear pivots 220mm apart c-to-c, BJ centred.
-    # Lateral arm length (UBJ-to-pivot line) = 250 mm.  UCA pivot line sits
-    # ~9 mm INBOARD of the LCA pivot line (the opposite of the forum CAD,
-    # which had UCA 50 mm outboard).  Confirmation question outstanding —
-    # see the "47 mm out from LCA" data point that disagrees with two other
-    # measurements; provisionally using the two consistent measurements.
+    # Lateral arm length (UBJ-to-pivot line) = 250 mm.
     uca_hub_to_pivot=382.0,  # lateral: hub centre to UCA inner pivot line (mm)
-    uca_fa_front=113.8,  # UCA front pivot: +113.8 mm forward of BJ
-    uca_fa_rear=106.2,  # UCA rear pivot: 106.2 mm rearward of BJ (symmetric 220 c-c)
+    uca_fa_front=110.0,  # UCA front pivot: +110 mm forward of BJ (symmetric)
+    uca_fa_rear=110.0,   # UCA rear pivot:  110 mm rearward of BJ (symmetric)
     uca_z_front=181.78,  # UCA front pivot height above LCA pivot
     uca_z_rear=168.22,  # UCA rear pivot height above LCA pivot
     uca_z_drop=23.75,  # UCA inner pivot is 23.75 mm below UBJ height

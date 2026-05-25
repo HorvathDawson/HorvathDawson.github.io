@@ -117,8 +117,8 @@ Dimensions started as estimates pulled from published Miata data (factory specs,
 | UCA inner pivot from car CL | 378.0 mm | **368 mm** | scanned | hub face − uca_hub_to_pivot = 750 − 382 |
 | UCA effective length (UBJ → inner pivot, lateral) | 199.8 mm | **250 mm** | scanned | scan: 382 from hub face − 132 (UBJ from hub face) |
 | UCA arm symmetry | asymmetric (+113.5/−143.5 fa) | **symmetric (±110 from BJ)** | scanned | scan: front and rear pivots 220 mm apart, BJ centred |
-| UCA front pivot fa from BJ | +113.5 mm fwd | **+113.8 mm fwd** | derived | from symmetric 220 mm c-c + UBJ position |
-| UCA rear pivot fa from BJ | 143.5 mm aft | **106.2 mm aft** | derived | from symmetric 220 mm c-c + UBJ position |
+| UCA front pivot fa from BJ | +113.5 mm fwd | **+110 mm fwd** | scanned | symmetric arm |
+| UCA rear pivot fa from BJ | 143.5 mm aft | **−110 mm aft** | scanned | symmetric arm |
 | UCA front pivot z above LCA pivot | 192 mm | **181.78 mm** | scanned | UCA tilted slightly front-high (6.78 mm) |
 | UCA rear pivot z above LCA pivot | 170 mm | **168.22 mm** | scanned | |
 | UCA pivot centre z above LCA pivot | 181 mm | **175 mm** | scanned | (front + rear)/2 |
