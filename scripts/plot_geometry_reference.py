@@ -5,12 +5,12 @@ Outputs PNG files to public/assets/projects/a40-austin/blog/plots/
 Run from the repo root: python scripts/plot_geometry_reference.py
 
 Constants come from the 005b analysis:
-  - Miata NA front track 1405 mm, A40 target 1230 mm
+  - Miata NA front track 1420 mm, A40 target 1230 mm
   - CG: Miata 460 mm, A40 estimated 575 mm (+/-50 mm)
   - RC: Miata 45 mm, A40 39 mm (0.875 scaling)
   - Sprung mass: Miata 820 kg, A40 850 kg
   - Total mass: 950 kg
-  - Front spring: 25 N/mm, MR 0.63 -> wheel rate 9,920 N/m
+  - Front spring: 25 N/mm, MR ~0.62 -> wheel rate ~9,650 N/m
 """
 
 import os
@@ -73,8 +73,11 @@ def save(fig, name):
 
 
 # ── Shared constants ─────────────────────────────────────────
-T_MIATA = 1405
+T_MIATA = 1420  # NA Miata front track (mm) — reports vary 1405–1425; 1420 matches the scanned subframe + ET40 hub geometry
 T_A40 = 1230
+ET_MIATA = 40  # NA Miata wheel offset (mm).  Hub FACE sits ET outboard of wheel CL.
+#               All `*_from_hub` offsets in SUSP are measured from the hub face,
+#               so any code that mixes hub-face vs wheel-CL must add ET_MIATA.
 H_CG_MIATA = 460
 H_CG_A40 = 575
 M_TOTAL = 950
@@ -82,7 +85,9 @@ M_S_MIATA = 820
 M_S_A40 = 850
 G_ACC = 9.81
 AY = 0.8
-KW_FRONT = 9_920  # N/m (25 N/mm spring, MR 0.63 from motion-ratio calc, wheel-centerline convention)
+KS_FRONT = 25_000  # N/m — front coilover spring rate (25 N/mm).  Wheel rate
+#                    KW_FRONT and roll-stiffness terms are DERIVED from this
+#                    and the scanned LCA geometry below — do not hardcode.
 G_SHEAR = 80e9
 L_EFF = 400  # mm ARB effective torsional length
 # Installation ratio back-calculated from the post's stated value:
@@ -100,53 +105,58 @@ IR_BAR = 1.977
 SPRING_BASE_REAR = 950  # mm
 KW_REAR = 20_000  # N/m (20 N/mm spring, MR ~1.0)
 K_PHI_REAR = KW_REAR * (SPRING_BASE_REAR / 1000) ** 2 / 2  # 9,025
-
-K_PHI_SPRING = KW_FRONT * (T_A40 / 1000) ** 2 / 2 + K_PHI_REAR  # ~24,343
+# Front spring-only roll stiffness and total spring roll stiffness are
+# derived AFTER SUSP is defined — see DERIVED constants block below.
 
 # ── Miata NA front suspension geometry (all in mm) ────────────────
 # Source: photogrammetric scan of the donor front subframe (Einstar 2).
 # The original numbers came from forum-published CAD (frontcontrolarms.pdf
 # + frontcontrolpickups.pdf) but produced ~11.5° static caster — implausible
-# for a street-car Miata, so the donor was scanned.  Scan invalidated the
-# UCA pickup positions and the LCA inner-pivot width; LCA arm geometry
-# (fa span, BJ offset, z rise) was correct in the forum CAD and is retained.
-# Values marked [SCAN-TBD] are pending update from the scan output.
+# for a street-car Miata, so the donor was scanned.  Scan corrected UCA
+# pickup positions and LCA inner-pivot width; LCA arm geometry (fa span,
+# BJ offset, z rise) was correct in the forum CAD and is retained.
 # Coordinate convention: +x outboard, +y forward, +z up. Origin at hub/BJ.
 SUSP = dict(
     # ── Knuckle / heights (front view) ──
     hub_z_ground=265,  # hub centre height above ground at ride height
-    kpi_deg=12.0,  # kingpin inclination angle (front view, inward lean)
+    # KPI / caster are DERIVED from lbj_from_hub and ubj_from_hub — see
+    # KPI_DEG / CASTER_DEG below.  Do not duplicate them here.
     # ── Knuckle BJ and steering arm positions relative to hub centre ──────────
     # Convention: (lat, fa, h) — lat outboard+, fa forward+, h up+, all mm.
-    # Source: photogrammetric scan CAD model — treat as estimated until verified.
-    lbj_from_hub=(-74.924, -8.827, -93.605),
-    ubj_from_hub=(-124.698, -8.827, +139.400),  # [SCAN-TBD] fa offset wrong — UCA scan correction pending
-    steer_from_hub=(-65.990, +97.216, -75.697),
-    # ── LCA inner pivot positions (LCA ARM geometry confirmed by scan) ─────────
+    # Source: donor subframe scan (Einstar 2).
+    lbj_from_hub=(-84.25, -3.75, -86.0),
+    ubj_from_hub=(-132.0, -17.9, +137.75),
+    steer_from_hub=(-65.990, +97.216, -75.697),  # [SCAN-TBD] steering arm not yet re-measured
+    # ── LCA inner pivot positions (LCA arm geometry confirmed by scan) ─────────
     # Lateral: from car CL.  Fore-aft origin: LCA front pivot.
     # BJ is lca_bj_fa mm FORWARD of the LCA front pivot.
-    lca_from_cl=328.0,  # [SCAN-TBD] forum CAD value — scan says this is wrong
-    lca_fa_span=323.5,  # LCA fore-aft span front-to-rear (c-t-c, mm) — scan-confirmed
+    lca_from_cl=329.5,  # scan: 659/2 mm from CL (both front & rear pivots)
+    lca_fa_span=322.5,  # scan: front-to-rear pivot c-to-c
     lca_bj_fa=25.0,  # BJ is 25 mm forward of LCA front pivot — scan-confirmed
     lca_z_rise=25.0,  # LCA inner pivot is 25 mm ABOVE LBJ height — scan-confirmed
     # Coilover and ARB mounts: explicit (perp_from_pivot_line, fore-aft in arm frame)
     # Both lie on horizontal lines (constant y) between BJ and the pivot line.
-    lca_coilover_perp=240.0,  # coilover: mm outboard from pivot line (x = -374.5+240 = -134.5)
+    lca_coilover_perp=240.0,  # coilover: mm outboard from pivot line
     lca_coilover_fa=+25.0,  # coilover: fore-aft = +25mm (forward of BJ)
-    lca_arb_perp=185.0,  # ARB end-link: mm outboard from pivot line (x = -374.5+185 = -189.5)
+    lca_arb_perp=185.0,  # ARB end-link: mm outboard from pivot line
     lca_arb_fa=+35.0,  # ARB end-link: fore-aft = +35mm (forward of BJ)
-    # ── UCA inner pivot positions — [SCAN-TBD] all values pending scan output ──
-    # Forum-CAD numbers retained as placeholders; scan correction needed.
-    uca_hub_to_pivot=324.5,  # [SCAN-TBD] lateral: hub centre to UCA inner pivot line (mm)
-    uca_fa_front=113.5,  # [SCAN-TBD] UCA front pivot fa from BJ
-    uca_fa_rear=143.5,  # [SCAN-TBD] UCA rear pivot fa from BJ (rearward)
-    uca_z_front=192.0,  # [SCAN-TBD] UCA front pivot height above LCA pivot
-    uca_z_rear=170.0,  # [SCAN-TBD] UCA rear pivot height above LCA pivot
-    uca_z_drop=15.0,  # [SCAN-TBD] UCA inner pivot below UBJ height
+    # ── UCA inner pivot positions (donor scan — symmetric arm) ────────────────
+    # UCA is SYMMETRIC: front and rear pivots 220mm apart c-to-c, BJ centred.
+    # Lateral arm length (UBJ-to-pivot line) = 250 mm.  UCA pivot line sits
+    # ~9 mm INBOARD of the LCA pivot line (the opposite of the forum CAD,
+    # which had UCA 50 mm outboard).  Confirmation question outstanding —
+    # see the "47 mm out from LCA" data point that disagrees with two other
+    # measurements; provisionally using the two consistent measurements.
+    uca_hub_to_pivot=382.0,  # lateral: hub centre to UCA inner pivot line (mm)
+    uca_fa_front=113.8,  # UCA front pivot: +113.8 mm forward of BJ
+    uca_fa_rear=106.2,  # UCA rear pivot: 106.2 mm rearward of BJ (symmetric 220 c-c)
+    uca_z_front=181.78,  # UCA front pivot height above LCA pivot
+    uca_z_rear=168.22,  # UCA rear pivot height above LCA pivot
+    uca_z_drop=23.75,  # UCA inner pivot is 23.75 mm below UBJ height
     # ── Pivot bushing dimensions (fore-aft length, mm) ──────────────────
-    lca_f_bushing=73.0,  # LCA front pivot bushing length (mm)
-    lca_r_bushing=60.0,  # LCA rear pivot bushing length (mm)
-    uca_bushing=56.0,  # UCA pivot bushing length (mm, both pivots)
+    lca_f_bushing=71.0,  # scan: LCA front pivot bushing length
+    lca_r_bushing=60.0,  # scan: LCA rear pivot bushing length
+    uca_bushing=57.0,  # scan: UCA pivot bushing length (both pivots)
     pivot_width=10.0,  # visual width for all pivot rectangles (mm)
     # ── Tire (for RC construction) ──
     tire_w=185,  # tire section width mm
@@ -165,11 +175,13 @@ def susp_geometry():
     Call this from any plot that needs pickup coordinates. Updating SUSP
     propagates to every consumer automatically.
     """
-    HT = T_MIATA / 2  # 702.5 mm half-track
-    uca_lat_cl = HT - SUSP["uca_hub_to_pivot"]  # 378.0 mm from car CL
+    HT = T_MIATA / 2  # 710 mm wheel-CL half-track
+    HUB_FACE = HT + ET_MIATA  # 750 mm — BJ measurements live in this frame
+    uca_lat_cl = HUB_FACE - SUSP["uca_hub_to_pivot"]  # UCA pivot lateral from CL
     return dict(
         half_track=HT,
-        lca_hub_to_pivot=HT - SUSP["lca_from_cl"],  # 374.5 mm hub centre to inner pivot
+        hub_face_from_cl=HUB_FACE,
+        lca_hub_to_pivot=HUB_FACE - SUSP["lca_from_cl"],  # hub face to inner pivot
         # Inner pivot positions (lat from CL, fa from LCA-F pivot, z from LCA pivot)
         lca_f=(SUSP["lca_from_cl"], 0.0, 0.0),
         lca_r=(SUSP["lca_from_cl"], -SUSP["lca_fa_span"], 0.0),
@@ -187,6 +199,43 @@ def susp_geometry():
         ),
         arb=(SUSP["lca_from_cl"] + SUSP["lca_arb_perp"], SUSP["lca_arb_fa"], 0.0),
     )
+
+
+# ── DERIVED constants (computed from SUSP scan-truth) ─────────────────
+# Lever from LCA inner-pivot axis to the wheel-CL contact-patch plane.
+# This is the wheel-rate-relevant lever (force at the contact patch).
+LCA_LEVER_WHEEL = (T_MIATA / 2) - SUSP["lca_from_cl"]  # mm — 710 − 329.5 = 380.5
+# Coilover lever from the same pivot axis.
+LCA_LEVER_SPRING = SUSP["lca_coilover_perp"]  # mm — 240
+# Static (alpha = 90 deg) lever ratio.
+MR_FRONT_STATIC = LCA_LEVER_SPRING / LCA_LEVER_WHEEL  # ~0.631
+# Operating motion ratio at the typical 80 deg shock angle.
+MR_FRONT = MR_FRONT_STATIC * np.sin(np.deg2rad(80))  # ~0.621
+# Wheel rate at the contact patch: KW = Ks * MR^2.
+KW_FRONT = KS_FRONT * MR_FRONT**2  # N/m — ~9,650
+# Front spring contribution to roll stiffness uses the BUILD track (A40).
+K_PHI_FRONT_SPRING = KW_FRONT * (T_A40 / 1000) ** 2 / 2  # N-m/rad
+K_PHI_SPRING = K_PHI_FRONT_SPRING + K_PHI_REAR
+
+# ── Steering-axis derived numbers (KPI, caster, scrub, trail) ─────────
+# All measured from the scan, expressed in the car-CL/ground frame.
+_HUB_FACE_X = T_MIATA / 2 + ET_MIATA  # 750
+_LBJ_X = _HUB_FACE_X + SUSP["lbj_from_hub"][0]  # 665.75
+_LBJ_FA = SUSP["lbj_from_hub"][1]  # -3.75
+_LBJ_Z = SUSP["hub_z_ground"] + SUSP["lbj_from_hub"][2]  # 179.0
+_UBJ_X = _HUB_FACE_X + SUSP["ubj_from_hub"][0]  # 618.0
+_UBJ_FA = SUSP["ubj_from_hub"][1]  # -17.9
+_UBJ_Z = SUSP["hub_z_ground"] + SUSP["ubj_from_hub"][2]  # 402.75
+_KP_DZ = _UBJ_Z - _LBJ_Z
+KPI_DEG = np.degrees(np.arctan2(_LBJ_X - _UBJ_X, _KP_DZ))  # UBJ inboard → +KPI
+CASTER_DEG = np.degrees(np.arctan2(_LBJ_FA - _UBJ_FA, _KP_DZ))  # UBJ rearward → +caster
+# Kingpin axis pierces ground at t = -_LBJ_Z / _KP_DZ from LBJ.
+_T_GND = -_LBJ_Z / _KP_DZ
+_KP_GND_X = _LBJ_X + _T_GND * (_UBJ_X - _LBJ_X)
+_KP_GND_FA = _LBJ_FA + _T_GND * (_UBJ_FA - _LBJ_FA)
+# Scrub: contact patch is at hub centerline = T_MIATA/2 from CL.
+SCRUB_MM = (T_MIATA / 2) - _KP_GND_X  # +ve = pierces inboard of CP
+TRAIL_MM = _KP_GND_FA - 0.0  # +ve = pierces ahead of CP → trail behind = +ve
 
 
 def arb_K_bar(d_mm):
@@ -307,20 +356,26 @@ def _build_suspension(half_track, *, hub_z_ground=None, tire_od=None):
         lbj, ubj, lca_inner, uca_inner, cp, ic, rc — numpy [x, y]
         x = lateral from car CL (mm), y = height above ground (mm).
     """
-    ht = half_track
+    ht = half_track  # wheel CL (= contact patch x)
+    hub_face = ht + ET_MIATA  # BJ measurements are from hub face, not wheel CL
     hz = hub_z_ground if hub_z_ground is not None else SUSP["hub_z_ground"]
     tod = tire_od if tire_od is not None else SUSP["tire_od"]
 
-    # Ball joints: hub centre + scan offset
-    lbj = np.array([ht + SUSP["lbj_from_hub"][0], hz + SUSP["lbj_from_hub"][2]])
-    ubj = np.array([ht + SUSP["ubj_from_hub"][0], hz + SUSP["ubj_from_hub"][2]])
+    # Ball joints: hub FACE + scan offset (lbj_from_hub is in hub-face frame)
+    lbj = np.array([hub_face + SUSP["lbj_from_hub"][0], hz + SUSP["lbj_from_hub"][2]])
+    ubj = np.array([hub_face + SUSP["ubj_from_hub"][0], hz + SUSP["ubj_from_hub"][2]])
 
-    # Inner pivots: inboard of hub centre by arm lateral dimensions.
-    # These lateral values are hub-to-inner-pivot, NOT BJ-to-inner-pivot.
-    lca_hub_to_pivot = T_MIATA / 2 - SUSP["lca_from_cl"]  # 374.5 mm
-    lca_inner = np.array([ht - lca_hub_to_pivot, lbj[1] + SUSP["lca_z_rise"]])
-
-    uca_inner = np.array([ht - SUSP["uca_hub_to_pivot"], ubj[1] - SUSP["uca_z_drop"]])
+    # Inner pivots: lateral distance from car CL is preserved when the whole
+    # assembly translates inboard by (T_MIATA/2 − ht).  lca_from_cl is the
+    # stock-Miata lateral from CL; subtract the inboard translation.
+    lca_inboard = (T_MIATA / 2) - ht
+    lca_inner = np.array(
+        [SUSP["lca_from_cl"] - lca_inboard, lbj[1] + SUSP["lca_z_rise"]]
+    )
+    # UCA inner pivot lateral position: hub-face minus uca_hub_to_pivot.
+    uca_inner = np.array(
+        [hub_face - SUSP["uca_hub_to_pivot"], ubj[1] - SUSP["uca_z_drop"]]
+    )
 
     cp = np.array([ht, 0.0])
 
@@ -374,7 +429,7 @@ def plot_rc_construction():
     stock_hz = SUSP["hub_z_ground"]
 
     configs = [
-        ("Miata track (1405 mm)", T_MIATA / 2, stock_hz, stock_od, MIATA_C, 0.45),
+        ("Miata track (1420 mm)", T_MIATA / 2, stock_hz, stock_od, MIATA_C, 0.45),
         ("A40 track (1230 mm)", T_A40 / 2, stock_hz, stock_od, A40_C, 0.90),
     ]
 
@@ -833,7 +888,7 @@ def plot_rc_tire_comparison():
 def plot_rc_combined():
     """Front-view RC construction: stock Miata vs the actual A40 build.
 
-    Miata: stock track (1405 mm) + stock tire (577 mm OD).
+    Miata: stock track (1420 mm) + stock tire (577 mm OD).
     A40:   narrowed track (1230 mm) + taller tire (646 mm OD).
     """
     fig, ax = styled_fig(figsize=(8, 8))
@@ -847,7 +902,7 @@ def plot_rc_combined():
 
     configs = [
         (
-            "Stock Miata (1405 mm, 577 mm OD)",
+            "Stock Miata (1420 mm, 577 mm OD)",
             T_MIATA / 2,
             stock_hz,
             stock_od,
@@ -1069,7 +1124,7 @@ def plot_rc_combined():
 #     Sweep both wheels' LCA angles independently across bump/droop
 #     and trace the area in the front view that the RC can occupy.
 #
-#     Travel: 5 in shock stroke, MR = 0.641 * sin(80 deg) = 0.631,
+#     Travel: 5 in shock stroke, MR ~0.621 at 80°,
 #     wheel travel ~201 mm = 141 mm bump + 60 mm droop (70/30).
 #
 #     Kinematic model (planar front view):
@@ -1710,8 +1765,7 @@ def plot_rc_migration():
     tires pinned to ground.  Sweeps every (h, φ) admissible under the
     shock-stroke limit and paints the resulting RC envelope."""
     SHOCK_STROKE_MM = 5 * 25.4
-    MR = (240 / 374.5) * np.sin(np.deg2rad(80))  # 0.631
-    WHEEL_TRAVEL = SHOCK_STROKE_MM / MR
+    WHEEL_TRAVEL = SHOCK_STROKE_MM / MR_FRONT
     BUMP = 0.70 * WHEEL_TRAVEL
     DROOP = 0.30 * WHEEL_TRAVEL
 
@@ -1900,9 +1954,9 @@ def plot_motion_ratio_vs_angle():
     # axis, taken from the Miata donor geometry in SUSP (the LCA is reused
     # unchanged).  Wheel-side lever runs to the tire contact patch, which
     # sits under hub centre at T_MIATA/2 from the car CL.
-    d_arm = T_MIATA / 2 - SUSP["lca_from_cl"]  # 702.5 - 328 = 374.5 mm
-    d_spring = SUSP["lca_coilover_perp"]  # 240 mm
-    lever = d_spring / d_arm  # 0.641
+    d_arm = LCA_LEVER_WHEEL  # mm — derived from SUSP (CL→pivot, wheel-CL convention)
+    d_spring = LCA_LEVER_SPRING  # mm
+    lever = MR_FRONT_STATIC  # static lever (alpha = 90 deg)
 
     mr = lever * np.sin(alpha_rad)
 
@@ -2357,7 +2411,7 @@ def plot_ackermann_topview():
             color=MIATA_C,
             linewidth=1.5,
             alpha=0.4,
-            label="Miata stock (T=1405, WB=2265)",
+            label="Miata stock (T=1420, WB=2265)",
         ),
         Line2D(
             [0], [0], color=A40_C, linewidth=2, label="A40 layout (T=1230, WB=2350)"
@@ -2836,7 +2890,7 @@ def plot_weight_transfer():
 
     wt_miata = M_TOTAL * ay_range * G_ACC * (H_CG_MIATA / 1000) / (T_MIATA / 1000)
     ax.plot(
-        ay_range, wt_miata, color=MIATA_C, linewidth=2, label="Miata (T=1405, CG=460)"
+        ay_range, wt_miata, color=MIATA_C, linewidth=2, label="Miata (T=1420, CG=460)"
     )
 
     wt_a40_lo = M_TOTAL * ay_range * G_ACC * (cg_lo / 1000) / (T_A40 / 1000)
@@ -2858,7 +2912,7 @@ def plot_weight_transfer():
         wt_stock_hi,
         alpha=0.15,
         color=PURPLE,
-        label=f"A40 CG at Miata track (T=1405)",
+        label=f"A40 CG at Miata track (T=1420)",
     )
 
     ax.axvline(0.8, color=TEXT, linestyle=":", linewidth=0.5, alpha=0.3)
@@ -2927,7 +2981,7 @@ def plot_jacking():
     p_a40_tall = _build_suspension(T_A40 / 2, hub_z_ground=a40_hz, tire_od=a40_od)
 
     markers = [
-        ("Stock Miata (1405 mm track)", p_miata["rc"][1], T_MIATA / 2, MIATA_C),
+        ("Stock Miata (1420 mm track)", p_miata["rc"][1], T_MIATA / 2, MIATA_C),
         ("A40, Miata tire", p_a40["rc"][1], half_t, BLUE),
         ("A40, A40 tire (build)", p_a40_tall["rc"][1], half_t, A40_C),
     ]
@@ -3162,7 +3216,7 @@ def _note(ax):
     ax.text(
         0.01,
         0.01,
-        "Dimensions from technical drawings — verify against donor car before fabrication.",
+        "Dimensions from donor subframe scan (Einstar 2).",
         transform=ax.transAxes,
         fontsize=6,
         color=TEXT,
@@ -3173,38 +3227,45 @@ def _note(ax):
 
 # ── derive all LCA arm-local coordinates from SUSP ──────────────────────────
 # BJ at origin (0, 0).  +x outboard, +y forward.
-# Both pivots at x = -(T_MIATA/2 - lca_from_cl) = -374.5 mm.
+# Both pivots at the scanned LCA pivot lateral from CL (lca_from_cl).
 # BJ is lca_bj_fa = 25 mm forward of LCA-front-pivot
 #   → front pivot at y = -25, rear pivot at y = -(25 + 323.5) = -348.5.
 # Coilover and ARB lie on horizontal lines (constant y) between BJ and the pivot line.
 def _lca_coords():
-    lca_lat = T_MIATA / 2 - SUSP["lca_from_cl"]  # 374.5 mm
+    # BJ at origin (plan view).  LCA pivot line sits at lca_from_cl from car
+    # CL; LBJ sits at (hub_face + lbj_from_hub[0]) from CL.  Hub face is at
+    # T_MIATA/2 + ET_MIATA from CL.  Pivot-to-BJ lateral = (LBJ_x_from_CL) −
+    # lca_from_cl.
+    hub_face = T_MIATA / 2 + ET_MIATA
+    lbj_from_cl = hub_face + SUSP["lbj_from_hub"][0]
+    lca_lat = lbj_from_cl - SUSP["lca_from_cl"]  # true BJ→pivot lateral
     bj = np.array([0.0, 0.0])
-    f = np.array([-lca_lat, -SUSP["lca_bj_fa"]], dtype=float)  # (-374.5, -25)
+    f = np.array([-lca_lat, -SUSP["lca_bj_fa"]], dtype=float)
     r = np.array(
         [-lca_lat, -(SUSP["lca_bj_fa"] + SUSP["lca_fa_span"])], dtype=float
-    )  # (-374.5, -348.5)
-    # Coilover: 240mm outboard of pivot line, y = +25mm (forward of BJ)
+    )
     cov = np.array(
         [-lca_lat + SUSP["lca_coilover_perp"], SUSP["lca_coilover_fa"]]
-    )  # (-134.5, +25)
-    # ARB end-link: 185mm outboard of pivot line, y = +35mm
+    )
     arb = np.array(
         [-lca_lat + SUSP["lca_arb_perp"], SUSP["lca_arb_fa"]]
-    )  # (-189.5, +35)
+    )
     return bj, f, r, cov, arb
 
 
 def _uca_coords():
-    # BJ at origin, +x outboard, +y forward.
-    # UCA pivots: 324.5mm inboard of hub, +113.5 / -143.5 mm from BJ.
+    # BJ at origin, +x outboard, +y forward.  UBJ sits at
+    # (hub_face + ubj_from_hub[0]) from CL; UCA pivot line is
+    # uca_hub_to_pivot mm inboard of the hub face.  So BJ→pivot lateral
+    # = uca_hub_to_pivot − |ubj_from_hub[0]|.
+    bj_to_pivot = SUSP["uca_hub_to_pivot"] - abs(SUSP["ubj_from_hub"][0])
     bj = np.array([0.0, 0.0])
     f = np.array(
-        [-SUSP["uca_hub_to_pivot"], SUSP["uca_fa_front"]], dtype=float
-    )  # (-324.5, +113.5)
+        [-bj_to_pivot, SUSP["uca_fa_front"]], dtype=float
+    )
     r = np.array(
-        [-SUSP["uca_hub_to_pivot"], -SUSP["uca_fa_rear"]], dtype=float
-    )  # (-324.5, -143.5)
+        [-bj_to_pivot, -SUSP["uca_fa_rear"]], dtype=float
+    )
     return bj, f, r
 
 
@@ -3776,7 +3837,7 @@ def plot_knuckle_3view():
     ax_sid.text(
         0.02,
         0.98,
-        f"BJ fa offset: {lbj_fa:.1f} mm (both)",
+        f"LBJ fa: {lbj_fa:+.1f} mm │ UBJ fa: {ubj_fa:+.1f} mm │ Δ = {ubj_fa - lbj_fa:+.1f} mm",
         fontsize=6.5,
         color=TEXT,
         alpha=0.5,
@@ -3885,7 +3946,7 @@ def plot_knuckle_3view():
     fig.suptitle(
         "Miata NA front knuckle / spindle — 3-view schematic\n"
         "All positions relative to hub centre (0, 0, 0)  |  "
-        "CAD scan estimate — not yet verified against donor",
+        "Donor subframe scan (Einstar 2) — measured at ride height.",
         color=TEXT,
         fontsize=8.5,
         y=1.01,

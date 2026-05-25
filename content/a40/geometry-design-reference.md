@@ -17,7 +17,7 @@ All examples use **205/65R15 tires on 15×6 ET+38 wheels** (the working build sp
 
 ## Linkage geometry reference
 
-Every plot and equation in this post pulls from the same set of donor dimensions. They are collected here for reference. Sources are the published Miata pickup drawings, factory specs, and forum / photo-CAD estimates for what the drawings don't list. A photogrammetric scan of the donor knuckle, LCA, and UCA is the planned validation step before frame welding — nothing has been scanned yet.
+Every plot and equation in this post pulls from the same set of donor dimensions. They are collected here for reference. The donor front subframe has been photogrammetrically scanned (Einstar 2); the scan corrected the UCA pickup geometry and the LCA inner-pivot width that the forum CAD had wrong. Forum-CAD values are kept alongside the scanned values in the Numbers table for diff-ability.
 
 ### Glossary
 
@@ -61,7 +61,7 @@ Coordinate convention: lateral is measured from car centreline (CL); fore/aft is
 
 <figure class="wide" style="margin:1rem 0">
   <img src="/assets/projects/a40-austin/blog/plots/knuckle_3view.png" alt="Knuckle 3-view schematic — front, side, and plan views" style="width:100%" />
-  <figcaption>Knuckle 3-view. Front: kingpin axis, LBJ at −94 mm below hub, UBJ at +139 mm above hub, steering arm at −76 mm, KPI ≈ 12.1°. Side: LBJ and UBJ share the same fa offset (−8.8 mm), caster = 0.0°. Plan: lateral KPI spread (UBJ 50 mm more inboard than LBJ).</figcaption>
+  <figcaption>Knuckle 3-view (scanned). Front: kingpin axis, LBJ at −86 mm below hub, UBJ at +137.75 mm above hub, KPI ≈ 12.05°. Side: UBJ is 14.15 mm rearward of LBJ → caster ≈ 3.62°. Plan: lateral KPI spread (UBJ 47.75 mm more inboard than LBJ).</figcaption>
 </figure>
 
 <figure class="wide" style="margin:1rem 0">
@@ -71,7 +71,7 @@ Coordinate convention: lateral is measured from car centreline (CL); fore/aft is
 
 ### Donor engineering drawings
 
-The two scans below are the published Miata reference drawings (factory documentation, photographed). They are the primary source for the pickup-point dimensions in the Numbers table; everything not on these drawings is currently a forum / photo-CAD estimate.
+The two scans below are the published Miata reference drawings (factory documentation, photographed). They were the original source for the forum-CAD pickup-point estimates. Where the donor photogrammetric scan disagreed with these drawings, the scan wins — see the Original / Scanned columns in the Numbers table.
 
 <figure class="wide" style="margin:1rem 0">
   <img src="/assets/projects/a40-austin/blog/reference/arms-p0.png" alt="Miata front control arm key dimensions technical drawing" style="width:100%;border-radius:4px;display:block;margin-bottom:6px" />
@@ -85,45 +85,53 @@ The two scans below are the published Miata reference drawings (factory document
 
 ### Numbers
 
-Dimensions are estimates pulled from published Miata data (factory specs, the engineering drawings above, forum measurements, photo-measured CAD). **No donor parts have been 3D-scanned yet** — a photogrammetric scan of the donor knuckle, LCA, and UCA is the planned validation step before frame welding. The **Source** column flags where each value comes from today; the **Scan** column flags whether that row is on the to-scan list.
+Dimensions started as estimates pulled from published Miata data (factory specs, the engineering drawings above, forum measurements, photo-measured CAD). The donor front subframe has now been photogrammetrically scanned (Einstar 2) because the forum CAD produced a static caster of ~11.5° — implausible for a street Miata. The **Original** column is the forum-CAD / online-reference value; the **Scanned** column is the corrected measurement from the donor. Where the two agree, only the Original column is filled. The **Source** column tags the Scanned value; the **Original** column was a mix of `published` (factory) and `estimate` (forum / photo CAD).
 
-- `published` — factory spec or engineering drawing.
-- `estimate` — forum measurement, photo CAD, or model.
+- `scanned` — donor subframe photogrammetric scan.
+- `published` — factory spec or engineering drawing (unchanged).
 - `derived` — computed from other rows in this table.
 - `build target` — chosen build value, not measured.
 
-| Item | Value | Source | Scan | Notes |
+| Item | Original | Scanned | Source | Notes |
 |---|---|---|---|---|
-| Front track (Miata stock) | 1405 mm | published | n/a | ET40-45, 185 width |
-| Front track (A40 target) | 1230 mm | build target | n/a | 87.5 mm narrowing per side |
-| Tire OD (Miata stock) | 577 mm | published | n/a | 185/60R14 |
-| Tire OD (A40 build) | 646 mm | build target | n/a | 205/65R15 |
-| Hub centre above ground (Miata) | 265 mm | derived | n/a | tire radius |
-| Hub centre above ground (A40) | 299.5 mm | derived | n/a | tire radius |
-| LBJ from hub centre | 74.9 mm inboard, 8.8 mm aft, 93.6 mm down | estimate | planned | not on published drawing |
-| UBJ from hub centre | 124.7 mm inboard, 8.8 mm aft, 139.4 mm up | estimate | planned | not on published drawing |
-| Steering arm from hub | 66.0 mm inboard, 97.2 mm fwd, 75.7 mm down | estimate | planned | not on published drawing |
-| KPI (front view) | 12.1 deg | derived | planned | from LBJ/UBJ: $\arctan(49.8/233.0)$ |
-| Caster (side view) | 0.0 deg | derived | planned | both BJs share fa offset of 8.8 mm |
-| LCA inner pivot from car CL | 328.0 mm | published | planned | both front and rear pivot (shared lat) |
-| LCA fore/aft pivot span | 323.5 mm | published | planned | front pivot to rear pivot, c to c |
-| LCA effective length, front view | 374.5 mm | derived | planned | hub centre to inner pivot line |
-| LCA inner pivot z, vs LBJ | +25 mm | estimate | planned | LCA pivot above LBJ |
-| Coilover lower mount on LCA | 240 mm out, +25 mm fwd of BJ | estimate | planned | gives MR lever 240/374.5 = 0.641 |
-| ARB end link on LCA | 185 mm out, +35 mm fwd of BJ | estimate | planned | |
-| UCA inner pivot from car CL | 378.0 mm | published | planned | 50 mm outboard of LCA pivot |
-| UCA effective length, front view | 199.8 mm | derived | planned | UBJ to UCA pivot line |
-| UCA front pivot fa from BJ | +113.5 mm fwd | published | planned | |
-| UCA rear pivot fa from BJ | 143.5 mm aft | published | planned | |
-| UCA front pivot z above LCA pivot | 192 mm | estimate | planned | scan critical — dominates RC |
-| UCA rear pivot z above LCA pivot | 170 mm | estimate | planned | scan critical — dominates RC |
-| UCA inner pivot z, vs UBJ | 15 mm below | estimate | planned | scan critical — dominates RC |
-| LCA front pivot bushing length | 73 mm | published | planned | |
-| LCA rear pivot bushing length | 60 mm | published | planned | |
-| UCA pivot bushing length | 56 mm | published | planned | both pivots |
-| Shock stroke (5 in) | 127 mm | published | n/a | $44/47$ comp, $54/57$ ext at MR 0.63 |
-| Motion ratio at 80 deg | 0.631 | derived | n/a | $(240/374.5)\sin 80°$ |
-| Wheel travel | 141 mm bump, 60 mm droop | derived | n/a | shock stroke / MR |
+| Front track (Miata stock) | 1405 mm | **1420 mm** | published | NA Miata reports range 1405–1425; 1420 reconciles the scanned pickups with ET40 hubs |
+| Wheel offset (Miata stock) | n/a | **40 mm** | published | Hub face sits 40 mm outboard of wheel CL — all `*_from_hub` measurements are taken from this plane |
+| Front track (A40 target) | 1230 mm | — | build target | 87.5 mm narrowing per side |
+| Tire OD (Miata stock) | 577 mm | — | published | 185/60R14 |
+| Tire OD (A40 build) | 646 mm | — | build target | 205/65R15 |
+| Hub centre above ground (Miata) | 265 mm | — | derived | tire radius |
+| Hub centre above ground (A40) | 299.5 mm | — | derived | tire radius |
+| LBJ from hub centre | 74.9 mm in, 8.8 mm aft, 93.6 mm down | **84.25 mm in, 3.75 mm aft, 86.0 mm down** | scanned | forum CAD off by ~9 mm lat, ~5 mm fa, ~8 mm z |
+| UBJ from hub centre | 124.7 mm in, 8.8 mm aft, 139.4 mm up | **132.0 mm in, 17.9 mm aft, 137.75 mm up** | scanned | UBJ ~14 mm rearward of LBJ — this is what builds caster |
+| Steering arm from hub | 66.0 mm in, 97.2 mm fwd, 75.7 mm down | _(not yet re-measured)_ | estimate | scan TBD |
+| KPI (front view) | 12.1 deg | **12.05 deg** | derived | $\arctan(47.75/223.75)$ from scanned BJs |
+| Caster (side view) | 0.0 deg | **3.62 deg** | derived | $\arctan(14.15/223.75)$ — UBJ aft of LBJ by 14.15 mm |
+| Scrub radius (front view) | n/a | **+6.05 mm** | derived | kingpin pierces ground at 703.95 from CL, CP at 710 → pierce inboard of CP |
+| Mechanical trail (side view, from kingpin only) | n/a | **+7.57 mm** | derived | kingpin pierces ground at fa = +7.57 mm (forward of hub) → CP trails axis |
+| LCA inner pivot from car CL | 328.0 mm | **329.5 mm** | scanned | both front and rear pivot (shared lat); hub-face to pivot = 750−329.5 = 420.5 mm |
+| LCA fore/aft pivot span | 323.5 mm | **322.5 mm** | scanned | front pivot to rear pivot, c to c |
+| LCA effective length (BJ → inner pivot, lateral) | 374.5 mm | **336.25 mm** | derived | hub face − pivot − |LBJ from hub| = 750 − 329.5 − 84.25 |
+| LCA inner pivot z, vs LBJ | +25 mm | — | scanned | LCA pivot above LBJ (unchanged) |
+| Coilover lower mount on LCA | 240 mm out, +25 mm fwd of BJ | — | estimate | MR lever 240/380.5 = 0.631 (static) |
+| ARB end link on LCA | 185 mm out, +35 mm fwd of BJ | — | estimate | |
+| UCA inner pivot from car CL | 378.0 mm | **368 mm** | scanned | hub face − uca_hub_to_pivot = 750 − 382 |
+| UCA effective length (UBJ → inner pivot, lateral) | 199.8 mm | **250 mm** | scanned | scan: 382 from hub face − 132 (UBJ from hub face) |
+| UCA arm symmetry | asymmetric (+113.5/−143.5 fa) | **symmetric (±110 from BJ)** | scanned | scan: front and rear pivots 220 mm apart, BJ centred |
+| UCA front pivot fa from BJ | +113.5 mm fwd | **+113.8 mm fwd** | derived | from symmetric 220 mm c-c + UBJ position |
+| UCA rear pivot fa from BJ | 143.5 mm aft | **106.2 mm aft** | derived | from symmetric 220 mm c-c + UBJ position |
+| UCA front pivot z above LCA pivot | 192 mm | **181.78 mm** | scanned | UCA tilted slightly front-high (6.78 mm) |
+| UCA rear pivot z above LCA pivot | 170 mm | **168.22 mm** | scanned | |
+| UCA pivot centre z above LCA pivot | 181 mm | **175 mm** | scanned | (front + rear)/2 |
+| UCA inner pivot z, vs UBJ | 15 mm below | **23.75 mm below** | derived | UBJ at 198.75 above LCA pivot − UCA centre at 175 |
+| LCA front pivot bushing length | 73 mm | **71 mm** | scanned | |
+| LCA rear pivot bushing length | 60 mm | — | scanned | |
+| UCA pivot bushing length | 56 mm | **57 mm** | scanned | both pivots |
+| Shock stroke (5 in) | 127 mm | — | published | $44/47$ comp, $54/57$ ext at MR ~0.62 |
+| Static lever (CP→pivot, coilover→pivot) | 240/374.5 = 0.641 | **240/380.5 = 0.631** | derived | wheel lever lengthened with T_MIATA correction |
+| Motion ratio at 80 deg | 0.631 | **0.621** | derived | static lever × sin(80°) |
+| Wheel rate (25 N/mm spring) | 9,920 N/m | **9,646 N/m** | derived | $K_s \cdot MR^2$ |
+| Front spring roll stiffness | 7,506 N·m/rad | **7,297 N·m/rad** | derived | $K_w (T_{A40})^2 / 2$ |
+| Wheel travel | 141 mm bump, 60 mm droop | — | derived | shock stroke / MR |
 
 The four bar that drives the front view kinematics is set by four numbers: the LCA inner pivot, the UCA inner pivot, the LBJ, and the UBJ. The knuckle length and KPI follow directly from LBJ and UBJ. Everything downstream (RC, IC, FVSA, camber gain, scrub, motion ratio) is a function of these four points and the tire radius.
 
@@ -134,7 +142,7 @@ The four bar that drives the front view kinematics is set by four numbers: the L
 When the entire assembly translates as a unit on a custom frame, the following are preserved — but only if the inner pivot locations are correctly positioned at exactly 87.5mm inboard of their stock positions. The +/-1mm pickup tolerance in the fabrication section applies here:
 
 - **Camber curve through travel.** Preserved. Corrective gain per degree of body roll scales by $T_{new}/T_{old}$ (each degree of roll produces less wheel travel on a narrower track).
-- **Caster, KPI, mechanical trail.** Unchanged (properties of knuckle/arm orientations). Estimated KPI = 12.1° and caster = 0.0° (both ball joints share the same fore-aft offset of −8.8 mm from hub centre). These values come from a photo-CAD model and are pending donor scan validation.
+- **Caster, KPI, mechanical trail.** Unchanged (properties of knuckle/arm orientations). Scanned KPI = 12.05° and scanned caster = 3.62° (UBJ sits 14.15 mm rearward of LBJ in side view). Earlier forum-CAD numbers (KPI 12.1°, caster 0°) were wrong; the corrected values come from the donor subframe scan.
 - **Scrub radius from narrowing alone.** Horizontal narrowing preserves scrub radius (the KPI axis and contact patch translate together). However, changing tire diameter shifts the KPI ground intercept and changes scrub radius, even at stock ET+38. See the scrub radius section below.
 - **Anti-dive and anti-squat.** Side-view IC location is preserved. Anti-dive and anti-squat percentages change with the A40's longer wheelbase (2350mm vs 2265mm) and must be recalculated. Verify in SA V2.
 - **Bump steer.** On a custom frame the rack mount moves with everything else. Caveat: if the rack narrows differently than the track, tie rod angles change and bump steer must be re-checked.
