@@ -104,8 +104,13 @@ K_PHI_REAR = KW_REAR * (SPRING_BASE_REAR / 1000) ** 2 / 2  # 9,025
 K_PHI_SPRING = KW_FRONT * (T_A40 / 1000) ** 2 / 2 + K_PHI_REAR  # ~24,343
 
 # ── Miata NA front suspension geometry (all in mm) ────────────────
-# Source: frontcontrolarms.pdf + frontcontrolpickups.pdf.
-# All values marked TBD must be verified against the actual donor car.
+# Source: photogrammetric scan of the donor front subframe (Einstar 2).
+# The original numbers came from forum-published CAD (frontcontrolarms.pdf
+# + frontcontrolpickups.pdf) but produced ~11.5° static caster — implausible
+# for a street-car Miata, so the donor was scanned.  Scan invalidated the
+# UCA pickup positions and the LCA inner-pivot width; LCA arm geometry
+# (fa span, BJ offset, z rise) was correct in the forum CAD and is retained.
+# Values marked [SCAN-TBD] are pending update from the scan output.
 # Coordinate convention: +x outboard, +y forward, +z up. Origin at hub/BJ.
 SUSP = dict(
     # ── Knuckle / heights (front view) ──
@@ -115,30 +120,29 @@ SUSP = dict(
     # Convention: (lat, fa, h) — lat outboard+, fa forward+, h up+, all mm.
     # Source: photogrammetric scan CAD model — treat as estimated until verified.
     lbj_from_hub=(-74.924, -8.827, -93.605),
-    ubj_from_hub=(-124.698, -8.827, +139.400),
+    ubj_from_hub=(-124.698, -8.827, +139.400),  # [SCAN-TBD] fa offset wrong — UCA scan correction pending
     steer_from_hub=(-65.990, +97.216, -75.697),
-    # ── LCA inner pivot positions (confirmed from drawing) ─────────────────────
+    # ── LCA inner pivot positions (LCA ARM geometry confirmed by scan) ─────────
     # Lateral: from car CL.  Fore-aft origin: LCA front pivot.
     # BJ is lca_bj_fa mm FORWARD of the LCA front pivot.
-    lca_from_cl=328.0,  # LCA inner pivot line: mm from car CL (both front & rear)
-    lca_fa_span=323.5,  # LCA fore-aft span front-to-rear (c-t-c, mm)
-    lca_bj_fa=25.0,  # BJ is 25 mm forward of LCA front pivot
-    lca_z_rise=25.0,  # [est] LCA inner pivot is 25 mm ABOVE LBJ height (+ = above)
+    lca_from_cl=328.0,  # [SCAN-TBD] forum CAD value — scan says this is wrong
+    lca_fa_span=323.5,  # LCA fore-aft span front-to-rear (c-t-c, mm) — scan-confirmed
+    lca_bj_fa=25.0,  # BJ is 25 mm forward of LCA front pivot — scan-confirmed
+    lca_z_rise=25.0,  # LCA inner pivot is 25 mm ABOVE LBJ height — scan-confirmed
     # Coilover and ARB mounts: explicit (perp_from_pivot_line, fore-aft in arm frame)
     # Both lie on horizontal lines (constant y) between BJ and the pivot line.
     lca_coilover_perp=240.0,  # coilover: mm outboard from pivot line (x = -374.5+240 = -134.5)
     lca_coilover_fa=+25.0,  # coilover: fore-aft = +25mm (forward of BJ)
     lca_arb_perp=185.0,  # ARB end-link: mm outboard from pivot line (x = -374.5+185 = -189.5)
     lca_arb_fa=+35.0,  # ARB end-link: fore-aft = +35mm (forward of BJ)
-    # ── UCA inner pivot positions (confirmed from drawing) ─────────────────────
-    # UCA inner pivots sit 50mm outboard of LCA inner pivots (378mm from CL).
-    # Pivot positions are fore-aft from BJ (not symmetric).
-    uca_hub_to_pivot=324.5,  # lateral: hub centre to UCA inner pivot line (mm)
-    uca_fa_front=113.5,  # UCA front pivot: +113.5mm forward of BJ
-    uca_fa_rear=143.5,  # UCA rear pivot: 143.5mm rearward of BJ (negative in coords)
-    uca_z_front=192.0,  # UCA front pivot height above LCA pivot [verify]
-    uca_z_rear=170.0,  # UCA rear pivot height above LCA pivot [verify]
-    uca_z_drop=15.0,  # [est] UCA inner pivot 15 mm below UBJ height (+ = below UBJ)
+    # ── UCA inner pivot positions — [SCAN-TBD] all values pending scan output ──
+    # Forum-CAD numbers retained as placeholders; scan correction needed.
+    uca_hub_to_pivot=324.5,  # [SCAN-TBD] lateral: hub centre to UCA inner pivot line (mm)
+    uca_fa_front=113.5,  # [SCAN-TBD] UCA front pivot fa from BJ
+    uca_fa_rear=143.5,  # [SCAN-TBD] UCA rear pivot fa from BJ (rearward)
+    uca_z_front=192.0,  # [SCAN-TBD] UCA front pivot height above LCA pivot
+    uca_z_rear=170.0,  # [SCAN-TBD] UCA rear pivot height above LCA pivot
+    uca_z_drop=15.0,  # [SCAN-TBD] UCA inner pivot below UBJ height
     # ── Pivot bushing dimensions (fore-aft length, mm) ──────────────────
     lca_f_bushing=73.0,  # LCA front pivot bushing length (mm)
     lca_r_bushing=60.0,  # LCA rear pivot bushing length (mm)

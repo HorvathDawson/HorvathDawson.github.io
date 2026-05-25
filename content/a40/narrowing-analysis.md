@@ -65,6 +65,19 @@ The chosen 205/ET+38 sits 19 mm outboard of stock A40 outer-to-outer (≈10 mm p
 
 **1230 mm front track, 87.5 mm narrowing per side — locked.** Within 2 mm of the stock A40 front track, with the chosen 205/ET+38 wheel/tire landing within the body-scan envelope. Pickup-point coordinates and donor-side dimensions are in the [geometry design reference](./geometry-design-reference#numbers).
 
+### Donor-scan correction
+
+The pickup coordinates that originally drove this analysis came from a forum-published Miata CAD model. Re-running the kinematics on those numbers produced a static caster of **~11.5°**, which is implausible for a street-car Miata (the OEM spec is roughly 5°). That was the smell-test that triggered a full photogrammetric scan of the donor front subframe.
+
+The scan invalidated the forum CAD in two places:
+
+- **UCA inner-pivot positions were wrong.** Both fore-aft and lateral offsets differed from the forum drawing. This is what was driving the bogus caster — UCA fa was offset from LCA fa in a way that the forum CAD didn't capture.
+- **LCA inner-pivot width (`lca_from_cl`) was wrong.** The lateral distance from car centreline to the LCA pivot line in the forum drawing didn't match the actual subframe.
+
+What the scan **didn't** change: the LCA arm geometry itself (fa span between front and rear pivots, BJ position relative to the front pivot, vertical rise from BJ to pivot line) all came out consistent with the forum CAD. So the lower arm stays as drawn; the upper arm geometry and the LCA pivot location relative to the car centreline are the updates.
+
+Downstream: pickup coordinates in the [geometry design reference](./geometry-design-reference#numbers), the SUSP constants in `scripts/plot_geometry_reference.py`, and the RC / caster / pickup-3-view plots all reflect the scanned numbers.
+
 ### Full-lock-and-full-bump caveat
 
 The envelope check above is done at ride height. Sweeping the tire through the steering arc at ride height clears the body; sweeping it through the bump travel with the wheels pointed straight also clears. The one combination that doesn't quite clear is **simultaneous full steering lock + full suspension compression** — the inboard front corner of the tire kisses the inner fender / wheel arch by a few millimetres.
