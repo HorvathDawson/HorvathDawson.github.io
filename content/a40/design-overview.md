@@ -18,11 +18,11 @@ This post is the integration view: a one-paragraph summary of each system and a 
 | System | Summary | Detail |
 |---|---|---|
 | **Frame** | Custom ladder, two main rails + crossmembers, built around the suspension and drivetrain pickup points. Body mounts measured off the original A40 frame. | [frame design](./frame-design) · [finalization & cut list](./design-finalization) · [jig build](./frame-jig) |
-| **Front suspension** | Narrowed Miata NA double wishbone. Inner pickups moved 87.5 mm inboard per side; local four-bar geometry matches stock Miata. | [options](./suspension-options) · [narrowing analysis](./narrowing-analysis) · [geometry reference](./geometry-design-reference) · [tuning](./suspension-tuning) |
+| **Front suspension** | Narrowed Miata NA double wishbone. Inner pickups moved 95 mm inboard per side; donor LCA geometry retained, scanned UCA pickups used for the upper arm. | [options](./suspension-options) · [narrowing analysis](./narrowing-analysis) · [geometry reference](./geometry-design-reference) · [tuning](./suspension-tuning) |
 | **Rear suspension** | Triangulated four-link, Welder Series 318500 (Horton Hot Rod) kit. Rear track locked at 1340 mm. | [four-link rear](./four-link-rear) |
 | **Rear axle** | 31-spline Ford 9", stock-width housing on hand. Narrowing to 1340 mm; custom Moser axles with 4×100 flanges machined to spec (no redrill). | [rear axle & driveshaft](./rear-axle) |
 | **Engine + trans** | SR20DET, leaning CD009 6-speed (350Z) on a Driftworks Superfly adapter; OEM SR20 5-speed fallback. Tunnel sized to CD009. Motor ~3° nose-down. | [motor selection](./motor-selection) |
-| **Steering** | Narrowed Miata NA rack (175 mm total / ~87.5 mm per side), junkyard column-mount EPAS (Prius or Kia Soul) in failsafe mode, collapsible column. | [steering](./steering) |
+| **Steering** | Narrowed Miata NA rack (190 mm total / 95 mm per side), Toyota Prius Gen 3 EPAS column over a Pi CAN gateway. | [steering](./steering) |
 | **Body** | Original A40 shell. Mount style (welded / rubber / hybrid) TBD. Laser scan planned for clearance checks against frame, engine, suspension across full travel. | this post |
 | **Dash + electronics** | Custom Godot/GDScript digital dash on a Raspberry Pi behind the original A40 bezel, fed by Haltech ECU over CAN. | [digital dash](./digital-dash) |
 

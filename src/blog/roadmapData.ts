@@ -122,11 +122,11 @@ export const roadmap: Roadmap = {
       epic: 'research',
       kind: 'decision',
       status: 'decided',
-      decision: 'Miata NA rack (depowered, 175 mm narrowed) + Toyota Prius Gen 3 (2010–2015) column-mount EPAS, driven by the dash Pi acting as a dual-bus CAN gateway (Haltech → Toyota frames) for speed-sensitive assist. Failsafe-mode wiring is the fallback.',
+      decision: 'Miata NA rack (depowered, 190 mm narrowed) + Toyota Prius Gen 3 (2010–2015) column-mount EPAS, driven by the dash Pi acting as a dual-bus CAN gateway (Haltech → Toyota frames) for speed-sensitive assist. Failsafe-mode wiring is the fallback.',
       posts: ['steering', 'epas-can-gateway'],
       summary: 'Lock the rack donor and the EPAS column donor. Output: parts list, dual-bus gateway architecture, and failsafe fallback plan.',
       notes: [
-        'Rack: Miata NA, depowered (Flyin\' Miata method), narrowed by the front-track delta',
+        'Rack: Miata NA, depowered (Flyin\' Miata method), narrowed by 190 mm total (95 mm per side) to match the front-track delta',
         'Column: Toyota Prius Gen 3 (2010–2015) — any year in that range shares the same powertrain CAN architecture, so the gateway code is identical regardless of which year donor lands first',
         'Control strategy: dash Pi rebroadcasts Haltech RPM + speed as Toyota 0x1C4 + 0xB4 frames — see t-decide-epas-control',
         'Fallback: 12 V + ignition failsafe (fixed assist) if gateway fails',
@@ -249,7 +249,7 @@ export const roadmap: Roadmap = {
       epic: 'narrowing',
       kind: 'decision',
       status: 'decided',
-      decision: 'Front track locked at 1230 mm (87.5 mm narrowing per side). Within 2 mm of stock A40 front track and the chosen 205/65R15 ET+38 wheel/tire fits inside the scanned fender envelope.',
+      decision: 'Front track locked at 1230 mm (95 mm narrowing per side, off a scanned 1420 mm donor track). Within 2 mm of stock A40 front track and the chosen 205/65R15 ET+38 wheel/tire fits inside the scanned fender envelope.',
       summary: '1230 mm locked — drives the front pickup-point coordinates and the Miata rack narrowing. One open caveat: slight tire-to-body interference at simultaneous full steering lock + full bump; tracked as a mock-up check, not a track-width change.',
       posts: ['narrowing-analysis'],
       notes: [

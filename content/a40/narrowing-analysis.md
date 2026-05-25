@@ -16,10 +16,10 @@ How much the Miata front suspension has to narrow to fit inside the A40 fenders,
 | | A40 Devon | Miata NA | Δ (A40 − Miata) |
 |---|---|---|---|
 | Wheelbase | 2350 mm | 2265 mm | +85 mm |
-| Front track | 1232 mm | 1405 mm | −173 mm |
+| Front track | 1232 mm | 1420 mm | −188 mm |
 | Stock tire | 5.25-16 (133 × 646 mm) | 185/60R14 (185 × 577 mm) | width −52 mm, OD +69 mm |
-| Stock outer-to-outer | 1365 mm | 1590 mm | −225 mm |
-| Stock wheel | 16 in steel, no offset | 14×6, ET40-45 | — |
+| Stock outer-to-outer | 1365 mm | 1525 mm | −160 mm |
+| Stock wheel | 16 in steel, no offset | 14×6, ET40 | — |
 | Bolt pattern | 4-stud | 4×100 | converting to 4×100 |
 | Curb weight | ~1010 kg (build target ~950 kg, [build constants](./build-constants)) | — | — |
 
@@ -63,20 +63,25 @@ The chosen 205/ET+38 sits 19 mm outboard of stock A40 outer-to-outer (≈10 mm p
 
 ## Narrowing target
 
-**1230 mm front track, 87.5 mm narrowing per side — locked.** Within 2 mm of the stock A40 front track, with the chosen 205/ET+38 wheel/tire landing within the body-scan envelope. Pickup-point coordinates and donor-side dimensions are in the [geometry design reference](./geometry-design-reference#numbers).
+**1230 mm front track, 95 mm narrowing per side — locked.** Within 2 mm of the stock A40 front track, with the chosen 205/ET+38 wheel/tire landing within the body-scan envelope. Pickup-point coordinates and donor-side dimensions are in the [geometry design reference](./geometry-design-reference#numbers).
 
-### Donor-scan correction
+### Geometry implications of the scanned donor
 
-The pickup coordinates that originally drove this analysis came from a forum-published Miata CAD model. Re-running the kinematics on those numbers produced a static caster of **~11.5°**, which is implausible for a street-car Miata (the OEM spec is roughly 5°). That was the smell-test that triggered a full photogrammetric scan of the donor front subframe.
+The donor front subframe was photogrammetrically scanned (Einstar 2). The values that follow come from that scan and drive every downstream kinematic plot. Two consequences of the scanned geometry change how the narrowing has to be executed compared with a naive "translate the LCA inboard 95 mm" approach:
 
-The scan invalidated the forum CAD in two places:
+- **UCA pivot sits inboard of LCA pivot, not outboard.** UCA inner pivot is at 368 mm from CL; LCA inner pivot is at 329.5 mm from CL. After narrowing, UCA lands at 273 mm from CL and LCA at 234.5 mm. Frame UCA-bracket clearance against the SR20 valve cover and the inner fender both want a check at this new inboard position.
+- **Arm-length ratio is 1.34 : 1, not the textbook ~1.9 : 1.** LCA effective length (BJ → pivot) is 336.25 mm; UCA effective length is 250 mm. Closer-to-equal arms give a longer FVSA, a lower roll centre, and less negative camber gain per millimetre of bump than the more-unequal arm ratio commonly assumed for a Miata. The build's static negative camber needs to come from knuckle offset / shim packs, not from the camber curve.
+- **UCA bushing axis is canted in plan and tilted in side view.** Side view: front pivot sits 13.56 mm higher than the rear over a 220 mm fa span ≈ 3.5° nose-up. Plan: the bushing axis is not parallel to car fa — the UCA arm is symmetric ±110 mm in its own frame, but its inboard pivot centre projects ~54 mm forward of UBJ in car-frame fa. Frame UCA brackets must replicate both rotations, not just position. The ±1 mm pickup tolerance below applies to the pivot **centre**; orientation error compounds with arm length and is just as important.
+- **Caster is real (3.62°) and mechanical trail is +7.57 mm.** That gives the steering meaningful self-centring without relying on the EPAS column to manufacture all of the on-centre feel through torque overlay.
 
-- **UCA inner-pivot positions were wrong.** Both fore-aft and lateral offsets differed from the forum drawing. This is what was driving the bogus caster — UCA fa was offset from LCA fa in a way that the forum CAD didn't capture.
-- **LCA inner-pivot width (`lca_from_cl`) was wrong.** The lateral distance from car centreline to the LCA pivot line in the forum drawing didn't match the actual subframe.
+The lower arm itself — fa span between front and rear pivots (322.5 mm c-to-c), BJ offset relative to the front pivot (+25 mm fwd), z-rise from BJ to pivot line (+25 mm) — matches what the published Miata drawings show, so the donor LCA stays as-is. The UCA, the UCA bracket geometry, and the LCA inner-pivot position in the frame are the new fabrication inputs.
 
-What the scan **didn't** change: the LCA arm geometry itself (fa span between front and rear pivots, BJ position relative to the front pivot, vertical rise from BJ to pivot line) all came out consistent with the forum CAD. So the lower arm stays as drawn; the upper arm geometry and the LCA pivot location relative to the car centreline are the updates.
+### Fabrication notes
 
-Downstream: pickup coordinates in the [geometry design reference](./geometry-design-reference#numbers), the SUSP constants in `scripts/plot_geometry_reference.py`, and the RC / caster / pickup-3-view plots all reflect the scanned numbers.
+- **UCA bracket orientation matters.** Holding the position to ±1 mm is necessary but not sufficient. The bracket bore axis has to be canted to match the scanned side-view tilt (3.5° nose-up) and the plan-view cant inferred from the symmetric-arm reconciliation. Fixture the brackets off the actual UCA arm + a scanned bushing axis, not off generic centerlines.
+- **LCA inner-pivot lateral is 234.5 mm from CL.** This is the narrowed value (329.5 − 95). Both LCA pivots share that lateral; fa positions track the scanned 322.5 mm span at the BJ-+25 mm reference.
+- **UCA inner-pivot lateral is 273 mm from CL.** This places the UCA bracket inboard of the LCA bracket by 38.5 mm — opposite of what published Miata drawings imply. Verify clearance against the SR20 valve cover, exhaust manifold side, and the inner fender wheel-well before committing to the bracket position.
+- **Hub-face position references the wheel-CL, not the LBJ.** Hub face sits at half-track + wheel offset = 615 + ET mm from CL. With ET+38 wheels that puts hub face at 653 mm; with ET+45 at 660 mm. The scanned LBJ-to-hub offset (84.25 mm inboard, 3.75 mm aft, 86 mm down) is taken from the hub face plane and is invariant under narrowing.
 
 ### Full-lock-and-full-bump caveat
 

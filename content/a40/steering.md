@@ -66,7 +66,7 @@ Proven shortening ranges from [LocostUSA](https://www.locostusa.com/forums/viewt
 
 ## Ackermann geometry
 
-When the rack narrows by the same amount as the track (required for bump steer), the Miata knuckle steering arm geometry is preserved. The stock Miata arm converges at T=1405, WB=2265 ($\theta_{knuckle} = 17.2°$). On the A40, the narrower track shifts the convergence point 367mm ahead of the rear axle at 2350mm. This gives slightly too much Ackermann.
+When the rack narrows by the same amount as the track (required for bump steer), the Miata knuckle steering arm geometry is preserved. The stock Miata arm converges at T=1420, WB=2265 ($\theta_{knuckle} = 17.4°$). On the A40, the narrower track shifts the convergence point ahead of the rear axle at 2350 mm. This gives slightly too much Ackermann.
 
 The mismatch is small. Even at autocross slalom angles (20 degrees of lock, ~7m turn radius) the Ackermann error stays under 1 degree, well within tire slip angles, compliance steer, and normal driver variation. No custom steering arms required.
 
