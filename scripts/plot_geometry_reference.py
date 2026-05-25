@@ -3394,9 +3394,10 @@ def plot_lca_plan():
     ax.set_ylabel("← Rear    +y forward →  (mm)")
     ax.set_aspect("equal")
     pad = 40
+    left_pad = 110  # extra room for inboard-side fa-offset labels
     all_x = [bj[0], lca_f[0], lca_r[0], cov_pt[0], arb_pt[0]]
     all_y = [bj[1] + 20, lca_f[1], lca_r[1], y_bot - 28]
-    ax.set_xlim(min(all_x) - pad, max(all_x) + pad)
+    ax.set_xlim(min(all_x) - left_pad, max(all_x) + pad)
     ax.set_ylim(min(all_y) - pad, max(all_y) + pad)
     _note(ax)
     save(fig, "lca_plan.png")
@@ -3492,9 +3493,10 @@ def plot_uca_plan():
     ax.set_ylabel("← Rear    +y forward →  (mm)")
     ax.set_aspect("equal")
     pad = 36
+    left_pad = 110  # extra room for inboard-side fa-offset labels
     all_x = [bj[0], uca_f[0], uca_r[0]]
     all_y = [bj[1], uca_f[1], uca_r[1], y_bot - 28]
-    ax.set_xlim(min(all_x) - pad, max(all_x) + pad)
+    ax.set_xlim(min(all_x) - left_pad, max(all_x) + pad)
     ax.set_ylim(min(all_y) - pad, max(all_y) + pad)
     _note(ax)
     save(fig, "uca_plan.png")
