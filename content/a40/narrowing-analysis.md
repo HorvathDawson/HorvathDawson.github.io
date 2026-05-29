@@ -63,7 +63,7 @@ The chosen 205/ET+38 sits 19 mm outboard of stock A40 outer-to-outer (≈10 mm p
 
 ## Narrowing target
 
-**1230 mm front track, 95 mm narrowing per side — locked.** Within 2 mm of the stock A40 front track, with the chosen 205/ET+38 wheel/tire landing within the body-scan envelope. Pickup-point coordinates and donor-side dimensions are in the [geometry design reference](./geometry-design-reference#numbers).
+**1230 mm front track, 95 mm narrowing per side — locked.** Within 2 mm of the stock A40 front track, with the chosen 205/ET+38 wheel/tire landing within the body-scan envelope. Pickup-point coordinates and donor-side dimensions are in the [donor geometry dimensions reference](./donor-geometry-dimensions#numbers).
 
 ### Geometry implications of the scanned donor
 
